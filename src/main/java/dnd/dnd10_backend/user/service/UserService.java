@@ -203,7 +203,7 @@ public class UserService {
         Token refreshToken = tokenRepository.findByUser(user);
 
         //DB의 refreshToken과 비교
-        if(!refreshToken.equals(token)){ //DB의 refresh token과 front로부터 받아온 refresh toekn이 다를 때
+        if(!refreshToken.getRefreshToken().equals(token)){ //DB의 refresh token과 front로부터 받아온 refresh toekn이 다를 때
             throw new RuntimeException("옳지 않은 토큰");
 
         }
