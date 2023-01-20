@@ -23,7 +23,7 @@ import java.io.IOException;
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        String exception = (String) request.getAttribute(JwtProperties.HEADER_STRING);
+        String exception = (String) request.getAttribute(JwtProperties.AT_HEADER_STRING);
         String errorCode;
 
         if(exception.equals("토큰이 만료되었습니다.")) {
@@ -40,6 +40,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     private void setResponse(HttpServletResponse response, String errorCode) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().println(JwtProperties.HEADER_STRING + " : " + errorCode);
+        response.getWriter().println(JwtProperties.AT_HEADER_STRING + " : " + errorCode);
     }
 }

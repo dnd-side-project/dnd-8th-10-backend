@@ -7,10 +7,10 @@ import dnd.dnd10_backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * 패키지명 dnd.dnd10_backend.user.controller
@@ -39,10 +39,25 @@ public class UserController {
         OauthToken oauthToken = userService.getAccessToken(code);
 
         // 발급 받은 accessToken 으로 카카오 회원 정보 DB 저장 후 JWT 를 생성
-        String jwtToken = userService.saveUserAndGetToken(oauthToken.getAccess_token());
+        List<String> tokenList = userService.saveUserAndGetToken(oauthToken.getAccess_token());
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
+        headers.add(JwtProperties.AT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(0));
+
+        headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
+
+        return ResponseEntity.ok().headers(headers).body("success");
+    }
+
+    @GetMapping("/oauth/token/refresh")
+    public ResponseEntity refresh(HttpServletRequest request){
+
+        List<String> tokenList = userService.reissueRefreshToken(request.getHeader(JwtProperties.RT_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX,""));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(JwtProperties.AT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(0));
+
+        headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
 
         return ResponseEntity.ok().headers(headers).body("success");
     }
