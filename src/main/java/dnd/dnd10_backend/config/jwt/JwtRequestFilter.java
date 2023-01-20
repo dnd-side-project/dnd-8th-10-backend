@@ -37,7 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String jwtHeader = request.getHeader(JwtProperties.HEADER_STRING);
+        String jwtHeader = request.getHeader(JwtProperties.AT_HEADER_STRING);
 
         if(jwtHeader == null || !jwtHeader.startsWith(JwtProperties.TOKEN_PREFIX)) {
             filterChain.doFilter(request, response);
@@ -53,10 +53,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         } catch (TokenExpiredException e) {
             e.printStackTrace();
-            request.setAttribute(JwtProperties.HEADER_STRING, "토큰이 만료되었습니다.");
+            request.setAttribute(JwtProperties.AT_HEADER_STRING, "토큰이 만료되었습니다.");
         } catch (JWTVerificationException e) {
             e.printStackTrace();
-            request.setAttribute(JwtProperties.HEADER_STRING, "유효하지 않은 토큰입니다.");
+            request.setAttribute(JwtProperties.AT_HEADER_STRING, "유효하지 않은 토큰입니다.");
         }
 
         request.setAttribute("userCode", userCode);

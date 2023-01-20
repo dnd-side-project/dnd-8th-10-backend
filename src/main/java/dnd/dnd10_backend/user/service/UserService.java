@@ -1,9 +1,15 @@
 package dnd.dnd10_backend.user.service;
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import dnd.dnd10_backend.auth.domain.Token;
+import dnd.dnd10_backend.auth.repository.TokenRepository;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.oauth.domain.KakaoProfile;
@@ -20,7 +26,13 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
+import static com.auth0.jwt.JWT.create;
+import static com.auth0.jwt.JWT.require;
+
 /**
  * 패키지명 dnd.dnd10_backend.user.service
  * 클래스명 UserService
@@ -31,12 +43,16 @@ import java.util.Date;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2022-01-21] refresh token에 대한 내용 수정 - 원지윤
  */
 @Service
 public class UserService {
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    TokenRepository tokenRepository;
 
     //환경 변수 가져오기
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -92,11 +108,11 @@ public class UserService {
     /**
      * 신규 사용자 저장 및 JWT토큰 생성하는 함수
      * @param token access_token
-     * @return JWT토큰
+     * @return access token과 refresh token List
      */
-    public String saveUserAndGetToken(String token) {
+    public List<String> saveUserAndGetToken(String token) {
         KakaoProfile profile = findProfile(token);
-
+        List<String> tokenList = new ArrayList<>();
         User user = userRepository.findByKakaoEmail(profile.getKakao_account().getEmail());
         if(user == null) {
             user = User.builder()
@@ -108,8 +124,25 @@ public class UserService {
 
             userRepository.save(user);
         }
+        Token refreshToken = tokenRepository.findByUser(user);
 
-        return createToken(user);
+        if(refreshToken != null){
+            refreshToken.refreshUpdate(createRefreshToken(user));
+        }
+        else{
+            refreshToken = Token.builder()
+                    .user(user)
+                    .refreshToken(createRefreshToken(user)).build();
+
+        }
+
+        tokenRepository.save(refreshToken);
+        
+        //List에 각각 access token과 refresh token 차례로 넣어줌
+        tokenList.add(createToken(user));
+        tokenList.add(refreshToken.getRefreshToken());
+
+        return tokenList;
     }
 
     /**
@@ -122,14 +155,89 @@ public class UserService {
         String jwtToken = JWT.create()
 
                 .withSubject(user.getKakaoEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.EXPIRATION_TIME))
+                .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.AT_EXP_TIME))
+
+                .withClaim("id", user.getUserCode())
+                .withClaim("nickname", user.getKakaoNickname())
+
+                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+        return jwtToken;
+    }
+
+    /**
+     * refresh토큰 생성하는 함수
+     * @param user 사용자
+     * @return 발급한 refresh token
+     */
+    public String createRefreshToken(User user) {
+
+        String refreshToken = JWT.create()
+
+                .withSubject(user.getKakaoEmail())
+                .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.RT_EXP_TIME))
 
                 .withClaim("id", user.getUserCode())
                 .withClaim("nickname", user.getKakaoNickname())
 
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
-        return jwtToken;
+        return refreshToken;
+    }
+
+    /**
+     * refresh token을 받아 access token과 refresh toekn 재발급
+     * @param token refresh token
+     * @return access token과 refresh token List
+     */
+    public List<String> reissueRefreshToken(String token){
+        List<String> tokenList = new ArrayList<>();
+        //refreshToken 만료 확인
+        if(!validateToken(token)){ //refresh token까지 만료 되었을 때
+            throw new RuntimeException("다시 로그인해주세요");
+        }
+        
+        Long userCode = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
+                .getClaim("id").asLong();
+
+        User user = userRepository.findByUserCode(userCode);
+        Token refreshToken = tokenRepository.findByUser(user);
+
+        //DB의 refreshToken과 비교
+        if(!refreshToken.equals(token)){ //DB의 refresh token과 front로부터 받아온 refresh toekn이 다를 때
+            throw new RuntimeException("옳지 않은 토큰");
+
+        }
+
+        //refresh token 재발급
+        refreshToken.refreshUpdate(createRefreshToken(user));
+        tokenRepository.save(refreshToken);
+        
+        //List에 각각 access token과 refresh token 차례로 넣어줌
+        tokenList.add(createToken(user));
+        tokenList.add(refreshToken.getRefreshToken());
+
+        return tokenList;
+    }
+    
+    /**
+     * 토큰 정보를 검증하는 메서드
+     * @param token 토큰
+     * @return 토큰 검증 여부
+     */
+    public boolean validateToken(String token) {
+        Long userCode = null;
+        try {
+            userCode = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
+                    .getClaim("id").asLong();
+            return true;
+        }catch (TokenExpiredException e) {
+            //토큰이 만료되었습니다.
+            e.printStackTrace();
+        } catch (JWTVerificationException e) {
+            //유효하지 않은 토큰입니다.
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
