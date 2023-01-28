@@ -1,5 +1,6 @@
 package dnd.dnd10_backend.user.dto.request;
 
+import dnd.dnd10_backend.user.domain.enums.Role;
 import lombok.Getter;
 
 /**
@@ -15,5 +16,7 @@ import lombok.Getter;
  */
 @Getter
 public class UserRequestDto {
-
+    private Role role;
+    private String workPlace;
+    private String workTime;
 }
