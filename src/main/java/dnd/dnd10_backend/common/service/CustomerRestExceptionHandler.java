@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 /**
  * 패키지명 dnd.dnd10_backend.common.service
  * 클래스명 CustomerRestExceptionHandler
- * 클래스설명
+ * 클래스설명 개발자 정의 exceptionhandler 클래스
  * 작성일 2023-01-28
  *
  * @author 원지윤

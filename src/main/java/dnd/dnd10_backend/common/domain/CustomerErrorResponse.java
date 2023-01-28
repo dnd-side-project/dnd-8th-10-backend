@@ -5,6 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 패키지명 dnd.dnd10_backend.common.domain
+ * 클래스명 CustomerErrorResponse
+ * 클래스설명 exceptionError에 대한 응답
+ * 작성일 2023-01-28
+ *
+ * @author 원지윤
+ * @version 1.0
+ * [수정내용]
+ * 예시) [2022-09-17] 주석추가 - 원지윤
+ */
 @Setter
 @Getter
 @NoArgsConstructor

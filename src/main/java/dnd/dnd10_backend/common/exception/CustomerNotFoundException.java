@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 패키지명 dnd.dnd10_backend.common.exception
  * 클래스명 CustomerNotFoundException
- * 클래스설명
+ * 클래스설명 개발자 정의 exception 클래스
  * 작성일 2023-01-28
  *
  * @author 원지윤

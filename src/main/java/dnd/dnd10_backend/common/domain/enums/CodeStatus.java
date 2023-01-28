@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 패키지명 dnd.dnd10_backend.common.domain.enums
  * 클래스명 CodeStatus
- * 클래스설명
+ * 클래스설명 응답 코드 및 메세지에 대한 enum
  * 작성일 2023-01-28
  *
  * @author 원지윤
