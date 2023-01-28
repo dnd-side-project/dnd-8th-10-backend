@@ -1,5 +1,6 @@
 package dnd.dnd10_backend.user.domain;
 
+import dnd.dnd10_backend.user.domain.enums.Role;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import java.sql.Timestamp;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-01-28] user 역할,근무시간,근무장소 추가 - 원지윤
  */
 @Entity
 @Data
@@ -40,6 +42,16 @@ public class User {
 
     @Column(name = "kakao_email")
     private String kakaoEmail;
+
+    @Column(name = "work_role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    @Column(name = "work_place")
+    private String workPlace;
+
+    @Column(name = "work_time")
+    private String workTime;
 
     @Column(name = "user_role")
     private String userRole;
