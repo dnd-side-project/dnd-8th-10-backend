@@ -9,3 +9,6 @@ ex) feat/login -> dev
 
 ### 변경 사항
 ex) 로그인 시, 구글 소셜 로그인 기능을 추가했습니다.
+
+### 이슈 번호
+ex) https://github.com/dnd-side-project/dnd-8th-10-backend/issues/2
