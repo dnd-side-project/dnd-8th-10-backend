@@ -3,10 +3,10 @@ spring:
     import:
       - optional:classpath:./application-auth.yml
   datasource:
-    url: jdbc:mysql://27.96.134.11:3306/dnd10
-    username: root
-    password: admin123
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/dnd10
+    username: dnd10user
+    password: dnd10user
+    driver-class-name: org.mariadb.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: create
