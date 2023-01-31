@@ -22,7 +22,9 @@ import java.util.List;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * 프론트에 토큰 관련 헤더 노출 - 원지윤
  */
+@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = {"Authorization","Refresh"})
 @RestController
 @RequestMapping("/api")
 public class UserController {
