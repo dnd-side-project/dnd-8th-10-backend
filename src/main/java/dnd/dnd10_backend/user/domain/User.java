@@ -1,6 +1,8 @@
 package dnd.dnd10_backend.user.domain;
 
 import dnd.dnd10_backend.user.domain.enums.Role;
+import dnd.dnd10_backend.user.dto.request.UserRequestDto;
+import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -69,5 +71,12 @@ public class User {
         this.kakaoNickname = kakaoNickname;
         this.kakaoEmail = kakaoEmail;
         this.userRole = userRole;
+    }
+
+    @Builder(builderMethodName = "dtoBuilder")
+    public void updateUser(UserSaveRequestDto requestDto) {
+        this.role = requestDto.getRole();
+        this.workPlace = requestDto.getWorkPlace();
+        this.workTime = requestDto.getWorkTime();
     }
 }

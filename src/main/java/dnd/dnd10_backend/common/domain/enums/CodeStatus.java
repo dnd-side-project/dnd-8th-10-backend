@@ -20,7 +20,15 @@ public enum CodeStatus {
     SUCCESS(200,"성공"),
     FAIL(-999,"실패"),
     //200
-    SUCCESS_SOCIAL_LOGIN(200, "소셜로그인 성공");
+    SUCCESS_SOCIAL_LOGIN(200, "소셜로그인 성공하였습니다."),
+    SUCCESS_SEARCHED_USER(200, "사용자 조회에 성공하였습니다."),
+    SUCCESS_UPDATED_USER(201, "사용자 정보 수정에 성공하였습니다."),
+    SUCCESS_CREATED_USER(201, "사용자 등록에 성공하였습니다."),
+    //40X
+    ACCESS_TOKEN_EXPIRED(401,"엑세스 토큰이 만료되었습니다."),
+    REFRESH_TOKEN_EXPIRED(401,"리프레쉬 토큰이 만료되었습니다."),
+    NOT_FOUND_USER(404,"찾을 수 없는 사용자입니다.");
+
 
     private final int code;
     private final String message;

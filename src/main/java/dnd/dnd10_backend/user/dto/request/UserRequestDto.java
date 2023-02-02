@@ -1,7 +1,11 @@
 package dnd.dnd10_backend.user.dto.request;
 
+import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.domain.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * 패키지명 dnd.dnd10_backend.user.dto.request
@@ -15,8 +19,9 @@ import lombok.Getter;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  */
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequestDto {
-    private Role role;
-    private String workPlace;
-    private String workTime;
+    private String kakaoEmail;
 }
