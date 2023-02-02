@@ -27,6 +27,7 @@ public enum CodeStatus {
     //40X
     ACCESS_TOKEN_EXPIRED(401,"엑세스 토큰이 만료되었습니다."),
     REFRESH_TOKEN_EXPIRED(401,"리프레쉬 토큰이 만료되었습니다."),
+    INVALID_TOKEN(401,"유효하지 않은 토큰입니다."),
     NOT_FOUND_USER(404,"찾을 수 없는 사용자입니다.");
 
 

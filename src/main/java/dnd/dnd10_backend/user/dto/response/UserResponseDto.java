@@ -17,6 +17,7 @@ import lombok.Setter;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-02] 사용자 휴대전화 번호 추가 - 원지윤
  */
 @Getter
 @AllArgsConstructor
@@ -26,6 +27,7 @@ public class UserResponseDto {
     private String kakaoNickname;
     private String kakaoEmail;
     private Role role;
+    private String phoneNumber;
     private String workTime;
     private String workPlace;
 
@@ -35,6 +37,7 @@ public class UserResponseDto {
                 user.getKakaoNickname(),
                 user.getKakaoEmail(),
                 user.getRole(),
+                user.getPhoneNumber(),
                 user.getWorkTime(),
                 user.getWorkPlace()
         );

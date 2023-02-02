@@ -21,6 +21,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -50,6 +53,9 @@ public class TokenService {
 
     @Autowired
     TokenRepository tokenRepository;
+
+    @Autowired
+    CustomUserDetailsService customUserDetailsService;
 
     //환경 변수 가져오기
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -236,6 +242,13 @@ public class TokenService {
         }
         return false;
     }
+
+    public Authentication getAuthentication(Long userCode) {
+        User user = userRepository.findByUserCode(userCode);
+        UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getKakaoEmail());
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
 
     /**
      * 카카오 서버에 접근해서 사용자의 정보를 받아오는 함수
