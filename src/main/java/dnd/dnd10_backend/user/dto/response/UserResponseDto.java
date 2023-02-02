@@ -1,5 +1,10 @@
 package dnd.dnd10_backend.user.dto.response;
 
+import dnd.dnd10_backend.user.domain.User;
+import dnd.dnd10_backend.user.domain.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -12,11 +17,29 @@ import lombok.Setter;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-02] 사용자 휴대전화 번호 추가 - 원지윤
  */
-@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponseDto {
+    private Long userCode;
     private String kakaoNickname;
     private String kakaoEmail;
+    private Role role;
+    private String phoneNumber;
     private String workTime;
     private String workPlace;
+
+    public static UserResponseDto of(User user){
+        return new UserResponseDto(
+                user.getUserCode(),
+                user.getKakaoNickname(),
+                user.getKakaoEmail(),
+                user.getRole(),
+                user.getPhoneNumber(),
+                user.getWorkTime(),
+                user.getWorkPlace()
+        );
+    }
 }

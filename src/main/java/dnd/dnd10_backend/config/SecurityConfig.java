@@ -3,6 +3,7 @@ package dnd.dnd10_backend.config;
 import dnd.dnd10_backend.config.jwt.CustomAuthenticationEntryPoint;
 import dnd.dnd10_backend.config.jwt.JwtRequestFilter;
 import dnd.dnd10_backend.user.repository.UserRepository;
+import dnd.dnd10_backend.user.service.TokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -33,6 +34,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    TokenService tokenService;
+
     public static final String FRONT_URL = "http://localhost:3000";
 
     private final CorsFilter corsFilter;
@@ -54,14 +58,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(corsFilter);
 
         http.authorizeRequests()
-                .antMatchers(FRONT_URL+"/main/**")
-                .authenticated()
-                .anyRequest().permitAll()
+                .antMatchers("/oauth/**","/test").permitAll()
+                .antMatchers("/api/**").authenticated()
+                .anyRequest().authenticated()
 
                 .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(new CustomAuthenticationEntryPoint());
 
-        http.addFilterBefore(new JwtRequestFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(new JwtRequestFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
     }
 }

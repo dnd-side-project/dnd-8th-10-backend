@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.common.service;
 
 import dnd.dnd10_backend.common.domain.CommonResponse;
+import dnd.dnd10_backend.common.domain.SingleResponse;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.domain.enums.ResponseStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class ResponseService {
      * @param <T>
      * @return
      */
-    public <T>CommonResponse<T> getResponse(T data, CodeStatus status){
-        return new CommonResponse(ResponseStatus.SUCCESS, status,data);
+    public <T> SingleResponse<T> getResponse(T data, CodeStatus status){
+        return new SingleResponse(ResponseStatus.SUCCESS, status,data);
     }
 }

@@ -1,5 +1,9 @@
 package dnd.dnd10_backend.config.jwt;
 
+import dnd.dnd10_backend.common.domain.CustomerErrorResponse;
+import dnd.dnd10_backend.common.domain.enums.CodeStatus;
+import dnd.dnd10_backend.common.domain.enums.ResponseStatus;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -21,25 +25,29 @@ import java.io.IOException;
  */
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
+
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String exception = (String) request.getAttribute(JwtProperties.AT_HEADER_STRING);
-        String errorCode;
 
         if(exception.equals("토큰이 만료되었습니다.")) {
-            errorCode = "토큰이 만료되었습니다.";
-            setResponse (response, errorCode);
+            setResponse (response, CodeStatus.ACCESS_TOKEN_EXPIRED);
         }
 
         if(exception.equals("유효하지 않은 토큰입니다.")) {
-            errorCode = "유효하지 않은 토큰입니다.";
-            setResponse(response, errorCode);
+            setResponse(response, CodeStatus.INVALID_TOKEN);
         }
     }
 
-    private void setResponse(HttpServletResponse response, String errorCode) throws IOException {
+    private void setResponse(HttpServletResponse response, CodeStatus codeStatus) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().println(JwtProperties.AT_HEADER_STRING + " : " + errorCode);
+        response.getWriter().println("{ \"status\" : \"" + ResponseStatus.ERROR
+                + "\",\n \"code\" : " +  codeStatus.getCode()
+                + ",\n \"message\" : \"" + codeStatus.getMessage()
+                + "\",\n \"timeStamp\" : \"" + System.currentTimeMillis()+ "\"}");
+        response.getWriter().flush();
+        response.getWriter().close();
+
     }
 }
