@@ -30,6 +30,10 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         String exception = (String) request.getAttribute(JwtProperties.AT_HEADER_STRING);
 
+        if(exception == null){
+            setResponse (response, CodeStatus.UNAUTHORIZED);
+        }
+
         if(exception.equals("토큰이 만료되었습니다.")) {
             setResponse (response, CodeStatus.ACCESS_TOKEN_EXPIRED);
         }

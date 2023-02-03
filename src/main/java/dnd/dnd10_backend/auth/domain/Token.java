@@ -28,6 +28,7 @@ public class Token {
     @Id
     private Long id;
 
+    @Column(length = 300)
     private String refreshToken;
 
     @ManyToOne

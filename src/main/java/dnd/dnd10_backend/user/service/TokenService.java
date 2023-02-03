@@ -161,6 +161,7 @@ public class TokenService {
                 .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.AT_EXP_TIME))
 
                 .withClaim("id", user.getUserCode())
+                .withClaim("email", user.getKakaoEmail())
                 .withClaim("nickname", user.getKakaoNickname())
 
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
@@ -180,6 +181,7 @@ public class TokenService {
                 .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.RT_EXP_TIME))
 
                 .withClaim("id", user.getUserCode())
+                .withClaim("email", user.getKakaoEmail())
                 .withClaim("nickname", user.getKakaoNickname())
 
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));

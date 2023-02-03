@@ -1,7 +1,6 @@
 package dnd.dnd10_backend.user.domain;
 
 import dnd.dnd10_backend.user.domain.enums.Role;
-import dnd.dnd10_backend.user.dto.request.UserRequestDto;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import lombok.Builder;
 import lombok.Data;
