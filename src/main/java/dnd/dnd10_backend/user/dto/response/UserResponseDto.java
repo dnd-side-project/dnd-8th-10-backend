@@ -24,7 +24,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserResponseDto {
     private Long userCode;
-    private String kakaoNickname;
     private String kakaoEmail;
     private Role role;
     private String phoneNumber;
@@ -34,7 +33,6 @@ public class UserResponseDto {
     public static UserResponseDto of(User user){
         return new UserResponseDto(
                 user.getUserCode(),
-                user.getKakaoNickname(),
                 user.getKakaoEmail(),
                 user.getRole(),
                 user.getPhoneNumber(),

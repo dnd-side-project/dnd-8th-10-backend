@@ -16,13 +16,13 @@ import lombok.Setter;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-03] 이메일 필드 삭제 - 원지윤
  */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserSaveRequestDto {
-    private String kakaoEmail;
     private Role role;
     private String phoneNumber;
     private String workPlace;

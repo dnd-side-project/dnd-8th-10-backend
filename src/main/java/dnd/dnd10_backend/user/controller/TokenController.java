@@ -82,7 +82,7 @@ public class TokenController {
 
         //response body 설정
         UserResponseDto userResponseDto = userService.getUserByToekn(tokenList.get(0));
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto, CodeStatus.SUCCESS_SOCIAL_LOGIN);
+        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto, CodeStatus.SUCCESS_TOKEN_REISSUED);
 
         return ResponseEntity.ok().headers(headers).body(response);
     }

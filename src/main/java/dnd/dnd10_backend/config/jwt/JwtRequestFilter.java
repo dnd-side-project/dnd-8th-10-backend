@@ -68,7 +68,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         }
 
         request.setAttribute("userCode", userCode);
-        request.setAttribute(JwtProperties.AT_HEADER_STRING,"");
         System.out.println((String)request.getAttribute(JwtProperties.AT_HEADER_STRING));
         filterChain.doFilter(request, response);
     }
