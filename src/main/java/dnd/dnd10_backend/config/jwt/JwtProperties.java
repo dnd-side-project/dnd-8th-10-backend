@@ -14,8 +14,8 @@ package dnd.dnd10_backend.config.jwt;
  */
 public interface JwtProperties {
     String SECRET = "DND810";
-    Long AT_EXP_TIME =  60000L; //30분 //60000 1분 //864000000 10일
-    Long RT_EXP_TIME = 60000L * 3; //1주일
+    Long AT_EXP_TIME =  60000L * 5; //30분 //60000 1분 //864000000 10일
+    Long RT_EXP_TIME = 60000L * 7; //1주일
     String TOKEN_PREFIX = "Bearer ";
     String AT_HEADER_STRING = "Authorization";
     String RT_HEADER_STRING = "Refresh";
