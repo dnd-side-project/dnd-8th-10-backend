@@ -45,9 +45,11 @@ public class UserController {
      */
     @GetMapping("/user")
     public ResponseEntity getUser(HttpServletRequest request){
-        String token = request.getHeader(JwtProperties.AT_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX,"");
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                        .replace(JwtProperties.TOKEN_PREFIX,"");
         UserResponseDto userResponseDto = userService.getUserByEmail(token);
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto, CodeStatus.SUCCESS_SEARCHED_USER);
+        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+                                                                CodeStatus.SUCCESS_SEARCHED_USER);
         return ResponseEntity.ok().body(response);
     }
 
@@ -57,10 +59,13 @@ public class UserController {
      * @return
      */
     @PostMapping("/user/signup")
-    public ResponseEntity signupUser(@RequestBody UserSaveRequestDto requestDto, HttpServletRequest request){
-        String token = request.getHeader(JwtProperties.AT_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX,"");
+    public ResponseEntity signupUser(@RequestBody UserSaveRequestDto requestDto,
+                                     HttpServletRequest request){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                            .replace(JwtProperties.TOKEN_PREFIX,"");
         UserResponseDto userResponseDto = userService.saveUser(requestDto, token);
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto, CodeStatus.SUCCESS_CREATED_USER);
+        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+                                                                CodeStatus.SUCCESS_CREATED_USER);
         return ResponseEntity.ok().body(response);
     }
 
@@ -70,10 +75,13 @@ public class UserController {
      * @return
      */
     @PutMapping("/user/update")
-    public ResponseEntity updateUser(@RequestBody UserSaveRequestDto requestDto, HttpServletRequest request){
-        String token = request.getHeader(JwtProperties.AT_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX,"");
+    public ResponseEntity updateUser(@RequestBody UserSaveRequestDto requestDto,
+                                     HttpServletRequest request){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                            .replace(JwtProperties.TOKEN_PREFIX,"");
         UserResponseDto userResponseDto = userService.saveUser(requestDto, token);
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto, CodeStatus.SUCCESS_UPDATED_USER);
+        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+                                                                    CodeStatus.SUCCESS_UPDATED_USER);
         return ResponseEntity.ok().body(response);
     }
 
