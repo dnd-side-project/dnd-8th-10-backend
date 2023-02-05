@@ -45,7 +45,7 @@ public class TokenController {
     // 프론트에서 인가코드 돌려 받는 주소
     // 인가 코드로 엑세스 토큰 발급 -> 사용자 정보 조회 -> DB 저장 -> jwt 토큰 발급 -> 프론트에 토큰 전달
     @GetMapping("/token")
-    public ResponseEntity<SingleResponse<UserResponseDto>> getLogin(@RequestParam("code") String code) { //(1)
+    public ResponseEntity getLogin(@RequestParam("code") String code) { //(1)
 
         // 넘어온 인가 코드를 통해 access_token 발급
         OauthToken oauthToken = tokenService.getAccessToken(code);
@@ -60,7 +60,8 @@ public class TokenController {
 
         //response body 설정
         UserResponseDto userResponseDto = userService.getUserByToekn(tokenList.get(0));
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto, CodeStatus.SUCCESS_SOCIAL_LOGIN);
+        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+                                                                CodeStatus.SUCCESS_SOCIAL_LOGIN);
 
         return ResponseEntity.ok().headers(headers).body(response);
     }
@@ -71,9 +72,10 @@ public class TokenController {
      * @return
      */
     @GetMapping("/token/refresh")
-    public ResponseEntity<SingleResponse<UserResponseDto>> refresh(HttpServletRequest request){
+    public ResponseEntity refresh(HttpServletRequest request){
 
-        List<String> tokenList = tokenService.reissueRefreshToken(request.getHeader(JwtProperties.RT_HEADER_STRING).replace(JwtProperties.TOKEN_PREFIX,""));
+        List<String> tokenList = tokenService.reissueRefreshToken(request.getHeader(JwtProperties.RT_HEADER_STRING)
+                                                                    .replace(JwtProperties.TOKEN_PREFIX,""));
 
         //발급 받은 jwtToken, refreshToken header에 저장
         HttpHeaders headers = new HttpHeaders();
@@ -82,7 +84,8 @@ public class TokenController {
 
         //response body 설정
         UserResponseDto userResponseDto = userService.getUserByToekn(tokenList.get(0));
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto, CodeStatus.SUCCESS_TOKEN_REISSUED);
+        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+                                                                CodeStatus.SUCCESS_TOKEN_REISSUED);
 
         return ResponseEntity.ok().headers(headers).body(response);
     }
