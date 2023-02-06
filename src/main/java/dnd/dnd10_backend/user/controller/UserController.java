@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
  * [2023-02-02] 사용자 정보 조회, 등록 , 수정 api 추가 - 원지윤
  * [2023-02-02] 토큰 관련 컨트롤러 분리 - 원지윤
  * [2023-02-03] 토큰에서 이메일 식별 - 원지윤
+ * [2023-02-06] #50 User 엔티티 userResponseDto로 변환 - 이우진
  */
 @RestController
 @RequestMapping("/api")
@@ -47,7 +48,7 @@ public class UserController {
     public ResponseEntity getUser(HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                         .replace(JwtProperties.TOKEN_PREFIX,"");
-        UserResponseDto userResponseDto = userService.getUserByEmail(token);
+        UserResponseDto userResponseDto = new UserResponseDto().of(userService.getUserByEmail(token));
         SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
                                                                 CodeStatus.SUCCESS_SEARCHED_USER);
         return ResponseEntity.ok().body(response);

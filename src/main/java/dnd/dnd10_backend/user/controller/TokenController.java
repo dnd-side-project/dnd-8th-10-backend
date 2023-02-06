@@ -29,6 +29,7 @@ import java.util.List;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-06] getUserByToekn -> getUserByToken 오타수정 - 이우진
  */
 @RestController
 @RequestMapping("/oauth")
@@ -59,7 +60,7 @@ public class TokenController {
         headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
 
         //response body 설정
-        UserResponseDto userResponseDto = userService.getUserByToekn(tokenList.get(0));
+        UserResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
         SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
                                                                 CodeStatus.SUCCESS_SOCIAL_LOGIN);
 
@@ -83,7 +84,7 @@ public class TokenController {
         headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
 
         //response body 설정
-        UserResponseDto userResponseDto = userService.getUserByToekn(tokenList.get(0));
+        UserResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
         SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
                                                                 CodeStatus.SUCCESS_TOKEN_REISSUED);
 
