@@ -1,5 +1,6 @@
 package dnd.dnd10_backend.user.domain;
 
+import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.user.domain.enums.Role;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * 패키지명 dnd.dnd10_backend.user.domain
@@ -27,6 +29,7 @@ import java.util.Collection;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-01-28] user 역할,근무시간,근무장소 추가 - 원지윤
  * [2023-02-02] user 휴대전화 번호 추가 - 원지윤
+ * [2023-02-06] timecard 연관관계 매핑 추가 - 이우진
  */
 @Entity
 @Data
@@ -69,6 +72,9 @@ public class User implements UserDetails {
     @Column(name = "create_time")
     @CreationTimestamp
     private Timestamp createTime;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<TimeCard> timeCards = new ArrayList<>();
 
     @Builder
     public User(Long kakaoId, String kakaoProfileImg, String kakaoNickname,
