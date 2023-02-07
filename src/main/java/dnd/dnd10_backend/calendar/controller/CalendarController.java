@@ -7,6 +7,7 @@ import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,6 +37,7 @@ public class CalendarController {
     private final CalendarService calendarService;
     private final UserService userService;
 
+    //근무시간 등록 API
     @PostMapping("/calendar")
     public void post(HttpServletRequest request,
                      @RequestBody TimeCardCreateDto requestDto) {
@@ -47,4 +49,14 @@ public class CalendarController {
         calendarService.save(requestDto, user);
     }
 
+    //요일이랑 시간 리턴
+    @GetMapping("/calendar")
+    public ResponseEntity<String> get(HttpServletRequest request) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
+        return ResponseEntity.ok(user.getWorkTime());
+    }
 }
