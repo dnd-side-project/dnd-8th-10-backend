@@ -49,6 +49,7 @@ public class TokenController {
     public ResponseEntity getLogin(@RequestParam("code") String code,
                                    @RequestParam("isLocal") boolean isLocal,
                                    HttpServletRequest request) { //(1)
+
         // 넘어온 인가 코드를 통해 access_token 발급
         OauthToken oauthToken = tokenService.getAccessToken(code, isLocal);
 

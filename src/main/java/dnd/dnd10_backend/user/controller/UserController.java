@@ -44,7 +44,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/user")
-    public ResponseEntity getUser(HttpServletRequest request){
+    public ResponseEntity showUser(HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                         .replace(JwtProperties.TOKEN_PREFIX,"");
         UserResponseDto userResponseDto = userService.getUserByEmail(token);
