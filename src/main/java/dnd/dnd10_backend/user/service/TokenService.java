@@ -45,6 +45,7 @@ import static com.auth0.jwt.JWT.require;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2022-02-07] 프론트 local 판단해서 redirect_uri 변경 - 원지윤
  */
 @Service
 public class TokenService {
@@ -64,16 +65,14 @@ public class TokenService {
     @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     String client_secret;
 
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    String redirect_uri;
-
     /**
      * 인가 코드를 통해 access_token 발급
      * @param code 인가 코드
      * @return access_token
      */
-    public OauthToken getAccessToken(String code) {
-
+    public OauthToken getAccessToken(String code, boolean isLocal) {
+        String redirect_uri = isLocal ? "http://localhost:3000/login/oauth2/callback"
+                : "https://fabulous-pony-8bfa39.netlify.app/login/oauth2/callback";
         RestTemplate rt = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
