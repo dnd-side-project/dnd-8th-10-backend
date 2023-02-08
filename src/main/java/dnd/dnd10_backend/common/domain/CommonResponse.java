@@ -23,14 +23,16 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CommonResponse {
+public class CommonResponse<T> {
     ResponseStatus status;
     int code;
     String message;
+    T data;
 
-    public CommonResponse(ResponseStatus status, CodeStatus codeStatus){
+    public CommonResponse(ResponseStatus status, CodeStatus codeStatus,T data){
         this.status = status;
         this.code = codeStatus.getCode();
         this.message = codeStatus.getMessage();
+        this.data = data;
     }
 }
