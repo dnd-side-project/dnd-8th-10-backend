@@ -25,6 +25,8 @@ import static com.auth0.jwt.JWT.require;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-01-21] refresh token에 대한 내용 수정 - 원지윤
  * [2023-02-02] token관련 service 분리 - 원지윤
+ * [2023-02-06] getUserByToken 오타 수정 - 이우진
+ * [2023-02-06] getUserByEmail 리턴값 엔티티로 수정 - 이우진
  */
 @Service
 public class UserService {
@@ -37,7 +39,7 @@ public class UserService {
      * @param token access token
      * @return
      */
-    public UserResponseDto getUserByToekn(final String token){
+    public UserResponseDto getUserByToken(final String token){
         Long userCode = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
                 .getClaim("id").asLong();
         User user = userRepository.findByUserCode(userCode);
@@ -50,14 +52,14 @@ public class UserService {
      * @param token access token
      * @return
      */
-    public UserResponseDto getUserByEmail(final String token){
+    public User getUserByEmail(final String token){
         String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
                 .getClaim("email").asString();
         //user 찾기
         User user = userRepository.findByKakaoEmail(email);
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
-        return UserResponseDto.of(user);
+        return user;
     }
 
     /**
