@@ -3,8 +3,6 @@ package dnd.dnd10_backend.checkList.service;
 import com.auth0.jwt.algorithms.Algorithm;
 import dnd.dnd10_backend.checkList.domain.CheckList;
 import dnd.dnd10_backend.checkList.dto.request.CheckListRequestDto;
-import dnd.dnd10_backend.checkList.dto.request.DeleteCheckListRequestDto;
-import dnd.dnd10_backend.checkList.dto.request.SearchCheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.request.UpdateCheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.response.CheckListResponseDto;
 import dnd.dnd10_backend.checkList.dto.response.WorkCheckListResponseDto;
@@ -14,11 +12,8 @@ import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
-import org.hibernate.annotations.Check;
-import org.hibernate.jdbc.Work;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -102,11 +97,11 @@ public class CheckListService {
 
     /**
      * 체크리스트 삭제하는 메소드
-     * @param requestDto
+     * @param checkIdx 삭제하려는 체크리스트 idx
      * @param token
      * @return
      */
-    public List<CheckListResponseDto> deleteCheckList(DeleteCheckListRequestDto requestDto, final String token){
+    public List<CheckListResponseDto> deleteCheckList(Long checkIdx, final String token){
         String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
                 .getClaim("email").asString();
 
@@ -115,7 +110,7 @@ public class CheckListService {
 
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
-        CheckList checkList = checkListRepository.findById(requestDto.getCheckIdx())
+        CheckList checkList = checkListRepository.findById(checkIdx)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_CHECKLIST));
 
         checkListRepository.delete(checkList);
