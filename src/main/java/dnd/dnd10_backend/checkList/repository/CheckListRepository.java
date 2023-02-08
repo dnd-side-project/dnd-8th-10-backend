@@ -19,9 +19,10 @@ import java.util.Optional;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-08] 체크리스트 order by 추가 - 원지윤
  */
 public interface CheckListRepository extends JpaRepository<CheckList, Long> {
-    List<CheckList> findCheckListByDateAndUser(LocalDate date, User user);
+    List<CheckList> findCheckListByDateAndUserOrderByStatusAsc(LocalDate date, User user);
 
     @Override
     Optional<CheckList> findById(Long checkIdx);

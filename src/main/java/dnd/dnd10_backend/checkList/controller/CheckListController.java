@@ -2,7 +2,6 @@ package dnd.dnd10_backend.checkList.controller;
 
 import dnd.dnd10_backend.checkList.dto.request.CheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.request.DeleteCheckListRequestDto;
-import dnd.dnd10_backend.checkList.dto.request.SearchCheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.request.UpdateCheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.response.CheckListResponseDto;
 import dnd.dnd10_backend.checkList.dto.response.WorkCheckListResponseDto;
@@ -28,6 +27,7 @@ import java.util.List;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-08] 체크리스트 조회를 dto -> String으로 변경 - 원지윤
  */
 @RestController
 @RequestMapping("/api")
@@ -41,7 +41,7 @@ public class CheckListController {
 
     /**
      * 체크리스트를 저장하는 api
-     * @param requestDto
+     * @param requestDto 저장하려는 체크리스트 dto
      * @param
      * @return
      */
@@ -63,17 +63,17 @@ public class CheckListController {
 
     /**
      * 체크리스트 조회하는 api
-     * @param requestDto
-     * @param
+     * @param date 조회하려는 날짜
+     * @param request
      * @return
      */
     @GetMapping("/checkList")
-    public ResponseEntity showCheckList(@RequestBody SearchCheckListRequestDto requestDto,
+    public ResponseEntity showCheckList(@RequestParam("date") String date,
                                         HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
-        WorkCheckListResponseDto responseDto = checkListService.findCheckList(requestDto,token);
+        WorkCheckListResponseDto responseDto = checkListService.findCheckList(date,token);
 
         SingleResponse<WorkCheckListResponseDto> response
                 = responseService.getResponse(responseDto,CodeStatus.SUCCESS_SEARCHED_CHECKLIST);
@@ -83,8 +83,8 @@ public class CheckListController {
 
     /**
      * 체크리스트를 업데이트하는 api
-     * @param requestDto
-     * @param
+     * @param requestDto 업데이트 하려는 체크리스트 dto
+     * @param request
      * @return
      */
     @PutMapping("/checkList")
@@ -101,6 +101,12 @@ public class CheckListController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * 체크리스트 삭제 api
+     * @param requestDto 삭제하려는 체크리스트 dto
+     * @param request
+     * @return
+     */
     @DeleteMapping("/checkList")
     public ResponseEntity deleteCheckList(@RequestBody DeleteCheckListRequestDto requestDto,
                                           HttpServletRequest request){
