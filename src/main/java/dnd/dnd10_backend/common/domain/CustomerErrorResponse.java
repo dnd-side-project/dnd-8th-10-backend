@@ -1,7 +1,6 @@
 package dnd.dnd10_backend.common.domain;
 
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
-import dnd.dnd10_backend.common.domain.enums.ResponseStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,14 +25,12 @@ public class CustomerErrorResponse extends CommonResponse{
     private long timeStamp;
 
     public CustomerErrorResponse(CodeStatus status, long timeStamp){
-        this.status = ResponseStatus.ERROR;
         this.code = status.getCode();
         this.message = status.getMessage();
         this.timeStamp = timeStamp;
     }
 
     public CustomerErrorResponse(int code, String message, long timeStamp){
-        this.status = ResponseStatus.ERROR;
         this.code = code;
         this.message = message;
         this.timeStamp = timeStamp;

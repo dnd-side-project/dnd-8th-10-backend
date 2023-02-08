@@ -1,21 +1,13 @@
 package dnd.dnd10_backend.user.domain;
 
-import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.user.domain.enums.Role;
-import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * 패키지명 dnd.dnd10_backend.user.domain
@@ -28,14 +20,12 @@ import java.util.List;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-01-28] user 역할,근무시간,근무장소 추가 - 원지윤
- * [2023-02-02] user 휴대전화 번호 추가 - 원지윤
- * [2023-02-06] timecard 연관관계 매핑 추가 - 이우진
  */
 @Entity
 @Data
 @NoArgsConstructor
 @Table(name = "user")
-public class User implements UserDetails {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_code")
@@ -57,9 +47,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
     @Column(name = "work_place")
     private String workPlace;
 
@@ -73,9 +60,6 @@ public class User implements UserDetails {
     @CreationTimestamp
     private Timestamp createTime;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<TimeCard> timeCards = new ArrayList<>();
-
     @Builder
     public User(Long kakaoId, String kakaoProfileImg, String kakaoNickname,
                 String kakaoEmail, String userRole) {
@@ -85,50 +69,5 @@ public class User implements UserDetails {
         this.kakaoNickname = kakaoNickname;
         this.kakaoEmail = kakaoEmail;
         this.userRole = userRole;
-    }
-
-    @Builder(builderMethodName = "dtoBuilder")
-    public void updateUser(UserSaveRequestDto requestDto) {
-        this.role = requestDto.getRole();
-        this.phoneNumber = requestDto.getPhoneNumber();
-        this.workPlace = requestDto.getWorkPlace();
-        this.workTime = requestDto.getWorkTime();
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        ArrayList<GrantedAuthority> auth = new ArrayList<GrantedAuthority>();
-        auth.add(new SimpleGrantedAuthority(userRole));
-        return auth;
-    }
-
-    @Override
-    public String getPassword() {
-        return "";
-    }
-
-    @Override
-    public String getUsername() {
-        return kakaoNickname;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 }
