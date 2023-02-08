@@ -1,9 +1,7 @@
 package dnd.dnd10_backend.calendar.controller;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import dnd.dnd10_backend.calendar.dto.request.CalendarRequestDto;
 import dnd.dnd10_backend.calendar.dto.request.TimeCardCreateDto;
-import dnd.dnd10_backend.calendar.dto.request.TimeCardRequestDto;
 import dnd.dnd10_backend.calendar.dto.request.UpdateTimeCardRequestDto;
 import dnd.dnd10_backend.calendar.dto.response.TimeCardResponseDto;
 import dnd.dnd10_backend.calendar.service.CalendarService;
@@ -84,13 +82,15 @@ public class CalendarController {
     //삭제 요청 API
     @DeleteMapping("/calendar")
     public void deleteTimeCard(HttpServletRequest request,
-                               TimeCardRequestDto requestDto) {
+                               @RequestParam String year,
+                               @RequestParam String month,
+                               @RequestParam String day) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         User user = userService.getUserByEmail(token);
 
-        calendarService.deleteTimeCard(requestDto, user);
+        calendarService.deleteTimeCard(year, month, day, user);
     }
 
     //오늘 날짜를 누른 경우
@@ -135,13 +135,15 @@ public class CalendarController {
     //과거의 날짜를 눌렀을때 같은 지점 출근 내역 조회
     @GetMapping("calendar/detail")
     public ResponseEntity getTimeCards(HttpServletRequest request,
-                                       @RequestBody TimeCardRequestDto requestDto) {
+                                       @RequestParam String year,
+                                       @RequestParam String month,
+                                       @RequestParam String day) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         User user = userService.getUserByEmail(token);
 
-        List<TimeCardResponseDto> responseDto = calendarService.getTimeCards(requestDto, user.getWorkPlace());
+        List<TimeCardResponseDto> responseDto = calendarService.getTimeCards(year, month, day, user.getWorkPlace());
 
         SingleResponse<List<TimeCardResponseDto>> response
                 = responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_TIMECARD);
@@ -152,13 +154,14 @@ public class CalendarController {
     //해당 달의 '본인' 출근한 날짜
     @GetMapping("calendar")
     public ResponseEntity getWorkDay(HttpServletRequest request,
-                                     @RequestBody CalendarRequestDto requestDto) {
+                                     @RequestParam String year,
+                                     @RequestParam String month) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         User user = userService.getUserByEmail(token);
 
-        List<String> responseDto = calendarService.getWorkDay(requestDto, user);
+        List<String> responseDto = calendarService.getWorkDay(year, month, user);
 
         SingleResponse<List<String>> response
                 = responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_WORKDAY);
