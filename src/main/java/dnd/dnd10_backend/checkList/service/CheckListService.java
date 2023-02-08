@@ -36,6 +36,7 @@ import static com.auth0.jwt.JWT.require;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 체크리스트 조회를 dto -> String으로 변경 - 원지윤
+ * [2023-02-08] 체크리스트 삭제, 업데이트 시 사용자 확인 - 원지윤
  */
 @Service
 public class CheckListService {
@@ -113,6 +114,9 @@ public class CheckListService {
         CheckList checkList = checkListRepository.findById(checkIdx)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_CHECKLIST));
 
+        if(!checkList.getUser().equals(user))
+            throw new CustomerNotFoundException(CodeStatus.UNAUTHORIZED_DELETED_USER);
+
         checkListRepository.delete(checkList);
 
         return findCheckListByDate(checkList.getDate(), user);
@@ -135,7 +139,9 @@ public class CheckListService {
         //기존 체크리스트 찾기
         CheckList checkList = checkListRepository.findById(requestDto.getCheckIdx())
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_CHECKLIST));
-        
+
+        if(!checkList.getUser().equals(user))
+            throw new CustomerNotFoundException(CodeStatus.UNAUTHORIZED_UPDATED_USER);
         //체크리스트 내용 업데이트
         checkList.update(requestDto);
         
