@@ -1,7 +1,6 @@
 package dnd.dnd10_backend.checkList.controller;
 
 import dnd.dnd10_backend.checkList.dto.request.CheckListRequestDto;
-import dnd.dnd10_backend.checkList.dto.request.DeleteCheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.request.UpdateCheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.response.CheckListResponseDto;
 import dnd.dnd10_backend.checkList.dto.response.WorkCheckListResponseDto;
@@ -103,16 +102,16 @@ public class CheckListController {
 
     /**
      * 체크리스트 삭제 api
-     * @param requestDto 삭제하려는 체크리스트 dto
+     * @param checkIdx 삭제하려는 체크리스트 idx
      * @param request
      * @return
      */
     @DeleteMapping("/checkList")
-    public ResponseEntity deleteCheckList(@RequestBody DeleteCheckListRequestDto requestDto,
+    public ResponseEntity deleteCheckList(@RequestParam("check")Long checkIdx,
                                           HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
-        List<CheckListResponseDto> responseDto = checkListService.deleteCheckList(requestDto, token);
+        List<CheckListResponseDto> responseDto = checkListService.deleteCheckList(checkIdx, token);
 
         SingleResponse<List<CheckListResponseDto>> response
                 = responseService.getResponse(responseDto, CodeStatus.SUCCESS_DELETED_CHECKLIST);
