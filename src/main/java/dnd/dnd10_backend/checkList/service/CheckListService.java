@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ import static com.auth0.jwt.JWT.require;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-08] 체크리스트 조회를 dto -> String으로 변경 - 원지윤
  */
 @Service
 public class CheckListService {
@@ -75,12 +77,12 @@ public class CheckListService {
     }
 
     /**
-     *  체크리스트 조회하는 메소드
-     * @param requestDto
-     * @param token
+     * 체크리스트 조회하는 메소드
+     * @param date 조회하려는 날짜
+     * @param token 토큰
      * @return
      */
-    public WorkCheckListResponseDto findCheckList(SearchCheckListRequestDto requestDto, final String token){
+    public WorkCheckListResponseDto findCheckList(final String date, final String token){
         String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
                 .getClaim("email").asString();
 
@@ -89,10 +91,12 @@ public class CheckListService {
 
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
-        //일하는 날인지 체크
-        boolean isWorkDay = checkWorkDay(requestDto.getDate(), user);
+        LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
 
-        return WorkCheckListResponseDto.of(isWorkDay, findCheckListByDate(requestDto.getDate(), user));
+        //일하는 날인지 체크
+        boolean isWorkDay = checkWorkDay(localDate, user);
+
+        return WorkCheckListResponseDto.of(isWorkDay, findCheckListByDate(localDate, user));
 
     }
 
@@ -154,8 +158,6 @@ public class CheckListService {
      */
     public boolean checkWorkDay(LocalDate date, User user){
         DayOfWeek dayOfWeek = date.getDayOfWeek();
-        int dayOfWeekNumber = dayOfWeek.getValue();
-        //월 = 1 ~ 일 = 7
         String DOW = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 
         return user.getWorkTime().contains(DOW.subSequence(0,1));
@@ -170,7 +172,7 @@ public class CheckListService {
     public List<CheckListResponseDto> findCheckListByDate(LocalDate date, User user){
         //날짜로 checkList 찾기
         List<CheckList> checkLists =
-                checkListRepository.findCheckListByDateAndUser(date, user);
+                checkListRepository.findCheckListByDateAndUserOrderByStatusAsc(date, user);
 
         //response에 추가
         List<CheckListResponseDto> checkListResponseDtoList = new ArrayList<>();

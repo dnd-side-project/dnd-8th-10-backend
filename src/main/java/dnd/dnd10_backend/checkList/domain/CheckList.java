@@ -47,8 +47,8 @@ public class CheckList {
     @CreationTimestamp
     private Timestamp createTime;
 
-    @ManyToOne
-    @JoinColumn(name="user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_code")
     private User user;
 
     @Builder
