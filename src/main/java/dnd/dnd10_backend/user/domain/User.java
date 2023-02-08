@@ -30,6 +30,7 @@ import java.util.List;
  * [2023-01-28] user 역할,근무시간,근무장소 추가 - 원지윤
  * [2023-02-02] user 휴대전화 번호 추가 - 원지윤
  * [2023-02-06] timecard 연관관계 매핑 추가 - 이우진
+ * [2023-02-08] 카카오 프로필 삭제 - 원지윤
  */
 @Entity
 @Data
@@ -44,14 +45,14 @@ public class User implements UserDetails {
     @Column(name = "kakao_id")
     private Long kakaoId;
 
-    @Column(name = "kakao_profile_img")
-    private String kakaoProfileImg;
-
     @Column(name = "kakao_nickname")
     private String kakaoNickname;
 
     @Column(name = "kakao_email")
     private String kakaoEmail;
+
+    @Column(name = "user_profile")
+    private Long userProfileCode;
 
     @Column(name = "work_role")
     @Enumerated(EnumType.STRING)
@@ -77,11 +78,10 @@ public class User implements UserDetails {
     private List<TimeCard> timeCards = new ArrayList<>();
 
     @Builder
-    public User(Long kakaoId, String kakaoProfileImg, String kakaoNickname,
+    public User(Long kakaoId, String kakaoNickname,
                 String kakaoEmail, String userRole) {
 
         this.kakaoId = kakaoId;
-        this.kakaoProfileImg = kakaoProfileImg;
         this.kakaoNickname = kakaoNickname;
         this.kakaoEmail = kakaoEmail;
         this.userRole = userRole;

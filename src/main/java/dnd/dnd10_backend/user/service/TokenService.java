@@ -45,7 +45,8 @@ import static com.auth0.jwt.JWT.require;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
- * [2022-02-07] 프론트 local 판단해서 redirect_uri 변경 - 원지윤
+ * [2023-02-07] 프론트 local 판단해서 redirect_uri 변경 - 원지윤
+ * [2023-02-08] 카카오 프로필 삭제 - 원지윤
  */
 @Service
 public class TokenService {
@@ -119,7 +120,6 @@ public class TokenService {
         if(user == null) {
             user = User.builder()
                     .kakaoId(profile.getId())
-                    .kakaoProfileImg(profile.getKakao_account().getProfile().getProfile_image_url())
                     .kakaoNickname(profile.getKakao_account().getProfile().getNickname())
                     .kakaoEmail(profile.getKakao_account().getEmail())
                     .userRole("ROLE_USER").build();
