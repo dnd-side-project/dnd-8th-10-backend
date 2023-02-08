@@ -1,9 +1,7 @@
 package dnd.dnd10_backend.calendar.service;
 
 import dnd.dnd10_backend.calendar.domain.TimeCard;
-import dnd.dnd10_backend.calendar.dto.request.CalendarRequestDto;
 import dnd.dnd10_backend.calendar.dto.request.TimeCardCreateDto;
-import dnd.dnd10_backend.calendar.dto.request.TimeCardRequestDto;
 import dnd.dnd10_backend.calendar.dto.request.UpdateTimeCardRequestDto;
 import dnd.dnd10_backend.calendar.dto.response.TimeCardResponseDto;
 import dnd.dnd10_backend.calendar.repository.TimeCardRepository;
@@ -28,9 +26,9 @@ import java.util.stream.Collectors;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-06] TimeCard 저장 기능 구현 - 이우진
- * [2023-02-06] TimeCard 수정, 삭제, 조회 기능 구현 - 이우진
+ * [2023-02-08] TimeCard 수정, 삭제, 조회 기능 구현 - 이우진
+ * [2023-02-08] GET, DELETE 요청 파라미터 수정 - 이우진
  */
-
 @Service
 @RequiredArgsConstructor
 public class CalendarService {
@@ -55,24 +53,18 @@ public class CalendarService {
     }
 
     @Transactional
-    public void deleteTimeCard(TimeCardRequestDto requestDto, User user) {
+    public void deleteTimeCard(String year, String month, String day, User user) {
 
-        TimeCard timeCard = timeCardRepository.findByYearAndMonthAndDayAndUser(requestDto.getYear(),
-                requestDto.getMonth(),
-                requestDto.getDay(),
-                user)
+        TimeCard timeCard = timeCardRepository.findByYearAndMonthAndDayAndUser(year, month, day, user)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD));
 
         timeCardRepository.delete(timeCard);
     }
 
 
-    public List<TimeCardResponseDto> getTimeCards(TimeCardRequestDto requestDto, String workPlace) {
+    public List<TimeCardResponseDto> getTimeCards(String year, String month, String day, String workPlace) {
         List<TimeCard> timeCards =
-                timeCardRepository.findByYearAndMonthAndDayAndWorkPlace(requestDto.getYear(),
-                        requestDto.getMonth(),
-                        requestDto.getDay(),
-                        workPlace);
+                timeCardRepository.findByYearAndMonthAndDayAndWorkPlace(year, month, day, workPlace);
         List<TimeCardResponseDto> collect = timeCards.stream()
                 .map(t -> new TimeCardResponseDto(t.getUser().getUsername(), t.getWorkTime()))
                 .collect(Collectors.toList());
@@ -80,8 +72,8 @@ public class CalendarService {
         return collect;
     }
 
-    public List<String> getWorkDay(CalendarRequestDto requestDto, User user) {
-        List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUser(requestDto.getYear(), requestDto.getMonth(), user);
+    public List<String> getWorkDay(String year, String month, User user) {
+        List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUser(year, month, user);
         List<String> collect = timeCards.stream()
                 .map(t -> new String(t.getDay()))
                 .collect(Collectors.toList());
