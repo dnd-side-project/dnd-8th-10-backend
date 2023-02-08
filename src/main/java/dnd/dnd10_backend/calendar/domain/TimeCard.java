@@ -19,6 +19,7 @@ import javax.persistence.*;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-06] TimeCard Entity 정의 - 이우진
+ * [2023-02-08] TimeCard 수정 메서드 구현 - 이우진
  */
 
 @Entity
@@ -49,5 +50,9 @@ public class TimeCard {
     private User user;
 
 
-    // 지점 정보 따로 추가? -> 유저 정보 값으로 접근?
+    public void update(String workTime, Float workHour) {
+        this.workTime = workTime;
+        this.workHour = workHour;
+    }
+
 }
