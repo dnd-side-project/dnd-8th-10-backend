@@ -102,7 +102,7 @@ public class CheckListController {
 
     /**
      * 체크리스트 삭제 api
-     * @param idx 삭제하려는 체크리스트 idx
+     * @param checkIdx 삭제하려는 체크리스트 idx
      * @param request
      * @return
      */
