@@ -7,10 +7,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -43,9 +46,14 @@ public class CheckList {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "create_time")
+    @Column(name = "create_time",nullable = false,updatable = false)
     @CreationTimestamp
     private Timestamp createTime;
+
+    @Column(name = "modified_time",nullable = false)
+    @LastModifiedDate
+    private LocalDateTime modifiedTime;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_code")
@@ -57,6 +65,7 @@ public class CheckList {
         this.content = content;
         this.status = status;
         this.user = user;
+        this.modifiedTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     public CheckList(CheckListRequestDto requestDto, User user) {
@@ -64,6 +73,7 @@ public class CheckList {
         this.content = requestDto.getContent();
         this.status = requestDto.getStatus();
         this.user = user;
+        this.modifiedTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     public void update(UpdateCheckListRequestDto requestDto){

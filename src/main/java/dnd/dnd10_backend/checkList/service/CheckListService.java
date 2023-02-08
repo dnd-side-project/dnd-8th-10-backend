@@ -173,7 +173,7 @@ public class CheckListService {
     public List<CheckListResponseDto> findCheckListByDate(LocalDate date, User user){
         //날짜로 checkList 찾기
         List<CheckList> checkLists =
-                checkListRepository.findCheckListByDateAndUserOrderByStatusAsc(date, user);
+                checkListRepository.findCheckListByDateAndUser(date, user);
 
         //response에 추가
         List<CheckListResponseDto> checkListResponseDtoList = new ArrayList<>();
