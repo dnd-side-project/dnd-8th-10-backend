@@ -35,7 +35,9 @@ public enum CodeStatus {
     INVALID_TOKEN(401,"유효하지 않은 토큰입니다."),
     UNAUTHORIZED(401,"인증되지 않은 사용자입니다."),
     NOT_FOUND_USER(404,"찾을 수 없는 사용자입니다."),
-    NOT_FOUND_CHECKLIST(404,"찾을 수 없는 체크리스트입니다.");
+    NOT_FOUND_CHECKLIST(404,"찾을 수 없는 체크리스트입니다."),
+    UNAUTHORIZED_DELETED_USER(401,"삭제 가능한 사용자가 아닙니다."),
+    UNAUTHORIZED_UPDATED_USER(401,"업데이트 가능한 사용자가 아닙니다.");
 
 
     private final int code;
