@@ -1,5 +1,6 @@
 package dnd.dnd10_backend.user.dto.response;
 
+import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.domain.enums.Role;
 import lombok.AllArgsConstructor;
@@ -30,14 +31,14 @@ public class UserResponseDto {
     private String workTime;
     private String workPlace;
 
-    public static UserResponseDto of(User user){
+    public static UserResponseDto of(User user, Store store){
         return new UserResponseDto(
                 user.getUserCode(),
                 user.getKakaoEmail(),
                 user.getRole(),
                 user.getPhoneNumber(),
                 user.getWorkTime(),
-                user.getWorkPlace()
+                store.getStoreName()
         );
     }
 }

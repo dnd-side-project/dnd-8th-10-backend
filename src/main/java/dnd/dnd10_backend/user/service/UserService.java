@@ -4,6 +4,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
+import dnd.dnd10_backend.store.domain.Store;
+import dnd.dnd10_backend.store.repository.StoreRepository;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
@@ -34,6 +36,9 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    StoreRepository storeRepository;
+
     /**
      * 토큰 정보로 사용자를 조회하는 메소드
      * @param token access token
@@ -44,7 +49,9 @@ public class UserService {
                 .getClaim("id").asLong();
         User user = userRepository.findByUserCode(userCode);
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
-        return UserResponseDto.of(user);
+
+
+        return UserResponseDto.of(user, findStoreNameByUser(user));
     }
 
     /**
@@ -68,18 +75,53 @@ public class UserService {
      * @return UserResponseDto
      */
     public UserResponseDto saveUser(UserSaveRequestDto requestDto, final String token){
-        String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-                .getClaim("email").asString();
         //user 찾기
-        User user = userRepository.findByKakaoEmail(email);
-        if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
+        User user = getUserByEmail(token);
+
+        Store store = storeRepository.findStoreByStoreName(requestDto.getWorkPlace());
+
+        if(store == null){
+            store = Store.builder()
+                    .storeName(requestDto.getWorkPlace())
+                    .build();
+
+            storeRepository.save(store);
+        }
+
+        int count = userRepository.findByStore(store).size();
 
         //requestDto로 user 정보 update
         user.updateUser(requestDto);
 
+        user.setStore(store);
+        user.setUserProfileCode((count%10)+1);
+
         //user 정보 저장
         userRepository.save(user);
 
-        return UserResponseDto.of(user);
+        return UserResponseDto.of(user,store);
     }
+
+    /**
+     * access token으로 사용자를 찾는 메소드
+     * @param token access token
+     * @return
+     */
+    public UserResponseDto findUser(final String token){
+        User user = getUserByEmail(token);
+        Store store = findStoreNameByUser(user);
+        return UserResponseDto.of(user,store);
+    }
+
+    /**
+     * 사용자 정보로 매장 정보를 찾는 메소드
+     * @param user
+     * @return
+     */
+    public Store findStoreNameByUser(User user){
+        Store store = storeRepository.findStoreByStoreIdx(user.getStore().getStoreIdx());
+        if(store == null) throw new CustomerNotFoundException();
+        return store;
+    }
+
 }
