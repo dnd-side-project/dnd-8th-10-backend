@@ -33,6 +33,7 @@ import static com.auth0.jwt.JWT.require;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-06] TimeCard 저장 기능 구현 - 이우진
  * [2023-02-08] TimeCard 수정, 삭제, 조회 기능 구현 - 이우진
+ * [2023-02-10] 근무시간 subString 수정 - 이우진
  */
 
 @RestController
@@ -126,7 +127,7 @@ public class CalendarController {
         if(index == -1) {
             time = "";
         } else {
-            time = workDay.substring(index+2, index+20);
+            time = workDay.substring(index+2, index+13);
         }
 
         return ResponseEntity.ok().body(time); //인덱스 값 맞는지 테스트 필요
