@@ -48,7 +48,7 @@ public class UserController {
     public ResponseEntity showUser(HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                         .replace(JwtProperties.TOKEN_PREFIX,"");
-        UserResponseDto userResponseDto = new UserResponseDto().of(userService.getUserByEmail(token));
+        UserResponseDto userResponseDto = userService.findUser(token);
         SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
                                                                 CodeStatus.SUCCESS_SEARCHED_USER);
         return ResponseEntity.ok().body(response);

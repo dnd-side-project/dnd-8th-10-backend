@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.user.domain;
 
 import dnd.dnd10_backend.calendar.domain.TimeCard;
+import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.enums.Role;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import lombok.Builder;
@@ -31,6 +32,7 @@ import java.util.List;
  * [2023-02-02] user 휴대전화 번호 추가 - 원지윤
  * [2023-02-06] timecard 연관관계 매핑 추가 - 이우진
  * [2023-02-08] 카카오 프로필 삭제 - 원지윤
+ * [2023-02-10] store연관 관계 추가 - 원지윤
  */
 @Entity
 @Data
@@ -52,7 +54,7 @@ public class User implements UserDetails {
     private String kakaoEmail;
 
     @Column(name = "user_profile")
-    private Long userProfileCode;
+    private int userProfileCode;
 
     @Column(name = "work_role")
     @Enumerated(EnumType.STRING)
@@ -73,6 +75,10 @@ public class User implements UserDetails {
     @Column(name = "create_time")
     @CreationTimestamp
     private Timestamp createTime;
+
+    @ManyToOne
+    @JoinColumn(name = "store_idx", insertable = false, updatable = false)
+    private Store store;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<TimeCard> timeCards = new ArrayList<>();

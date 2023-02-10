@@ -33,6 +33,8 @@ public enum CodeStatus {
     SUCCESS_DELETED_CHECKLIST(200, "체크리스트 삭제에 성공하였습니다."),
     SUCCESS_CREATED_CHECKLIST(201, "체크리스트 등록에 성공하였습니다."),
 
+    SUCCESS_SEARCHED_INVENTORY(200, "시재 조회에 성공하였습니다."),
+
     //40X
     ACCESS_TOKEN_EXPIRED(401,"엑세스 토큰이 만료되었습니다."),
     REFRESH_TOKEN_EXPIRED(401,"리프레쉬 토큰이 만료되었습니다."),
