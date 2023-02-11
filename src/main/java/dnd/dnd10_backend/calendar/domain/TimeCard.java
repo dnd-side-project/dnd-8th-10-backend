@@ -20,6 +20,7 @@ import javax.persistence.*;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-06] TimeCard Entity 정의 - 이우진
  * [2023-02-08] TimeCard 수정 메서드 구현 - 이우진
+ * [2023-02-11] workPlace storeName 으로 수정 - 이우진
  */
 
 @Entity
@@ -43,7 +44,7 @@ public class TimeCard {
 
     private Float workHour; // 몇시간 근무 , ex 4.5, 5
 
-    private String workPlace; // 지점 정보
+    private String storeName; // 지점 정보
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_code")
