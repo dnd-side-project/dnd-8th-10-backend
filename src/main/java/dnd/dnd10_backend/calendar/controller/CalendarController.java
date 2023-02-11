@@ -145,7 +145,7 @@ public class CalendarController {
 
         User user = userService.getUserByEmail(token);
 
-        List<TimeCardResponseDto> responseDto = calendarService.getTimeCards(year, month, day, user.getWorkPlace());
+        List<TimeCardResponseDto> responseDto = calendarService.getTimeCards(year, month, day, user.getStore().getStoreName());
 
         SingleResponse<List<TimeCardResponseDto>> response
                 = responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_TIMECARD);

@@ -16,6 +16,7 @@ import lombok.NoArgsConstructor;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 응답 dto 구현 - 이우진
+ * [2023-02-11] 유저 프로필 코드 추가 - 이우진
  */
 
 
@@ -28,4 +29,6 @@ public class TimeCardResponseDto {
     private String name;
 
     private String workTime;
+
+    private int userProfileCode;
 }

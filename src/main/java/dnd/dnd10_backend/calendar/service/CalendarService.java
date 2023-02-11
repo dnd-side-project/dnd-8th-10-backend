@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
  * [2023-02-06] TimeCard 저장 기능 구현 - 이우진
  * [2023-02-08] TimeCard 수정, 삭제, 조회 기능 구현 - 이우진
  * [2023-02-08] GET, DELETE 요청 파라미터 수정 - 이우진
+ * [2023-02-11] getTimeCards 유저 프로필 코드 추가 - 이우진
+ * [2023-02-11] workPlace storeName 으로 수정 - 이우진
  */
 @Service
 @RequiredArgsConstructor
@@ -62,11 +64,11 @@ public class CalendarService {
     }
 
 
-    public List<TimeCardResponseDto> getTimeCards(String year, String month, String day, String workPlace) {
+    public List<TimeCardResponseDto> getTimeCards(String year, String month, String day, String storeName) {
         List<TimeCard> timeCards =
-                timeCardRepository.findByYearAndMonthAndDayAndWorkPlace(year, month, day, workPlace);
+                timeCardRepository.findByYearAndMonthAndDayAndStoreName(year, month, day, storeName);
         List<TimeCardResponseDto> collect = timeCards.stream()
-                .map(t -> new TimeCardResponseDto(t.getUser().getUsername(), t.getWorkTime()))
+                .map(t -> new TimeCardResponseDto(t.getUser().getUsername(), t.getWorkTime(), t.getUser().getUserProfileCode()))
                 .collect(Collectors.toList());
 
         return collect;
