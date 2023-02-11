@@ -1,6 +1,9 @@
 package dnd.dnd10_backend.user.service;
 
 import com.auth0.jwt.algorithms.Algorithm;
+import dnd.dnd10_backend.Inventory.repository.DefaultInventoryRepository;
+import dnd.dnd10_backend.Inventory.service.DefaultInventoryService;
+import dnd.dnd10_backend.Inventory.service.InventoryService;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
@@ -34,10 +37,13 @@ import static com.auth0.jwt.JWT.require;
 public class UserService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    StoreRepository storeRepository;
+    private StoreRepository storeRepository;
+
+    @Autowired
+    private DefaultInventoryService defaultInventoryService;
 
     /**
      * 토큰 정보로 사용자를 조회하는 메소드
@@ -85,7 +91,8 @@ public class UserService {
                     .storeName(requestDto.getWorkPlace())
                     .build();
 
-            storeRepository.save(store);
+            store = storeRepository.save(store);
+            defaultInventoryService.saveDafaultInventories(store);
         }
 
         int count = userRepository.findByStore(store).size();
