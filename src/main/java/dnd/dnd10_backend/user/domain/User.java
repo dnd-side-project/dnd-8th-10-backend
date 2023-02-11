@@ -33,6 +33,7 @@ import java.util.List;
  * [2023-02-06] timecard 연관관계 매핑 추가 - 이우진
  * [2023-02-08] 카카오 프로필 삭제 - 원지윤
  * [2023-02-10] store연관 관계 추가 - 원지윤
+ * [2023-02-11] workPlace 삭제
  */
 @Entity
 @Data
@@ -62,9 +63,6 @@ public class User implements UserDetails {
 
     @Column(name = "phone_number")
     private String phoneNumber;
-
-    @Column(name = "work_place")
-    private String workPlace;
 
     @Column(name = "work_time")
     private String workTime;
@@ -97,7 +95,6 @@ public class User implements UserDetails {
     public void updateUser(UserSaveRequestDto requestDto) {
         this.role = requestDto.getRole();
         this.phoneNumber = requestDto.getPhoneNumber();
-        this.workPlace = requestDto.getWorkPlace();
         this.workTime = requestDto.getWorkTime();
     }
 

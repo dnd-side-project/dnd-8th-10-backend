@@ -34,6 +34,8 @@ public enum CodeStatus {
     SUCCESS_CREATED_CHECKLIST(201, "체크리스트 등록에 성공하였습니다."),
 
     SUCCESS_SEARCHED_INVENTORY(200, "시재 조회에 성공하였습니다."),
+    SUCCESS_CREATED_INVENTORY(201, "시재 등록에 성공하였습니다."),
+    SUCCESS_UPDATED_INVENTORY(200, "시재 업데이트에 성공하였습니다."),
 
     //40X
     ACCESS_TOKEN_EXPIRED(401,"엑세스 토큰이 만료되었습니다."),
@@ -44,7 +46,8 @@ public enum CodeStatus {
     NOT_FOUND_TIMECARD(404,"찾을 수 없는 근무이력입니다."),
     NOT_FOUND_CHECKLIST(404,"찾을 수 없는 체크리스트입니다."),
     UNAUTHORIZED_DELETED_USER(401,"삭제 가능한 사용자가 아닙니다."),
-    UNAUTHORIZED_UPDATED_USER(401,"업데이트 가능한 사용자가 아닙니다.");
+    UNAUTHORIZED_UPDATED_USER(401,"업데이트 가능한 사용자가 아닙니다."),
+    ALREADY_CREATED_INVENTORY(400, "이미 존재하는 담배입니다.");
 
 
     private final int code;

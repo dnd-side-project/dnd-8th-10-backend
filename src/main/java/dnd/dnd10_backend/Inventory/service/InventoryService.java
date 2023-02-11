@@ -1,9 +1,18 @@
 package dnd.dnd10_backend.Inventory.service;
 
+import dnd.dnd10_backend.Inventory.domain.DefaultInventory;
 import dnd.dnd10_backend.Inventory.domain.Inventory;
+import dnd.dnd10_backend.Inventory.domain.InventoryUpdateRecord;
 import dnd.dnd10_backend.Inventory.domain.enums.Category;
+import dnd.dnd10_backend.Inventory.dto.request.CreateInventoryRequestDto;
+import dnd.dnd10_backend.Inventory.dto.request.UpdateInventoryListRequestDto;
+import dnd.dnd10_backend.Inventory.dto.request.UpdateInventoryRequestDto;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryResponseDto;
+import dnd.dnd10_backend.Inventory.repository.DefaultInventoryRepository;
 import dnd.dnd10_backend.Inventory.repository.InventoryRepository;
+import dnd.dnd10_backend.Inventory.repository.InventoryUpdateRecordRepository;
+import dnd.dnd10_backend.common.domain.enums.CodeStatus;
+import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.store.repository.StoreRepository;
 import dnd.dnd10_backend.user.domain.User;
@@ -33,6 +42,9 @@ public class InventoryService {
     @Autowired
     private InventoryRepository inventoryRepository;
 
+    @Autowired
+    private InventoryUpdateRecordRepository inventoryUpdateRecordRepository;
+
     /**
      * inventory를 모두 조회하는 메소드
      * @param token access token
@@ -59,6 +71,63 @@ public class InventoryService {
     }
 
     /**
+     * 새로운 담배 저장 메소드
+     * @param requestDto 저장하려는 담배 정보를 담은 dto
+     * @param token access token
+     * @return
+     */
+    public List<InventoryResponseDto> saveInventory(CreateInventoryRequestDto requestDto, final String token){
+        User user = userService.getUserByEmail(token);
+        Store store = user.getStore();
+        Inventory inventory = inventoryRepository.findInventoryByInventoryName(requestDto.getInventoryName());
+
+        if(inventory != null) throw new CustomerNotFoundException(CodeStatus.ALREADY_CREATED_INVENTORY);
+
+        inventory = Inventory.builder()
+                .inventoryName(requestDto.getInventoryName())
+                .category(Category.CIGARETTE)
+                .store(store)
+                .build();
+
+        inventoryRepository.save(inventory);
+        
+        List<Inventory> inventoryList = inventoryRepository.findInventoryByCategoryAndStore(Category.CIGARETTE, store);
+        return convertInventoryToDto(inventoryList);
+    }
+
+    /**
+     * 시재 업데이트 메소드
+     * @param listRequestDto
+     * @param token
+     * @return
+     */
+    public List<InventoryResponseDto> updateInventory(UpdateInventoryListRequestDto listRequestDto, final String token){
+        User user = userService.getUserByEmail(token);
+        Store store = user.getStore();
+        Category category = listRequestDto.getCategory();
+
+        List<UpdateInventoryRequestDto> list = listRequestDto.getList();
+
+        for(UpdateInventoryRequestDto i: list){
+            Inventory inventory = inventoryRepository.findInventoryByInventoryName(i.getInventoryName());
+
+            InventoryUpdateRecord record = InventoryUpdateRecord.builder()
+                    .inventory(inventory)
+                    .diff(i.getDiff())
+                    .category(category)
+                    .user(user)
+                    .store(store)
+                    .build();
+
+            inventoryUpdateRecordRepository.save(record);
+            
+        }
+
+        List<Inventory> inventoryList = inventoryRepository.findInventoryByCategoryAndStore(category, store);
+        return convertInventoryToDto(inventoryList);
+    }
+
+    /**
      * List<Inventory>를  List<InventoryResponseDto> 변환시켜주는 메소드
      * @param inventoryList 변환시키려는 List<Inventory>
      * @return
@@ -70,4 +139,6 @@ public class InventoryService {
         }
         return responseList;
     }
+
+
 }

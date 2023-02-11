@@ -22,9 +22,11 @@ import java.util.List;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  */
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
-    @Query("select i from Inventory i where i.store = :store group by i.category")
+    @Query("select i from Inventory i where i.store = :store order by i.category")
     public List<Inventory> findAllByStore(@Param("store")Store store);
 
     public List<Inventory> findInventoryByCategoryAndStore(Category category, Store store);
+
+    public Inventory findInventoryByInventoryName(String inventoryName);
 
 }

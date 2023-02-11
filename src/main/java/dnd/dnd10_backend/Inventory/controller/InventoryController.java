@@ -1,6 +1,8 @@
 package dnd.dnd10_backend.Inventory.controller;
 
 import dnd.dnd10_backend.Inventory.domain.enums.Category;
+import dnd.dnd10_backend.Inventory.dto.request.CreateInventoryRequestDto;
+import dnd.dnd10_backend.Inventory.dto.request.UpdateInventoryListRequestDto;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryResponseDto;
 import dnd.dnd10_backend.Inventory.service.InventoryService;
 import dnd.dnd10_backend.common.domain.SingleResponse;
@@ -37,7 +39,7 @@ public class InventoryController {
 
     /**
      * 시재 조회 api
-     * @param category
+     * @param category 조회하려는 카테고리
      * @param request
      * @return
      */
@@ -56,6 +58,46 @@ public class InventoryController {
 
         SingleResponse<List<InventoryResponseDto>> response = responseService.getResponse(responseDtoList,
                                                                           CodeStatus.SUCCESS_SEARCHED_INVENTORY);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 시재 저장 api (담배만 새로 추가 가능)
+     * @param requestDto
+     * @param request
+     * @return
+     */
+    @PostMapping("/inventory")
+    public ResponseEntity createInventory(@RequestBody CreateInventoryRequestDto requestDto,
+                                                  HttpServletRequest request){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        List<InventoryResponseDto> responseDtoList = inventoryService.saveInventory(requestDto, token);
+
+        SingleResponse<List<InventoryResponseDto>> response = responseService.getResponse(responseDtoList,
+                CodeStatus.SUCCESS_CREATED_INVENTORY);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     *
+     * @param requestDto
+     * @param request
+     * @return
+     */
+    @PutMapping("/inventory")
+    public ResponseEntity updateInventory(@RequestBody UpdateInventoryListRequestDto requestDto,
+                                                HttpServletRequest request){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        List<InventoryResponseDto> responseDtoList = inventoryService.updateInventory(requestDto, token);
+
+        SingleResponse<List<InventoryResponseDto>> response = responseService.getResponse(responseDtoList,
+                CodeStatus.SUCCESS_UPDATED_INVENTORY);
 
         return ResponseEntity.ok().body(response);
     }
