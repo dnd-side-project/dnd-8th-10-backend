@@ -11,6 +11,8 @@ import dnd.dnd10_backend.Inventory.dto.response.InventoryResponseDto;
 import dnd.dnd10_backend.Inventory.repository.DefaultInventoryRepository;
 import dnd.dnd10_backend.Inventory.repository.InventoryRepository;
 import dnd.dnd10_backend.Inventory.repository.InventoryUpdateRecordRepository;
+import dnd.dnd10_backend.calendar.domain.TimeCard;
+import dnd.dnd10_backend.calendar.repository.TimeCardRepository;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.store.domain.Store;
@@ -20,6 +22,9 @@ import dnd.dnd10_backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +38,8 @@ import java.util.List;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-12] 재고 차이 저장하도록 수정 - 원지윤
+ * [2023-02-12] 시재 근무 시간 내에 여러번 작성 시 엔티티 수정되도록 변경 - 원지윤
  */
 @Service
 public class InventoryService {
@@ -44,6 +51,9 @@ public class InventoryService {
 
     @Autowired
     private InventoryUpdateRecordRepository inventoryUpdateRecordRepository;
+
+    @Autowired
+    private TimeCardRepository timeCardRepository;
 
     /**
      * inventory를 모두 조회하는 메소드
@@ -107,17 +117,35 @@ public class InventoryService {
         Category category = listRequestDto.getCategory();
 
         List<UpdateInventoryRequestDto> list = listRequestDto.getList();
+        TimeCard timeCard = findTimeCard(user, store);
+
+        List<InventoryUpdateRecord> recordList = inventoryUpdateRecordRepository.findByTimeCard(timeCard);
 
         for(UpdateInventoryRequestDto i: list){
             Inventory inventory = inventoryRepository.findInventoryByInventoryName(i.getInventoryName());
+            inventory.setInventoryCount(i.getDiff());
+            inventoryRepository.save(inventory);
 
-            InventoryUpdateRecord record = InventoryUpdateRecord.builder()
-                    .inventory(inventory)
-                    .diff(i.getDiff())
-                    .category(category)
-                    .user(user)
-                    .store(store)
-                    .build();
+            InventoryUpdateRecord record = new InventoryUpdateRecord();
+
+            for(InventoryUpdateRecord rc: recordList){
+                if(!rc.getInventoryName().equals(i.getInventoryName())){
+                    continue;
+                }
+                rc.setDiff(i.getDiff());
+                record = rc;
+            }
+
+            if(record.getInventoryName()==null){
+                record = InventoryUpdateRecord.builder()
+                        .inventory(inventory)
+                        .timeCard(timeCard)
+                        .diff(i.getDiff())
+                        .category(category)
+                        .user(user)
+                        .store(store)
+                        .build();
+            }
 
             inventoryUpdateRecordRepository.save(record);
             
@@ -140,5 +168,26 @@ public class InventoryService {
         return responseList;
     }
 
+    public TimeCard findTimeCard(User user, Store store){
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 현재시간
+        List<TimeCard> list = timeCardRepository.findByUserAndStoreName(user, store.getStoreName());
+        if(list == null) throw new CustomerNotFoundException("근무일자를 찾을 수 없습니다.");
 
+        for(TimeCard t: list){
+            String[] time = t.getWorkTime().split("~");
+
+            String month = t.getMonth().length()<2 ? "0"+t.getMonth() : t.getMonth();
+            String day = t.getDay().length()<2 ? "0"+t.getDay() : t.getDay();
+            String[] HM1 = time[0].split(":");
+            String[] HM2 = time[1].split(":");
+            LocalDateTime startTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM1[0]+":"+HM1[1]+":00", formatter);
+            LocalDateTime endTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM2[0]+":"+HM2[1]+":00", formatter);
+            if((startTime.isBefore(now) && endTime.isAfter(now)) || startTime.isEqual(now) || endTime.isEqual(now)){
+                return t;
+            }
+
+        }
+        throw new CustomerNotFoundException("등록할 수 있는 시간대가 아닙니다.");
+    }
 }

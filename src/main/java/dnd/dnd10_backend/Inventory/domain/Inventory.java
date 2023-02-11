@@ -35,6 +35,9 @@ public class Inventory {
     @Column(name = "inventory_name")
     private String inventoryName;
 
+    @Column(name = "inventory_count")
+    private int inventoryCount;
+
     @Column(name = "category")
     @Enumerated(EnumType.STRING)
     private Category category;
@@ -44,8 +47,9 @@ public class Inventory {
     private Store store;
 
     @Builder
-    public Inventory(String inventoryName, Category category, Store store){
+    public Inventory(String inventoryName, int inventoryCount,Category category, Store store){
         this.inventoryName = inventoryName;
+        this.inventoryCount = inventoryCount;
         this.category = category;
         this.store = store;
     }

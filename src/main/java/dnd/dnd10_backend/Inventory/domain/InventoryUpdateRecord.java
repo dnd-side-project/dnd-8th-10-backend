@@ -3,6 +3,7 @@ package dnd.dnd10_backend.Inventory.domain;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import dnd.dnd10_backend.Inventory.domain.enums.Category;
 import dnd.dnd10_backend.Inventory.dto.request.UpdateInventoryRequestDto;
+import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
 import lombok.Builder;
@@ -52,15 +53,20 @@ public class InventoryUpdateRecord {
     @JoinColumn(name = "store_idx")
     private Store store;
 
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private TimeCard timeCard;
+
     @CreationTimestamp
     private LocalDateTime createTime;
 
     @Builder
-    public InventoryUpdateRecord(Inventory inventory, int diff, Category category, User user, Store store){
+    public InventoryUpdateRecord(Inventory inventory, int diff, Category category, User user, Store store, TimeCard timeCard){
         this.inventoryName = inventory.getInventoryName();
         this.diff = diff;
         this.category = category;
         this.user = user;
         this.store = store;
+        this.timeCard = timeCard;
     }
 }

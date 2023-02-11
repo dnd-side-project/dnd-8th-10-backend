@@ -20,6 +20,7 @@ import java.util.List;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-12] 기본 시재들의 default값 추가 - 원지윤
  */
 @Service
 public class DefaultInventoryService {
@@ -39,6 +40,7 @@ public class DefaultInventoryService {
         for(DefaultInventory i: list){
             Inventory inventory = Inventory.builder()
                     .inventoryName(i.getInventoryName())
+                    .inventoryCount(0)
                     .category(i.getCategory())
                     .store(store)
                     .build();
