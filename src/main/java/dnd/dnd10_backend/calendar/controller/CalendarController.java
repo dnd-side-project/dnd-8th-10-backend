@@ -34,6 +34,7 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-06] TimeCard 저장 기능 구현 - 이우진
  * [2023-02-08] TimeCard 수정, 삭제, 조회 기능 구현 - 이우진
  * [2023-02-10] 근무시간 subString 수정 - 이우진
+ * [2023-02-11] 근무시간 변수명 수정, api 요청 변경 - 이우진
  */
 
 @RestController
@@ -95,17 +96,17 @@ public class CalendarController {
     }
 
     //오늘 날짜를 누른 경우
-    @GetMapping("/calendar/{day}")
-    public ResponseEntity<String> getWorkTime(@PathVariable String day,
+    @GetMapping("/calendar/week")
+    public ResponseEntity<String> getWorkTime(@RequestParam String week,
                                       HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         User user = userService.getUserByEmail(token);
         String workTime = user.getWorkTime();
-        String workDay = day;
+        String workDay = week;
 
-        switch (day) {
+        switch (week) {
             case "mon": workDay = "월";
                 break;
             case "tue": workDay = "화";
@@ -127,7 +128,7 @@ public class CalendarController {
         if(index == -1) {
             time = "";
         } else {
-            time = workDay.substring(index+2, index+13);
+            time = workTime.substring(index+2, index+13);
         }
 
         return ResponseEntity.ok().body(time); //인덱스 값 맞는지 테스트 필요
