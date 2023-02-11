@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.Inventory.service;
 
 import dnd.dnd10_backend.Inventory.domain.InventoryUpdateRecord;
+import dnd.dnd10_backend.Inventory.domain.enums.Category;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryRecordListResponseDto;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryRecordResponseDto;
 import dnd.dnd10_backend.Inventory.repository.InventoryUpdateRecordRepository;
@@ -44,10 +45,14 @@ public class InventoryRecordService {
      * 시재 기록 조회하는 메소드
      * @param token access token
      */
-    public List<InventoryRecordListResponseDto> findInventoryUpdateRecords(final String token){
+    public List<InventoryRecordListResponseDto> findInventoryUpdateRecords(Category category, final String token){
         User user = userService.getUserByEmail(token);
         Store store = user.getStore();
-        List<InventoryUpdateRecord> list = recordRepository.findByStore(store);
+        List<InventoryUpdateRecord> list;
+        if(category == null)
+            list = recordRepository.findByStore(store);
+        else
+            list = recordRepository.findByStoreAndCategory(store, category);
         List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
 
         for(InventoryUpdateRecord i : list){

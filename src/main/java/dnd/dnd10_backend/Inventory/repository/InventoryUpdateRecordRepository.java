@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.Inventory.repository;
 
 import dnd.dnd10_backend.Inventory.domain.InventoryUpdateRecord;
+import dnd.dnd10_backend.Inventory.domain.enums.Category;
 import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.store.domain.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,7 @@ public interface InventoryUpdateRecordRepository extends JpaRepository<Inventory
 
     @Query("select i from InventoryUpdateRecord i where i.store = :store group by i.timeCard order by i.createTime desc")
     public List<InventoryUpdateRecord> findByStore(@Param("store")Store store);
+
+    @Query("select i from InventoryUpdateRecord i where i.store = :store and i.category = :category group by i.timeCard order by i.createTime desc")
+    public List<InventoryUpdateRecord> findByStoreAndCategory(@Param("store")Store store, @Param("category")Category category);
 }
