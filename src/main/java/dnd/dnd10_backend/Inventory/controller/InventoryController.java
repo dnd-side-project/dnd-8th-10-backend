@@ -28,6 +28,7 @@ import java.util.List;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-12] 시재 기록 카테고리 별로 조회 가능하도록 변경 - 원지윤
  */
 @RestController
 @RequestMapping("/api")
@@ -108,10 +109,11 @@ public class InventoryController {
     }
 
     @GetMapping("/inventory/record")
-    public ResponseEntity showInventoryRecord(HttpServletRequest request){
+    public ResponseEntity showInventoryRecord(@RequestParam(value = "category", required = false)Category category,
+                                              HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
-        List<InventoryRecordListResponseDto> responseDtoList = recordService.findInventoryUpdateRecords(token);
+        List<InventoryRecordListResponseDto> responseDtoList = recordService.findInventoryUpdateRecords(category, token);
         SingleResponse<List<InventoryRecordListResponseDto>> response = responseService.getResponse(responseDtoList,
                 CodeStatus.SUCCESS_SEARCHED_INVENTORY);
         return ResponseEntity.ok().body(response);

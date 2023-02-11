@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.Inventory.dto.response;
 
 import dnd.dnd10_backend.Inventory.domain.InventoryUpdateRecord;
+import dnd.dnd10_backend.Inventory.domain.enums.Category;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,11 +23,13 @@ import lombok.NoArgsConstructor;
 public class InventoryRecordResponseDto {
     private String inventoryName;
     private int diff;
+    private Category category;
 
     public static InventoryRecordResponseDto of(InventoryUpdateRecord updateRecord){
         return new InventoryRecordResponseDto(
                 updateRecord.getInventoryName(),
-                updateRecord.getDiff()
+                updateRecord.getDiff(),
+                updateRecord.getCategory()
         );
 
     }
