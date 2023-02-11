@@ -23,12 +23,14 @@ import lombok.NoArgsConstructor;
 public class InventoryResponseDto {
     private Long inventoryIdx;
     private String inventoryName;
+    private int inventoryCount;
     private Category category;
 
     public static InventoryResponseDto of(Inventory inventory){
         return new InventoryResponseDto(
                 inventory.getInventoryIdx(),
                 inventory.getInventoryName(),
+                inventory.getInventoryCount(),
                 inventory.getCategory()
         );
     }

@@ -28,4 +28,6 @@ public interface TimeCardRepository extends JpaRepository<TimeCard, Long> {
     List<TimeCard> findByYearAndMonthAndUser(String year, String month, User user);
 
     Optional<TimeCard> findByYearAndMonthAndDayAndUser(String year, String month, String day, User user);
+
+    List<TimeCard> findByUserAndStoreName(User user, String storeName);
 }

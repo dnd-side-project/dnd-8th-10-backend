@@ -3,7 +3,9 @@ package dnd.dnd10_backend.Inventory.controller;
 import dnd.dnd10_backend.Inventory.domain.enums.Category;
 import dnd.dnd10_backend.Inventory.dto.request.CreateInventoryRequestDto;
 import dnd.dnd10_backend.Inventory.dto.request.UpdateInventoryListRequestDto;
+import dnd.dnd10_backend.Inventory.dto.response.InventoryRecordListResponseDto;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryResponseDto;
+import dnd.dnd10_backend.Inventory.service.InventoryRecordService;
 import dnd.dnd10_backend.Inventory.service.InventoryService;
 import dnd.dnd10_backend.common.domain.SingleResponse;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
@@ -33,6 +35,9 @@ public class InventoryController {
 
     @Autowired
     private InventoryService inventoryService;
+
+    @Autowired
+    private InventoryRecordService recordService;
 
     @Autowired
     private ResponseService responseService;
@@ -99,6 +104,16 @@ public class InventoryController {
         SingleResponse<List<InventoryResponseDto>> response = responseService.getResponse(responseDtoList,
                 CodeStatus.SUCCESS_UPDATED_INVENTORY);
 
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/inventory/record")
+    public ResponseEntity showInventoryRecord(HttpServletRequest request){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+        List<InventoryRecordListResponseDto> responseDtoList = recordService.findInventoryUpdateRecords(token);
+        SingleResponse<List<InventoryRecordListResponseDto>> response = responseService.getResponse(responseDtoList,
+                CodeStatus.SUCCESS_SEARCHED_INVENTORY);
         return ResponseEntity.ok().body(response);
     }
 
