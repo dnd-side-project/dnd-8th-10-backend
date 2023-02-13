@@ -16,7 +16,6 @@ import dnd.dnd10_backend.calendar.repository.TimeCardRepository;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.store.domain.Store;
-import dnd.dnd10_backend.store.repository.StoreRepository;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,7 @@ import java.util.List;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-12] 재고 차이 저장하도록 수정 - 원지윤
  * [2023-02-12] 시재 근무 시간 내에 여러번 작성 시 엔티티 수정되도록 변경 - 원지윤
+ * [2023-02-13] exception발생 시 500에러 안뜨도록 codestatus 사용 - 원지윤
  */
 @Service
 public class InventoryService {
@@ -172,7 +172,7 @@ public class InventoryService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 현재시간
         List<TimeCard> list = timeCardRepository.findByUserAndStoreName(user, store.getStoreName());
-        if(list == null) throw new CustomerNotFoundException("근무일자를 찾을 수 없습니다.");
+        if(list == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD);
 
         for(TimeCard t: list){
             String[] time = t.getWorkTime().split("~");
@@ -188,6 +188,6 @@ public class InventoryService {
             }
 
         }
-        throw new CustomerNotFoundException("등록할 수 있는 시간대가 아닙니다.");
+        throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD);
     }
 }
