@@ -29,6 +29,7 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-02] token관련 service 분리 - 원지윤
  * [2023-02-06] getUserByToken 오타 수정 - 이우진
  * [2023-02-06] getUserByEmail 리턴값 엔티티로 수정 - 이우진
+ * [2023-02-13] findByUserCode 추가 - 이우진
  */
 @Service
 public class UserService {
@@ -122,6 +123,11 @@ public class UserService {
         Store store = storeRepository.findStoreByStoreIdx(user.getStore().getStoreIdx());
         if(store == null) throw new CustomerNotFoundException();
         return store;
+    }
+
+    public User findByUserCode(Long userCode) {
+        User user = userRepository.findByUserCode(userCode);
+        return user;
     }
 
 }

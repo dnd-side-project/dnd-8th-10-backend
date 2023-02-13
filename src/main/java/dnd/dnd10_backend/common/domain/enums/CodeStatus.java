@@ -25,6 +25,7 @@ public enum CodeStatus {
     SUCCESS_TOKEN_REISSUED(200, "토큰 재발급에 성공하였습니다."),
     SUCCESS_SEARCHED_TIMECARD(200, "근무 내역 조회에 성공하였습니다."),
     SUCCESS_SEARCHED_WORKDAY(200, "근무 일자 조회에 성공하였습니다."),
+    SUCCESS_SEARCHED_SALARY(200, "급여 조회에 성공하였습니다"),
     SUCCESS_UPDATED_USER(201, "사용자 정보 수정에 성공하였습니다."),
     SUCCESS_CREATED_USER(201, "사용자 등록에 성공하였습니다."),
 
