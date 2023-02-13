@@ -40,6 +40,8 @@ import static com.auth0.jwt.JWT.require;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 체크리스트 조회를 dto -> String으로 변경 - 원지윤
  * [2023-02-08] 체크리스트 삭제, 업데이트 시 사용자 확인 - 원지윤
+ * [2023-02-13] 체크리스트 일주일 상태 확인 메소드 추가 - 원지윤
+ * [2023-02-13] userService 추가 및 토큰으로 사용자 찾는 부분 변경 - 원지윤
  */
 @Service
 public class CheckListService {

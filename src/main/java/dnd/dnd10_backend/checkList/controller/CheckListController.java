@@ -27,6 +27,7 @@ import java.util.List;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 체크리스트 조회를 dto -> String으로 변경 - 원지윤
+ * [2023-02-13] 체크리스트 일주일 상태 확인 api 추가 - 원지윤
  */
 @RestController
 @RequestMapping("/api")
