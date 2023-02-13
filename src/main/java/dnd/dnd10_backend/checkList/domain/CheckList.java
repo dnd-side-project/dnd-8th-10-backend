@@ -6,6 +6,7 @@ import dnd.dnd10_backend.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -26,6 +27,7 @@ import java.util.Date;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-13] column애 대한 nullable 설정 및 default 지정 - 원지윤
  */
 @Entity
 @Data
@@ -37,13 +39,14 @@ public class CheckList {
     @Column(name = "check_idx")
     private Long checkIdx;
 
-    @Column(name = "check_date")
+    @Column(name = "check_date",nullable = false)
     private LocalDate date;
 
     @Column(name = "content")
     private String content;
 
-    @Column(name = "status")
+    @Column(name = "status",nullable = false)
+    @ColumnDefault("N")
     private String status;
 
     @Column(name = "create_time",nullable = false,updatable = false)
