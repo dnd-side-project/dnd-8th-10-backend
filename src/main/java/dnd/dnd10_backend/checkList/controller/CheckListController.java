@@ -27,6 +27,7 @@ import java.util.List;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 체크리스트 조회를 dto -> String으로 변경 - 원지윤
+ * [2023-02-13] 체크리스트 일주일 상태 확인 api 추가 - 원지윤
  */
 @RestController
 @RequestMapping("/api")
@@ -111,10 +112,29 @@ public class CheckListController {
                                           HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
+
         List<CheckListResponseDto> responseDto = checkListService.deleteCheckList(checkIdx, token);
 
         SingleResponse<List<CheckListResponseDto>> response
                 = responseService.getResponse(responseDto, CodeStatus.SUCCESS_DELETED_CHECKLIST);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 체크리스트 일주일 상태 확인하는 api
+     * @param request
+     * @return
+     */
+    @GetMapping("/checkList/week")
+    public ResponseEntity showWeekStatus(HttpServletRequest request){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        List<Boolean> responseList = checkListService.checkWeek(token);
+
+        SingleResponse<List<Boolean>> response
+                = responseService.getResponse(responseList,CodeStatus.SUCCESS);
 
         return ResponseEntity.ok().body(response);
     }

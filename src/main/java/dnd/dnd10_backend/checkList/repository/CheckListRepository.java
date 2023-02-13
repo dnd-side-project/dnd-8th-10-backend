@@ -22,6 +22,7 @@ import java.util.Optional;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 체크리스트 order by 추가 - 원지윤
+ * [2023-02-13] 체크리스트 date, status로 체크리스트 찾도록 추가 - 원지윤
  */
 public interface CheckListRepository extends JpaRepository<CheckList, Long> {
     @Query(value = "select * from (select * from check_list c1 where c1.user_code = :user and c1.check_date = :date and c1.status = 'N' order by c1.create_time DESC LIMIT 1000000) as A " + "UNION ALL "
@@ -30,4 +31,6 @@ public interface CheckListRepository extends JpaRepository<CheckList, Long> {
 
     @Override
     Optional<CheckList> findById(Long checkIdx);
+
+    public List<CheckList> findCheckListByDateAndAndStatusAndUser(LocalDate date, String status, User user);
 }

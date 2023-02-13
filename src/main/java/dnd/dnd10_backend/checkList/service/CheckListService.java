@@ -12,11 +12,14 @@ import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
+import dnd.dnd10_backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ import static com.auth0.jwt.JWT.require;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 체크리스트 조회를 dto -> String으로 변경 - 원지윤
  * [2023-02-08] 체크리스트 삭제, 업데이트 시 사용자 확인 - 원지윤
+ * [2023-02-13] 체크리스트 일주일 상태 확인 메소드 추가 - 원지윤
+ * [2023-02-13] userService 추가 및 토큰으로 사용자 찾는 부분 변경 - 원지윤
  */
 @Service
 public class CheckListService {
@@ -46,6 +51,8 @@ public class CheckListService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private UserService userService;
     /**
      * 체크리스트 저장하는 메소드
      * @param token
@@ -53,11 +60,8 @@ public class CheckListService {
      * @return
      */
     public List<CheckListResponseDto> saveCheckList(CheckListRequestDto requestDto, final String token){
-        String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-                .getClaim("email").asString();
-
         //user 찾기
-        User user = userRepository.findByKakaoEmail(email);
+        User user = userService.getUserByEmail(token);
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
         CheckList checkList = CheckList.builder()
@@ -79,11 +83,8 @@ public class CheckListService {
      * @return
      */
     public WorkCheckListResponseDto findCheckList(final String date, final String token){
-        String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-                .getClaim("email").asString();
-
         //user 찾기
-        User user = userRepository.findByKakaoEmail(email);
+        User user = userService.getUserByEmail(token);
 
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
@@ -103,11 +104,8 @@ public class CheckListService {
      * @return
      */
     public List<CheckListResponseDto> deleteCheckList(Long checkIdx, final String token){
-        String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-                .getClaim("email").asString();
-
         //user 찾기
-        User user = userRepository.findByKakaoEmail(email);
+        User user = userService.getUserByEmail(token);
 
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
@@ -128,11 +126,8 @@ public class CheckListService {
      * @param token
      */
     public List<CheckListResponseDto> updateCheckList(UpdateCheckListRequestDto requestDto, final String token){
-        String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-                .getClaim("email").asString();
-
         //user 찾기
-        User user = userRepository.findByKakaoEmail(email);
+        User user = userService.getUserByEmail(token);
 
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
         
@@ -162,6 +157,34 @@ public class CheckListService {
         String DOW = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 
         return user.getWorkTime().contains(DOW.subSequence(0,1));
+    }
+
+    /**
+     *
+     * @param token access token
+     * @return
+     */
+    public List<Boolean> checkWeek(final String token){
+        List<Boolean> weekStatus = new ArrayList<>();
+        User user = userService.getUserByEmail(token);
+
+        LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul")); // 현재시간
+        DayOfWeek dayOfWeek = now.getDayOfWeek();
+        int dayOfWeekNumber = dayOfWeek.getValue(); //월 - 1 일 - 7
+
+        LocalDate startDay = now.minusDays(dayOfWeekNumber);
+
+        for(int i=0;i<7;i++){
+            List<CheckList> list = checkListRepository
+                    .findCheckListByDateAndAndStatusAndUser(startDay.plusDays(i),"N", user);
+            if(list.size()>0){
+                weekStatus.add(true);
+            }
+            else{
+                weekStatus.add(false);
+            }
+        }
+        return weekStatus;
     }
 
     /**
