@@ -42,7 +42,7 @@ public class TimeCard {
 
     private String workTime; // ”오전:7:00 - 오후12:00”
 
-    private Float workHour; // 몇시간 근무 , ex 4.5, 5
+    private Double workHour; // 몇시간 근무 , ex 4.5, 5
 
     private String storeName; // 지점 정보
 
@@ -51,7 +51,7 @@ public class TimeCard {
     private User user;
 
 
-    public void update(String workTime, Float workHour) {
+    public void update(String workTime, Double workHour) {
         this.workTime = workTime;
         this.workHour = workHour;
     }

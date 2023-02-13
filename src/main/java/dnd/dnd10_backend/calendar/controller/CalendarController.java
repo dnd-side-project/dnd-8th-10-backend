@@ -147,8 +147,8 @@ public class CalendarController {
 
         List<TimeCardResponseDto> responseDto = calendarService.getTimeCards(year, month, day, user.getStore().getStoreName());
 
-        SingleResponse<List<TimeCardResponseDto>> response
-                = responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_TIMECARD);
+        SingleResponse<List<TimeCardResponseDto>> response =
+                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_TIMECARD);
 
         return ResponseEntity.ok().body(response);
     }

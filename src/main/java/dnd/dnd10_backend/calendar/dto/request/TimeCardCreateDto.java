@@ -33,7 +33,7 @@ public class TimeCardCreateDto {
 
     private String workTime;
 
-    private Float workHour;
+    private Double workHour;
 
     public TimeCard toEntity(User user) {
         return TimeCard.builder()
