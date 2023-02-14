@@ -20,12 +20,14 @@ import java.util.List;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-14] role 삭제 및 workDay 추가 - 원지윤
+ * [2023-02-14] userProfileCode 추가 - 원지윤
  */
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class InventoryRecordListResponseDto {
     private String userName;
+    private int userProfileCode;
     private String workDay;
     private String workTime;
     List<InventoryRecordResponseDto> list;
@@ -33,6 +35,7 @@ public class InventoryRecordListResponseDto {
     public static InventoryRecordListResponseDto of(User user, TimeCard timeCard, List<InventoryRecordResponseDto> list){
         return new InventoryRecordListResponseDto(
                 user.getUsername(),
+                user.getUserProfileCode(),
                 timeCard.getMonth() + "월"+ timeCard.getDay()+"일",
                 timeCard.getWorkTime(),
                 list
