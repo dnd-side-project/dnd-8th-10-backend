@@ -20,6 +20,7 @@ import java.util.List;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-14] 시재 조회 시 매장 조건 추가 - 원지윤
  */
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
     @Query("select i from Inventory i where i.store = :store order by i.category")
@@ -27,6 +28,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
     public List<Inventory> findInventoryByCategoryAndStore(Category category, Store store);
 
-    public Inventory findInventoryByInventoryName(String inventoryName);
+    public Inventory findInventoryByStoreAndInventoryName(Store store, String inventoryName);
 
 }
