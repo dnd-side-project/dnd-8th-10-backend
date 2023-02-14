@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -33,6 +34,7 @@ import java.util.List;
  * [2023-02-12] 시재 기록 삭제하는 스케쥴러 추가 - 원지윤
  * [2023-02-12] 시재 기록 조회하는 메소드 추가 - 원지윤
  * [2023-02-14] findInventoryByInventoryName -> findInventoryByStoreAndInventoryName 수정 - 원지윤
+ * [2023-02-14] 카테고리별 시재기록 조회 안되는 오류 수정 - 원지윤
  */
 @Service
 public class InventoryRecordService {
@@ -51,11 +53,23 @@ public class InventoryRecordService {
         Store store = user.getStore();
         List<InventoryUpdateRecord> list;
         //category가 null이면 전체를 조회
-        if(category == null)
+        if(category == null){
             list = recordRepository.findByStore(store);
-        else
-            list = recordRepository.findByStoreAndCategory(store, category);
+            return findAllInventoryUpdateRecords(list);
+        }
 
+        list = recordRepository.findByStoreAndCategory(store, category);
+
+        return findInventoryUpdateRecordsByCategory(list, category);
+
+    }
+
+    /**
+     * 모든 카테고리의 시재 기록을 조회하는 메소드
+     * @param list
+     * @return
+     */
+    public List<InventoryRecordListResponseDto> findAllInventoryUpdateRecords(List<InventoryUpdateRecord> list){
         List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
 
         for(InventoryUpdateRecord i : list){
@@ -63,7 +77,22 @@ public class InventoryRecordService {
             responseDtoList.add(InventoryRecordListResponseDto.of(i.getUser(),i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
         }
         return responseDtoList;
+    }
 
+    /**
+     * 카테고리별 시재 기록을 조회하는 메소드
+     * @param list
+     * @param category
+     * @return
+     */
+    public List<InventoryRecordListResponseDto> findInventoryUpdateRecordsByCategory(List<InventoryUpdateRecord> list, Category category){
+        List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
+
+        for(InventoryUpdateRecord i : list){
+            List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCardAndCategory(i.getTimeCard(), category);
+            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUser(),i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
+        }
+        return responseDtoList;
     }
 
     /**
