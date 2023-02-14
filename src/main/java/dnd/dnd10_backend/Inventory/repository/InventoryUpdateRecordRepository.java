@@ -27,6 +27,8 @@ public interface InventoryUpdateRecordRepository extends JpaRepository<Inventory
     @Query("select i from InventoryUpdateRecord i where i.createTime <= :date")
     public List<InventoryUpdateRecord> findPastRecord(@Param("date")LocalDateTime endDateTime);
 
+    public List<InventoryUpdateRecord> findByTimeCardAndCategory(TimeCard timeCard, Category category);
+
     public List<InventoryUpdateRecord> findByTimeCard(TimeCard timeCard);
 
     @Query("select i from InventoryUpdateRecord i where i.store = :store group by i.timeCard order by i.createTime desc")
