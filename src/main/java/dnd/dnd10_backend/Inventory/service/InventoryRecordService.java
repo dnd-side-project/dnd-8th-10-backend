@@ -32,6 +32,7 @@ import java.util.List;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-12] 시재 기록 삭제하는 스케쥴러 추가 - 원지윤
  * [2023-02-12] 시재 기록 조회하는 메소드 추가 - 원지윤
+ * [2023-02-14] findInventoryByInventoryName -> findInventoryByStoreAndInventoryName 수정 - 원지윤
  */
 @Service
 public class InventoryRecordService {
@@ -49,10 +50,12 @@ public class InventoryRecordService {
         User user = userService.getUserByEmail(token);
         Store store = user.getStore();
         List<InventoryUpdateRecord> list;
+        //category가 null이면 전체를 조회
         if(category == null)
             list = recordRepository.findByStore(store);
         else
             list = recordRepository.findByStoreAndCategory(store, category);
+
         List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
 
         for(InventoryUpdateRecord i : list){

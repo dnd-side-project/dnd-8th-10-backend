@@ -89,7 +89,8 @@ public class InventoryService {
     public List<InventoryResponseDto> saveInventory(CreateInventoryRequestDto requestDto, final String token){
         User user = userService.getUserByEmail(token);
         Store store = user.getStore();
-        Inventory inventory = inventoryRepository.findInventoryByInventoryName(requestDto.getInventoryName());
+        Inventory inventory = inventoryRepository
+                .findInventoryByStoreAndInventoryName(store, requestDto.getInventoryName());
 
         if(inventory != null) throw new CustomerNotFoundException(CodeStatus.ALREADY_CREATED_INVENTORY);
 
@@ -122,7 +123,8 @@ public class InventoryService {
         List<InventoryUpdateRecord> recordList = inventoryUpdateRecordRepository.findByTimeCard(timeCard);
 
         for(UpdateInventoryRequestDto i: list){
-            Inventory inventory = inventoryRepository.findInventoryByInventoryName(i.getInventoryName());
+            Inventory inventory = inventoryRepository
+                    .findInventoryByStoreAndInventoryName(store, i.getInventoryName());
             inventory.setInventoryCount(i.getDiff());
             inventoryRepository.save(inventory);
 
