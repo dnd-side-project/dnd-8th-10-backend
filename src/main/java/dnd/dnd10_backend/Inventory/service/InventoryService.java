@@ -18,6 +18,7 @@ import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,18 +43,13 @@ import java.util.List;
  * [2023-02-13] exception발생 시 500에러 안뜨도록 codestatus 사용 - 원지윤
  */
 @Service
+@RequiredArgsConstructor
 public class InventoryService {
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private InventoryRepository inventoryRepository;
-
-    @Autowired
-    private InventoryUpdateRecordRepository inventoryUpdateRecordRepository;
-
-    @Autowired
-    private TimeCardRepository timeCardRepository;
+    private final UserService userService;
+    private final InventoryRepository inventoryRepository;
+    private final InventoryUpdateRecordRepository inventoryUpdateRecordRepository;
+    private final TimeCardRepository timeCardRepository;
 
     /**
      * inventory를 모두 조회하는 메소드

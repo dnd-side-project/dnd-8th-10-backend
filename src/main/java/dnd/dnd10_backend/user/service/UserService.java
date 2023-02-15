@@ -13,6 +13,7 @@ import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,13 +36,11 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-13] findByUserCode 추가 - 이우진
  */
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private StoreRepository storeRepository;
+    private final UserRepository userRepository;
+    private final StoreRepository storeRepository;
 
     @Autowired
     private DefaultInventoryService defaultInventoryService;

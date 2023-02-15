@@ -10,6 +10,7 @@ import dnd.dnd10_backend.calendar.repository.TimeCardRepository;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -37,12 +38,11 @@ import java.util.List;
  * [2023-02-14] 카테고리별 시재기록 조회 안되는 오류 수정 - 원지윤
  */
 @Service
+@RequiredArgsConstructor
 public class InventoryRecordService {
-    @Autowired
-    private InventoryUpdateRecordRepository recordRepository;
 
-    @Autowired
-    private UserService userService;
+    private final InventoryUpdateRecordRepository recordRepository;
+    private final UserService userService;
 
     /**
      * 시재 기록 조회하는 메소드

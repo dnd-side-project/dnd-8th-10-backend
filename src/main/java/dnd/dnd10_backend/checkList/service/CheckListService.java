@@ -13,6 +13,7 @@ import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import dnd.dnd10_backend.user.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -45,12 +46,12 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-13] userService 추가 및 토큰으로 사용자 찾는 부분 변경 - 원지윤
  */
 @Service
+@RequiredArgsConstructor
 public class CheckListService {
-    @Autowired
-    private CheckListRepository checkListRepository;
 
-    @Autowired
-    private UserService userService;
+    private final CheckListRepository checkListRepository;
+    private final UserService userService;
+
     /**
      * 체크리스트 저장하는 메소드
      * @param token

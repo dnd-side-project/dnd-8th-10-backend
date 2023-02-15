@@ -15,6 +15,7 @@ import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.oauth.domain.KakaoProfile;
 import dnd.dnd10_backend.user.oauth.domain.OauthToken;
 import dnd.dnd10_backend.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -49,12 +50,11 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-08] 카카오 프로필 삭제 - 원지윤
  */
 @Service
+@RequiredArgsConstructor
 public class TokenService {
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    TokenRepository tokenRepository;
+    private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
 
     @Autowired
     CustomUserDetailsService customUserDetailsService;
