@@ -1,6 +1,5 @@
 package dnd.dnd10_backend.checkList.service;
 
-import com.auth0.jwt.algorithms.Algorithm;
 import dnd.dnd10_backend.checkList.domain.CheckList;
 import dnd.dnd10_backend.checkList.dto.request.CheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.request.UpdateCheckListRequestDto;
@@ -9,13 +8,9 @@ import dnd.dnd10_backend.checkList.dto.response.WorkCheckListResponseDto;
 import dnd.dnd10_backend.checkList.repository.CheckListRepository;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
-import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.domain.User;
-import dnd.dnd10_backend.user.repository.UserRepository;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;

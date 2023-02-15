@@ -6,7 +6,6 @@ import dnd.dnd10_backend.Inventory.repository.DefaultInventoryRepository;
 import dnd.dnd10_backend.Inventory.repository.InventoryRepository;
 import dnd.dnd10_backend.store.domain.Store;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

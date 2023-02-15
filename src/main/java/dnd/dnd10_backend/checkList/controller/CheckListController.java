@@ -9,7 +9,7 @@ import dnd.dnd10_backend.common.domain.SingleResponse;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.service.ResponseService;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,14 +30,12 @@ import java.util.List;
  * [2023-02-13] 체크리스트 일주일 상태 확인 api 추가 - 원지윤
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class CheckListController {
 
-    @Autowired
-    private CheckListService checkListService;
-
-    @Autowired
-    private ResponseService responseService;
+    private final CheckListService checkListService;
+    private final ResponseService responseService;
 
     /**
      * 체크리스트를 저장하는 api
@@ -68,7 +66,7 @@ public class CheckListController {
      * @return
      */
     @GetMapping("/checkList")
-    public ResponseEntity showCheckList(@RequestParam("date") String date,
+    public ResponseEntity getCheckList(@RequestParam("date") String date,
                                         HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
@@ -127,7 +125,7 @@ public class CheckListController {
      * @return
      */
     @GetMapping("/checkList/week")
-    public ResponseEntity showWeekStatus(HttpServletRequest request){
+    public ResponseEntity getWeekStatus(HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 

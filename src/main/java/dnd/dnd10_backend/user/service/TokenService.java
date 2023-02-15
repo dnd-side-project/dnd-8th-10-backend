@@ -16,7 +16,6 @@ import dnd.dnd10_backend.user.oauth.domain.KakaoProfile;
 import dnd.dnd10_backend.user.oauth.domain.OauthToken;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -55,9 +54,7 @@ public class TokenService {
 
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-
-    @Autowired
-    CustomUserDetailsService customUserDetailsService;
+    private final CustomUserDetailsService customUserDetailsService;
 
     //환경 변수 가져오기
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")

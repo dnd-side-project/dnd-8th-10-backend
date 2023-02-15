@@ -8,7 +8,7 @@ import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.oauth.domain.OauthToken;
 import dnd.dnd10_backend.user.service.TokenService;
 import dnd.dnd10_backend.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,16 +33,13 @@ import java.util.List;
  * [2022-02-07] 프론트 local 판단 param 추가 - 원지윤
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/oauth")
 public class TokenController {
-    @Autowired
-    private UserService userService;
 
-    @Autowired
-    private TokenService tokenService;
-
-    @Autowired
-    private ResponseService responseService;
+    private final UserService userService;
+    private final TokenService tokenService;
+    private final ResponseService responseService;
 
     // 프론트에서 인가코드 돌려 받는 주소
     // 인가 코드로 엑세스 토큰 발급 -> 사용자 정보 조회 -> DB 저장 -> jwt 토큰 발급 -> 프론트에 토큰 전달

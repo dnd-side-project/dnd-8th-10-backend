@@ -11,7 +11,7 @@ import dnd.dnd10_backend.common.domain.SingleResponse;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.service.ResponseService;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,17 +31,13 @@ import java.util.List;
  * [2023-02-12] 시재 기록 카테고리 별로 조회 가능하도록 변경 - 원지윤
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class InventoryController {
 
-    @Autowired
-    private InventoryService inventoryService;
-
-    @Autowired
-    private InventoryRecordService recordService;
-
-    @Autowired
-    private ResponseService responseService;
+    private final InventoryService inventoryService;
+    private final InventoryRecordService recordService;
+    private final ResponseService responseService;
 
     /**
      * 시재 조회 api
@@ -109,7 +105,7 @@ public class InventoryController {
     }
 
     @GetMapping("/inventory/record")
-    public ResponseEntity showInventoryRecord(@RequestParam(value = "category", required = false)Category category,
+    public ResponseEntity getInventoryRecord(@RequestParam(value = "category", required = false)Category category,
                                               HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
