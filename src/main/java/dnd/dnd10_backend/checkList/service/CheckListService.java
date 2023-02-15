@@ -1,5 +1,7 @@
 package dnd.dnd10_backend.checkList.service;
 
+import dnd.dnd10_backend.calendar.domain.TimeCard;
+import dnd.dnd10_backend.calendar.repository.TimeCardRepository;
 import dnd.dnd10_backend.checkList.domain.CheckList;
 import dnd.dnd10_backend.checkList.dto.request.CheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.request.UpdateCheckListRequestDto;
@@ -13,6 +15,9 @@ import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +25,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -39,6 +45,7 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-08] 체크리스트 삭제, 업데이트 시 사용자 확인 - 원지윤
  * [2023-02-13] 체크리스트 일주일 상태 확인 메소드 추가 - 원지윤
  * [2023-02-13] userService 추가 및 토큰으로 사용자 찾는 부분 변경 - 원지윤
+ * [2023-02-16] 출근일인지 확인하는 부분 수정 - 원지윤
  */
 @Service
 @RequiredArgsConstructor
@@ -46,6 +53,7 @@ public class CheckListService {
 
     private final CheckListRepository checkListRepository;
     private final UserService userService;
+    private final TimeCardRepository timeCardRepository;
 
     /**
      * 체크리스트 저장하는 메소드
@@ -53,6 +61,7 @@ public class CheckListService {
      * @param requestDto
      * @return
      */
+    @Transactional
     public List<CheckListResponseDto> saveCheckList(CheckListRequestDto requestDto, final String token){
         //user 찾기
         User user = userService.getUserByEmail(token);
@@ -84,8 +93,11 @@ public class CheckListService {
 
         LocalDate localDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
 
+        boolean isWorkDay = false;
         //일하는 날인지 체크
-        boolean isWorkDay = checkWorkDay(localDate, user);
+        if(checkWorkDay(localDate, user) || checkInsteadWorkDay(localDate, user)){
+            isWorkDay = true;
+        }
 
         return WorkCheckListResponseDto.of(isWorkDay, findCheckListByDate(localDate, user));
 
@@ -141,7 +153,7 @@ public class CheckListService {
     }
 
     /**
-     * 조회하려는 날짜가 일하는 날인지 확인하는 메소드
+     * 조회하려는 날짜가 정규 출근 일인지 확인하는 메소드
      * @param date 조회하려는 날짜
      * @param user 조회하려는 사용자
      * @return
@@ -151,6 +163,28 @@ public class CheckListService {
         String DOW = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 
         return user.getWorkTime().contains(DOW.subSequence(0,1));
+    }
+
+    /**
+     * 정규 출근일이 아닌 경우 출근부에 출근이 되어있는지 확인
+     * @param date
+     * @param user
+     * @return
+     */
+    public boolean checkInsteadWorkDay(LocalDate date, User user){
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String[] YMD = date.format(format).split("-");
+        
+        if(YMD[1].substring(0,1).equals("0")){
+            YMD[1] = YMD[1].replace("0","");
+        }
+
+        if(YMD[2].substring(0,1).equals("0")){
+            YMD[2] = YMD[2].replace("0","");
+        }
+
+        return timeCardRepository.findByYearAndMonthAndDayAndUser(YMD[0],YMD[1],YMD[2], user)
+                .isPresent();
     }
 
     /**
