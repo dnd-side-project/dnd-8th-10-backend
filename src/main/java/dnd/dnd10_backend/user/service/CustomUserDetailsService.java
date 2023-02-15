@@ -2,6 +2,7 @@ package dnd.dnd10_backend.user.service;
 
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,9 +21,10 @@ import org.springframework.stereotype.Service;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  */
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
-    @Autowired
-    private UserRepository userRepository;
+
+    private final UserRepository userRepository;
     @Override
     public UserDetails loadUserByUsername(String kakaoEmail) throws UsernameNotFoundException {
         User user = userRepository.findByKakaoEmail(kakaoEmail);

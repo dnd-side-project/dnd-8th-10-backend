@@ -6,6 +6,7 @@ import dnd.dnd10_backend.checkList.repository.CheckListRepository;
 import dnd.dnd10_backend.checkList.repository.DefaultCheckListRepository;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -25,18 +26,13 @@ import java.util.List;
  * [수정내용] 
  * 예시) [2022-09-17] 주석추가 - 원지윤
  */
-
 @Service
+@RequiredArgsConstructor
 public class DefaultCheckListService {
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private DefaultCheckListRepository defaultCheckListRepository;
-
-    @Autowired
-    private CheckListRepository checkListRepository;
+    private final UserRepository userRepository;
+    private final DefaultCheckListRepository defaultCheckListRepository;
+    private final CheckListRepository checkListRepository;
 
     /**
      * 매주 일요일 0시 0분 0초에 사용자들이 일하는 시간의 기본 체크리스트를 생성해주는 메소드

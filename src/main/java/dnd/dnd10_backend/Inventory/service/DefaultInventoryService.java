@@ -5,6 +5,7 @@ import dnd.dnd10_backend.Inventory.domain.Inventory;
 import dnd.dnd10_backend.Inventory.repository.DefaultInventoryRepository;
 import dnd.dnd10_backend.Inventory.repository.InventoryRepository;
 import dnd.dnd10_backend.store.domain.Store;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,11 @@ import java.util.List;
  * [2023-02-12] 기본 시재들의 default값 추가 - 원지윤
  */
 @Service
+@RequiredArgsConstructor
 public class DefaultInventoryService {
-    @Autowired
-    private DefaultInventoryRepository defaultInventoryRepository;
 
-    @Autowired
-    private InventoryRepository inventoryRepository;
+    private final DefaultInventoryRepository defaultInventoryRepository;
+    private final InventoryRepository inventoryRepository;
 
     /**
      * 기본 시재들을 저장하는 메소드
