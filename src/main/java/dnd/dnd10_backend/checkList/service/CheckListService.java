@@ -14,6 +14,7 @@ import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import dnd.dnd10_backend.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -47,9 +48,6 @@ import static com.auth0.jwt.JWT.require;
 public class CheckListService {
     @Autowired
     private CheckListRepository checkListRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
