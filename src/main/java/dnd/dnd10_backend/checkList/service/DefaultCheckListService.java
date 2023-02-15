@@ -24,6 +24,7 @@ import java.util.List;
  * @version 1.0
  * [수정내용] 
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-16] 지난주 체크리스트를 삭제하는 스케쥴러 추가 - 원지윤
  */
 @Service
 @RequiredArgsConstructor
@@ -57,7 +58,21 @@ public class DefaultCheckListService {
                saveDefaultCheckList(now.plusDays(saveDay), user);
            }
         }
+        return;
+    }
 
+    /**
+     * 일주일 지난 기록들을 삭제하는 메소드
+     */
+    @Scheduled(cron = "0 0 3 * * SUN")
+    public void deleteCheckListByScheduled(){
+        LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(2);
+        List<CheckList> checkList = checkListRepository.findCheckListByPastDate(date);
+
+        for(CheckList cl: checkList){
+            checkListRepository.delete(cl);
+        }
+        return;
     }
 
     /**
