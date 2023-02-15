@@ -7,7 +7,7 @@ import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,14 +30,12 @@ import javax.servlet.http.HttpServletRequest;
  * [2023-02-06] #50 User 엔티티 userResponseDto로 변환 - 이우진
  */
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ResponseService responseService;
+    private final UserService userService;
+    private final ResponseService responseService;
 
     /**
      * 사용자 정보 조회
@@ -45,7 +43,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/user")
-    public ResponseEntity showUser(HttpServletRequest request){
+    public ResponseEntity getUser(HttpServletRequest request){
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                         .replace(JwtProperties.TOKEN_PREFIX,"");
         UserResponseDto userResponseDto = userService.findUser(token);

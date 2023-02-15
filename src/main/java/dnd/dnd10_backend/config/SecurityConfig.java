@@ -5,7 +5,6 @@ import dnd.dnd10_backend.config.jwt.JwtRequestFilter;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import dnd.dnd10_backend.user.service.TokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -31,11 +30,9 @@ import org.springframework.web.filter.CorsFilter;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    UserRepository userRepository;
 
-    @Autowired
-    TokenService tokenService;
+    private final UserRepository userRepository;
+    private final TokenService tokenService;
 
     public static final String FRONT_URL = "http://localhost:3000";
 
