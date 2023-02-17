@@ -84,6 +84,7 @@ public class UserService {
         if(store == null){
             store = Store.builder()
                     .storeName(requestDto.getWorkPlace())
+                    .storeLocation(requestDto.getWorkLocation())
                     .build();
 
             store = storeRepository.save(store);

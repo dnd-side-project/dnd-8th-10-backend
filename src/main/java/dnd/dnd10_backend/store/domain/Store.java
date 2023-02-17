@@ -34,11 +34,15 @@ public class Store {
     @Column(name = "store_name")
     private String storeName;
 
+    @Column(name = "store_location")
+    private String storeLocation;
+
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Inventory> inventoryList = new ArrayList<>();
 
     @Builder
-    public Store(String storeName){
+    public Store(String storeName, String storeLocation){
         this.storeName = storeName;
+        this.storeLocation = storeLocation;
     }
 }
