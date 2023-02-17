@@ -26,5 +26,6 @@ public class UserSaveRequestDto {
     private Role role;
     private String phoneNumber;
     private String workPlace;
+    private String workLocation;
     private String workTime;
 }
