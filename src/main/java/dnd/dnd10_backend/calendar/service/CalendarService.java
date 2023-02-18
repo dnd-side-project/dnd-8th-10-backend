@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
  * [2023-02-11] getTimeCards 유저 프로필 코드 추가 - 이우진
  * [2023-02-11] workPlace storeName 으로 수정 - 이우진
  * [2023-02-16] 출근 시 대타일자면 체크리스트 생성하도록 변경 - 원지윤
+ * [2023-02-18] 날짜 포맷으로 발생하는 에러 해결 - 원지윤
  */
 @Service
 @RequiredArgsConstructor
@@ -49,9 +50,7 @@ public class CalendarService {
     @Transactional
     public void saveTimeCard(TimeCardCreateDto request, User user) {
         //입력 된 날짜를 LocalDate타입으로 변경
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String nowStr = request.getYear()+"-"+request.getMonth()+"-"+request.getDay();
-        LocalDate now = LocalDate.parse(nowStr, format);
+        LocalDate now = convertDate(request);
 
         //입력 된 날짜가 원래 일하는 날인지 확인
         if(!checkListService.checkWorkDay(now,user)){
@@ -103,4 +102,17 @@ public class CalendarService {
         return collect;
     }
 
+    /**
+     * request에 들어온 날을 LocalDate으로 변경해주는 메소드
+     * @param request
+     * @return
+     */
+    public LocalDate convertDate(TimeCardCreateDto request){
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        String month = request.getMonth().length()<2 ? "0"+request.getMonth() : request.getMonth();
+        String day = request.getDay().length()<2 ? "0"+request.getDay() : request.getDay();
+        String nowStr = request.getYear()+"-"+month+"-"+day;
+        return LocalDate.parse(nowStr, format);
+    }
 }
