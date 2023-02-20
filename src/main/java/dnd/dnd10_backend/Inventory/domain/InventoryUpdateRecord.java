@@ -6,6 +6,7 @@ import dnd.dnd10_backend.Inventory.dto.request.UpdateInventoryRequestDto;
 import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
+import dnd.dnd10_backend.user.domain.enums.Role;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,7 +50,8 @@ public class InventoryUpdateRecord {
     private String userName;
 
     @Column(name = "work_role")
-    private String workRole;
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(name = "work_day")
     private String workDay;
@@ -77,7 +79,7 @@ public class InventoryUpdateRecord {
         this.diff = diff;
         this.category = category;
         this.userName = user.getUsername();
-        this.workRole = user.getUserRole();
+        this.role = user.getRole();
         this.workTime = timeCard.getWorkTime();
         this.userProfileCode = user.getUserProfileCode();
         this.store = store;
