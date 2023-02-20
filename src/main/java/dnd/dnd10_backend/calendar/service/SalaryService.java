@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-12] 직원페이지 급여 조회 기능 개발 - 이우진
  * [2023-02-13] 점장 급여 조회 기능, 상세 조회 기능 개발 - 이우진
+ * [2023-02-20] timeCardRepository user 사용 메서드 userCode로 변경 - 이우진
  */
 
 @Service
@@ -38,7 +39,7 @@ public class SalaryService {
     private final UserRepository userRepository;
 
     public List<SalaryResponseDto> getWorkerSalary(String year, String month, User user) {
-        List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUser(year, month, user);
+        List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUserCode(year, month, user.getUserCode());
         List<SalaryResponseDto> collect = timeCards.stream()
                 .map(t -> new SalaryResponseDto(t.getMonth(), t.getDay(), t.getWorkTime(), t.getWorkHour(), t.getWorkHour()*9620))
                 .collect(Collectors.toList());
@@ -51,7 +52,7 @@ public class SalaryService {
         List<StoreSalaryResponseDto> dtos = new ArrayList<>();
 
         for (User user : member) {
-            List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUser(year, month, user);
+            List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUserCode(year, month, user.getUserCode());
             Double sum = timeCards.stream().mapToDouble(TimeCard::getWorkHour).sum();
             Double salary = sum * 9620;
             StoreSalaryResponseDto responseDto = StoreSalaryResponseDto.builder()
@@ -67,7 +68,7 @@ public class SalaryService {
     }
 
     public SalaryDetailResponseDto getSalaryDetail(String year, String month, User user) {
-        List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUser(year, month, user);
+        List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUserCode(year, month, user.getUserCode());
         List<SalaryResponseDto> collect = timeCards.stream()
                 .map(t -> new SalaryResponseDto(t.getMonth(), t.getDay(), t.getWorkTime(), t.getWorkHour(), t.getWorkHour()*9620))
                 .collect(Collectors.toList());

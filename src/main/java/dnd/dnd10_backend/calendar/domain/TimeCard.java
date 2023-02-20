@@ -21,6 +21,7 @@ import javax.persistence.*;
  * [2023-02-06] TimeCard Entity 정의 - 이우진
  * [2023-02-08] TimeCard 수정 메서드 구현 - 이우진
  * [2023-02-11] workPlace storeName 으로 수정 - 이우진
+ * [2023-02-20] user 와의 매핑 userTimeCard 와의 매핑으로 변경 - 이우진
  */
 
 @Entity
@@ -46,9 +47,7 @@ public class TimeCard {
 
     private String storeName; // 지점 정보
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_code")
-    private User user;
+    private Long userCode;
 
 
     public void update(String workTime, Double workHour) {

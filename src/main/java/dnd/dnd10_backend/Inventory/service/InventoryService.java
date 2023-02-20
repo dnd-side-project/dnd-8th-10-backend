@@ -40,6 +40,7 @@ import java.util.List;
  * [2023-02-12] 재고 차이 저장하도록 수정 - 원지윤
  * [2023-02-12] 시재 근무 시간 내에 여러번 작성 시 엔티티 수정되도록 변경 - 원지윤
  * [2023-02-13] exception발생 시 500에러 안뜨도록 codestatus 사용 - 원지윤
+ * [2023-02-20] timeCardRepository user -> userCode 사용으로 변경 - 이우진
  */
 @Service
 @RequiredArgsConstructor
@@ -168,7 +169,7 @@ public class InventoryService {
     public TimeCard findTimeCard(User user, Store store){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 현재시간
-        List<TimeCard> list = timeCardRepository.findByUserAndStoreName(user, store.getStoreName());
+        List<TimeCard> list = timeCardRepository.findByUserCodeAndStoreName(user.getUserCode(), store.getStoreName());
         if(list == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD);
 
         for(TimeCard t: list){
