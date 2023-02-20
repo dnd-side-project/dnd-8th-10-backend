@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-06] TimeCard 생성 Dto 생성 - 이우진
  * [2023-02-11] workPlace storeName 으로 수정 - 이우진
+ * [2023-02-20] user 값 userCode로 변경 - 이우진
  */
 
 @Getter
@@ -43,7 +44,7 @@ public class TimeCardCreateDto {
                 .workTime(workTime)
                 .workHour(workHour)
                 .storeName(user.getStore().getStoreName())
-                .user(user)
+                .userCode(user.getUserCode())
                 .build();
     }
 }

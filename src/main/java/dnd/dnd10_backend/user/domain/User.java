@@ -36,6 +36,7 @@ import java.util.List;
  * [2023-02-10] store연관 관계 추가 - 원지윤
  * [2023-02-11] workPlace 삭제
  * [2023-02-20] 체크리스트에 대한 연관 관계 추가 - 원지윤
+ * [2023-02-20] timecard 연관 관계 삭제 - 이우진
  */
 @Entity
 @Data
@@ -79,9 +80,6 @@ public class User implements UserDetails {
     @ManyToOne
     @JoinColumn(name = "store_idx", insertable = false, updatable = false)
     private Store store;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
-    private List<TimeCard> timeCards = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<CheckList> CheckList = new ArrayList<>();

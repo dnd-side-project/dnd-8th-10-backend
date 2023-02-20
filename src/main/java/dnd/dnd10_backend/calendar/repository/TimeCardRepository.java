@@ -20,14 +20,15 @@ import java.util.Optional;
  * [2023-02-06] TimeCard JPA Repository 생성 - 이우진
  * [2023-02-08] (날짜, 지점) 검색 메서드, (날짜, 유저) 검색 메서드 추가 - 이우진
  * [2023-02-08] workPlace storeName으로 수정 - 이우진
+ * [2023-02-08] user 사용 메서드 userCode 사용으로 변경 - 이우진
  */
 
 public interface TimeCardRepository extends JpaRepository<TimeCard, Long> {
     List<TimeCard> findByYearAndMonthAndDayAndStoreName(String year, String month, String day, String storeName);
 
-    List<TimeCard> findByYearAndMonthAndUser(String year, String month, User user);
+    List<TimeCard> findByYearAndMonthAndUserCode(String year, String month, Long userCode);
 
-    Optional<TimeCard> findByYearAndMonthAndDayAndUser(String year, String month, String day, User user);
+    Optional<TimeCard> findByYearAndMonthAndDayAndUserCode(String year, String month, String day, Long userCode);
 
-    List<TimeCard> findByUserAndStoreName(User user, String storeName);
+    List<TimeCard> findByUserCodeAndStoreName(Long userCode, String storeName);
 }

@@ -183,7 +183,7 @@ public class CheckListService {
             YMD[2] = YMD[2].replace("0","");
         }
 
-        return timeCardRepository.findByYearAndMonthAndDayAndUser(YMD[0],YMD[1],YMD[2], user)
+        return timeCardRepository.findByYearAndMonthAndDayAndUserCode(YMD[0],YMD[1],YMD[2], user.getUserCode())
                 .isPresent();
     }
 
