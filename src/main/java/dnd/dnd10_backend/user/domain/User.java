@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.user.domain;
 
 import dnd.dnd10_backend.calendar.domain.TimeCard;
+import dnd.dnd10_backend.checkList.domain.CheckList;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.enums.Role;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
@@ -34,6 +35,7 @@ import java.util.List;
  * [2023-02-08] 카카오 프로필 삭제 - 원지윤
  * [2023-02-10] store연관 관계 추가 - 원지윤
  * [2023-02-11] workPlace 삭제
+ * [2023-02-20] 체크리스트에 대한 연관 관계 추가 - 원지윤
  */
 @Entity
 @Data
@@ -80,6 +82,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<TimeCard> timeCards = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<CheckList> CheckList = new ArrayList<>();
 
     @Builder
     public User(Long kakaoId, String kakaoNickname,

@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
  * [2023-02-02] 토큰 관련 컨트롤러 분리 - 원지윤
  * [2023-02-03] 토큰에서 이메일 식별 - 원지윤
  * [2023-02-06] #50 User 엔티티 userResponseDto로 변환 - 이우진
+ * [2023-02-20] 사용자 삭제 api 추가 - 원지윤
  */
 @RestController
 @RequiredArgsConstructor
@@ -38,12 +39,12 @@ public class UserController {
     private final ResponseService responseService;
 
     /**
-     * 사용자 정보 조회
+     * 사용자 정보 조회 api
      * @param
      * @return
      */
     @GetMapping("/user")
-    public ResponseEntity getUser(HttpServletRequest request){
+    public ResponseEntity getUser(HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                         .replace(JwtProperties.TOKEN_PREFIX,"");
         UserResponseDto userResponseDto = userService.findUser(token);
@@ -53,13 +54,13 @@ public class UserController {
     }
 
     /**
-     * 사용자 등록
+     * 사용자 등록 api
      * @param requestDto
      * @return
      */
     @PostMapping("/user/signup")
     public ResponseEntity signupUser(@RequestBody UserSaveRequestDto requestDto,
-                                     HttpServletRequest request){
+                                     HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                             .replace(JwtProperties.TOKEN_PREFIX,"");
         UserResponseDto userResponseDto = userService.saveUser(requestDto, token);
@@ -69,13 +70,13 @@ public class UserController {
     }
 
     /**
-     * 사용자 정보 업데이트
+     * 사용자 정보 업데이트 api
      * @param requestDto
      * @return
      */
     @PutMapping("/user/update")
     public ResponseEntity updateUser(@RequestBody UserSaveRequestDto requestDto,
-                                     HttpServletRequest request){
+                                     HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                             .replace(JwtProperties.TOKEN_PREFIX,"");
         UserResponseDto userResponseDto = userService.saveUser(requestDto, token);
@@ -84,4 +85,17 @@ public class UserController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * 사용자 삭제 api
+     * @param request
+     * @return
+     */
+    @DeleteMapping("/user")
+    public ResponseEntity deleteUser(HttpServletRequest request) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+        userService.deleteUser(token);
+        SingleResponse<String> response = responseService.getResponse("",CodeStatus.SUCCESS_DELETED_USER);
+        return ResponseEntity.ok().body(response);
+    }
 }

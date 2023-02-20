@@ -32,10 +32,10 @@ public class InventoryRecordListResponseDto {
     private String workTime;
     List<InventoryRecordResponseDto> list;
 
-    public static InventoryRecordListResponseDto of(User user, TimeCard timeCard, List<InventoryRecordResponseDto> list){
+    public static InventoryRecordListResponseDto of(String userName, int userProfileCode, TimeCard timeCard, List<InventoryRecordResponseDto> list){
         return new InventoryRecordListResponseDto(
-                user.getUsername(),
-                user.getUserProfileCode(),
+                userName,
+                userProfileCode,
                 timeCard.getMonth() + "월"+ timeCard.getDay()+"일",
                 timeCard.getWorkTime(),
                 list

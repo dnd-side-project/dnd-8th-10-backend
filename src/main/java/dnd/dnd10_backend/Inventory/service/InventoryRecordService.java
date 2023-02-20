@@ -73,7 +73,9 @@ public class InventoryRecordService {
 
         for(InventoryUpdateRecord i : list){
             List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCard(i.getTimeCard());
-            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUser(),i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
+            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUserName(),
+                    i.getUserProfileCode(),
+                    i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
         }
         return responseDtoList;
     }
@@ -89,7 +91,8 @@ public class InventoryRecordService {
 
         for(InventoryUpdateRecord i : list){
             List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCardAndCategory(i.getTimeCard(), category);
-            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUser(),i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
+            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUserName(),
+                    i.getUserProfileCode(),i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
         }
         return responseDtoList;
     }
