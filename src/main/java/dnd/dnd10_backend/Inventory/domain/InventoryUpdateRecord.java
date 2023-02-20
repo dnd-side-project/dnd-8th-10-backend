@@ -53,12 +53,6 @@ public class InventoryUpdateRecord {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "work_day")
-    private String workDay;
-
-    @Column(name = "work_time")
-    private String workTime;
-
     @Column(name = "user_profile_code")
     private int userProfileCode;
 
@@ -80,7 +74,6 @@ public class InventoryUpdateRecord {
         this.category = category;
         this.userName = user.getUsername();
         this.role = user.getRole();
-        this.workTime = timeCard.getWorkTime();
         this.userProfileCode = user.getUserProfileCode();
         this.store = store;
         this.timeCard = timeCard;
