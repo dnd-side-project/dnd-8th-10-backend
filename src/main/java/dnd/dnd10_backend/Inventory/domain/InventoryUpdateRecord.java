@@ -35,19 +35,30 @@ public class InventoryUpdateRecord {
     @Column(name = "record_idx")
     private Long recordIdx;
 
-    @Column(name="inventory_name")
+    @Column(name = "inventory_name")
     private String inventoryName;
 
-    @Column(name="diff")
+    @Column(name = "diff")
     private int diff;
 
     @Column(name = "category")
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @ManyToOne
-    @JoinColumn(name = "user_code")
-    private User user;
+    @Column(name = "user_name")
+    private String userName;
+
+    @Column(name = "work_role")
+    private String workRole;
+
+    @Column(name = "work_day")
+    private String workDay;
+
+    @Column(name = "work_time")
+    private String workTime;
+
+    @Column(name = "user_profile_code")
+    private int userProfileCode;
 
     @ManyToOne
     @JoinColumn(name = "store_idx")
@@ -65,7 +76,10 @@ public class InventoryUpdateRecord {
         this.inventoryName = inventory.getInventoryName();
         this.diff = diff;
         this.category = category;
-        this.user = user;
+        this.userName = user.getUsername();
+        this.workRole = user.getUserRole();
+        this.workTime = timeCard.getWorkTime();
+        this.userProfileCode = user.getUserProfileCode();
         this.store = store;
         this.timeCard = timeCard;
     }

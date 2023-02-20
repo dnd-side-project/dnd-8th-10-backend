@@ -31,6 +31,7 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-06] getUserByToken 오타 수정 - 이우진
  * [2023-02-06] getUserByEmail 리턴값 엔티티로 수정 - 이우진
  * [2023-02-13] findByUserCode 추가 - 이우진
+ * [2023-02-20] 사용자 삭제에 대한 메소드 추가 - 원지윤
  */
 @Service
 @RequiredArgsConstructor
@@ -106,6 +107,16 @@ public class UserService {
     }
 
     /**
+     * user를 삭제하는 메소드
+     * @param token
+     */
+    public void deleteUser(final String token){
+        //user 찾기
+        User user = getUserByEmail(token);
+        userRepository.delete(user);
+    }
+
+    /**
      * access token으로 사용자를 찾는 메소드
      * @param token access token
      * @return
@@ -127,6 +138,11 @@ public class UserService {
         return store;
     }
 
+    /**
+     * userCode를 통해 user를 찾는 메소드
+     * @param userCode
+     * @return
+     */
     public User findByUserCode(Long userCode) {
         User user = userRepository.findByUserCode(userCode);
         return user;
