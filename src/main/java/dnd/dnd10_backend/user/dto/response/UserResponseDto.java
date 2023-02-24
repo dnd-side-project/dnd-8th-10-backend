@@ -33,6 +33,7 @@ public class UserResponseDto {
     private String phoneNumber;
     private String workTime;
     private String workPlace;
+    private double wage;
 
     public static UserResponseDto of(User user, Store store){
         return new UserResponseDto(
@@ -43,7 +44,8 @@ public class UserResponseDto {
                 user.getRole(),
                 user.getPhoneNumber(),
                 user.getWorkTime(),
-                store.getStoreName()
+                store.getStoreName(),
+                user.getWage()
         );
     }
 }

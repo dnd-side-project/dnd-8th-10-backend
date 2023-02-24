@@ -119,6 +119,7 @@ public class TokenService {
                     .kakaoId(profile.getId())
                     .kakaoNickname(profile.getKakao_account().getProfile().getNickname())
                     .kakaoEmail(profile.getKakao_account().getEmail())
+                    .wage(0)
                     .userRole("ROLE_USER").build();
 
             userRepository.save(user);

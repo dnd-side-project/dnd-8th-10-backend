@@ -28,4 +28,5 @@ public class UserSaveRequestDto {
     private String workPlace;
     private String workLocation;
     private String workTime;
+    private double wage;
 }
