@@ -17,6 +17,7 @@ import javax.persistence.*;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-24] user 연관관계 수정 - 원지윤
  */
 
 @Getter
@@ -31,7 +32,7 @@ public class Token {
     @Column(length = 300)
     private String refreshToken;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_code")
     private User user;
 
