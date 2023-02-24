@@ -9,6 +9,7 @@ import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.store.repository.StoreRepository;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
+import dnd.dnd10_backend.user.dto.response.UserCreateResponseDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,8 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-06] getUserByEmail 리턴값 엔티티로 수정 - 이우진
  * [2023-02-13] findByUserCode 추가 - 이우진
  * [2023-02-20] 사용자 삭제에 대한 메소드 추가 - 원지윤
+ * [2023-02-24] 사용자 생성 시 발생하는 에러 해결 - 원지윤
+ * [2023-02-24] 사용자 등록과 업데이트 함수 분리 - 원지윤
  */
 @Service
 @RequiredArgsConstructor
@@ -46,14 +49,14 @@ public class UserService {
      * @param token access token
      * @return
      */
-    public UserResponseDto getUserByToken(final String token){
+    public UserCreateResponseDto getUserByToken(final String token){
         Long userCode = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
                 .getClaim("id").asLong();
         User user = userRepository.findByUserCode(userCode);
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
 
-        return UserResponseDto.of(user, findStoreNameByUser(user));
+        return UserCreateResponseDto.of(user);
     }
 
     /**
@@ -95,10 +98,40 @@ public class UserService {
         int count = userRepository.findByStore(store).size();
 
         //requestDto로 user 정보 update
-        user.updateUser(requestDto);
+        user.updateUser(requestDto, store);
 
-        user.setStore(store);
         user.setUserProfileCode((count%10)+1);
+
+        //user 정보 저장
+        userRepository.save(user);
+
+        return UserResponseDto.of(user,store);
+    }
+
+    /**
+     * 사용자 정보를 업데이트하는 함수
+     * @param requestDto
+     * @param token
+     * @return
+     */
+    public UserResponseDto updateUser(UserSaveRequestDto requestDto, final String token){
+        //user 찾기
+        User user = getUserByEmail(token);
+
+        Store store = storeRepository.findStoreByStoreName(requestDto.getWorkPlace());
+
+        if(store == null){
+            store = Store.builder()
+                    .storeName(requestDto.getWorkPlace())
+                    .storeLocation(requestDto.getWorkLocation())
+                    .build();
+
+            store = storeRepository.save(store);
+            defaultInventoryService.saveDafaultInventories(store);
+        }
+
+        //requestDto로 user 정보 update
+        user.updateUser(requestDto, store);
 
         //user 정보 저장
         userRepository.save(user);
@@ -147,5 +180,6 @@ public class UserService {
         User user = userRepository.findByUserCode(userCode);
         return user;
     }
+
 
 }

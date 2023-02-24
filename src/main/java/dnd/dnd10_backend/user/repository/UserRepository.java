@@ -3,6 +3,8 @@ package dnd.dnd10_backend.user.repository;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -23,4 +25,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     public List<User> findByStore(Store store);
 
     public User findByUserCode(Long userCode);
+
 }

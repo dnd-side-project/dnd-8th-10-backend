@@ -4,6 +4,7 @@ import dnd.dnd10_backend.common.domain.SingleResponse;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.service.ResponseService;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
+import dnd.dnd10_backend.user.dto.response.UserCreateResponseDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.oauth.domain.OauthToken;
 import dnd.dnd10_backend.user.service.TokenService;
@@ -60,8 +61,8 @@ public class TokenController {
         headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
 
         //response body 설정
-        UserResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+        UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
+        SingleResponse<UserCreateResponseDto> response = responseService.getResponse(userResponseDto,
                                                                 CodeStatus.SUCCESS_SOCIAL_LOGIN);
 
         return ResponseEntity.ok().headers(headers).body(response);
@@ -84,8 +85,8 @@ public class TokenController {
         headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
 
         //response body 설정
-        UserResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+        UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
+        SingleResponse<UserCreateResponseDto> response = responseService.getResponse(userResponseDto,
                                                                 CodeStatus.SUCCESS_TOKEN_REISSUED);
 
         return ResponseEntity.ok().headers(headers).body(response);

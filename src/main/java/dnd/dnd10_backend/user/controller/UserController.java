@@ -79,7 +79,7 @@ public class UserController {
                                      HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                             .replace(JwtProperties.TOKEN_PREFIX,"");
-        UserResponseDto userResponseDto = userService.saveUser(requestDto, token);
+        UserResponseDto userResponseDto = userService.updateUser(requestDto, token);
         SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
                                                                     CodeStatus.SUCCESS_UPDATED_USER);
         return ResponseEntity.ok().body(response);

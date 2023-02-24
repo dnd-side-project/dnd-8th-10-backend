@@ -83,7 +83,7 @@ public class User implements UserDetails {
     private Timestamp createTime;
 
     @ManyToOne
-    @JoinColumn(name = "store_idx", insertable = false, updatable = false)
+    @JoinColumn(name = "store_idx", insertable = false)
     private Store store;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
@@ -95,19 +95,22 @@ public class User implements UserDetails {
 
     @Builder
     public User(Long kakaoId, String kakaoNickname,
-                String kakaoEmail, String userRole) {
+                String kakaoEmail, String userRole, double wage) {
 
         this.kakaoId = kakaoId;
         this.kakaoNickname = kakaoNickname;
         this.kakaoEmail = kakaoEmail;
         this.userRole = userRole;
+        this.wage = wage;
     }
 
     @Builder(builderMethodName = "dtoBuilder")
-    public void updateUser(UserSaveRequestDto requestDto) {
+    public void updateUser(UserSaveRequestDto requestDto, Store store) {
         this.role = requestDto.getRole();
         this.phoneNumber = requestDto.getPhoneNumber();
         this.workTime = requestDto.getWorkTime();
+        this.wage = requestDto.getWage();
+        this.store = store;
     }
 
     @Override
