@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
  * [2023-02-18] 날짜 포맷으로 발생하는 에러 해결 - 원지윤
  * [2023-02-20] timeCardRepository user 사용 메서드 userCode로 변경 - 이우진
  * [2023-02-25] 수정 요청 인자 수정 - 이우진
+ * [2023-02-25] saveTimeCard workTime 값 수정 - 이우진
  */
 @Service
 @RequiredArgsConstructor
@@ -70,7 +71,7 @@ public class CalendarService {
                 .userCode(user.getUserCode())
                 .userProfileCode(user.getUserProfileCode())
                 .timeCardId(timeCard.getId())
-                .workTime(user.getWorkTime())
+                .workTime(timeCard.getWorkTime())
                 .build()
         );
     }
