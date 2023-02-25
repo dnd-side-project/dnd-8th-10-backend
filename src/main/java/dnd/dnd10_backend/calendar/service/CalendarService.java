@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +42,7 @@ import java.util.stream.Collectors;
  * [2023-02-16] 출근 시 대타일자면 체크리스트 생성하도록 변경 - 원지윤
  * [2023-02-18] 날짜 포맷으로 발생하는 에러 해결 - 원지윤
  * [2023-02-20] timeCardRepository user 사용 메서드 userCode로 변경 - 이우진
+ * [2023-02-25] 수정 요청 인자 수정 - 이우진
  */
 @Service
 @RequiredArgsConstructor
@@ -74,15 +76,27 @@ public class CalendarService {
     }
 
     @Transactional
-    public void updateTimeCard(UpdateTimeCardRequestDto requestDto, User user) {
+    public void updateTimeCard(UpdateTimeCardRequestDto requestDto) {
+
+        //TimeCardId로 찾아서 수정해도 됨
+        /*
         TimeCard timeCard = timeCardRepository.findByYearAndMonthAndDayAndUserCode(requestDto.getYear(),
                 requestDto.getMonth(),
                 requestDto.getDay(),
                         user.getUserCode())
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD));
+        */
+        TimeCard timeCard = timeCardRepository.findById(requestDto.getTimeCardId())
+                .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD));
 
         timeCard.update(requestDto.getWorkTime(), requestDto.getWorkHour());
         timeCardRepository.save(timeCard);
+
+        UserTimeCard userTimeCard = userTimeCardRepository.findByTimeCardId(requestDto.getTimeCardId())
+                        .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD));
+
+        userTimeCard.update(requestDto.getWorkTime());
+        userTimeCardRepository.save(userTimeCard);
     }
 
     @Transactional
@@ -103,13 +117,14 @@ public class CalendarService {
                 timeCardRepository.findByYearAndMonthAndDayAndStoreName(year, month, day, storeName);
 
         // 이 부분 이쁘게 리팩토링 하고 싶다.
-        List<UserTimeCard> userTimeCards = null;
+        List<UserTimeCard> userTimeCards = new ArrayList<>();
+
         for(TimeCard timeCard : timeCards) {
             userTimeCards.add(userTimeCardRepository.findByTimeCardId(timeCard.getId()).orElseThrow(IllegalArgumentException::new));
         }
 
         List<TimeCardResponseDto> collect = userTimeCards.stream()
-                .map(u -> new TimeCardResponseDto(u.getUserName(), u.getWorkTime(), u.getUserProfileCode()))
+                .map(u -> new TimeCardResponseDto(u.getTimeCardId(), u.getUserName(), u.getWorkTime(), u.getUserProfileCode()))
                 .collect(Collectors.toList());
 
         return collect;

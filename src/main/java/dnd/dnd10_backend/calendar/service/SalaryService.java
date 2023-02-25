@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
  * [2023-02-12] 직원페이지 급여 조회 기능 개발 - 이우진
  * [2023-02-13] 점장 급여 조회 기능, 상세 조회 기능 개발 - 이우진
  * [2023-02-20] timeCardRepository user 사용 메서드 userCode로 변경 - 이우진
+ * [2023-02-25] 시급 값 변경 - 이우진
  */
 
 @Service
@@ -41,7 +42,7 @@ public class SalaryService {
     public List<SalaryResponseDto> getWorkerSalary(String year, String month, User user) {
         List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUserCode(year, month, user.getUserCode());
         List<SalaryResponseDto> collect = timeCards.stream()
-                .map(t -> new SalaryResponseDto(t.getMonth(), t.getDay(), t.getWorkTime(), t.getWorkHour(), t.getWorkHour()*9620))
+                .map(t -> new SalaryResponseDto(t.getMonth(), t.getDay(), t.getWorkTime(), t.getWorkHour(), t.getWorkHour()*user.getWage()))
                 .collect(Collectors.toList());
 
         return collect;
@@ -54,10 +55,11 @@ public class SalaryService {
         for (User user : member) {
             List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUserCode(year, month, user.getUserCode());
             Double sum = timeCards.stream().mapToDouble(TimeCard::getWorkHour).sum();
-            Double salary = sum * 9620;
+            Double salary = sum * user.getWage();
             StoreSalaryResponseDto responseDto = StoreSalaryResponseDto.builder()
                     .userCode(user.getUserCode())
                     .userName(user.getUsername())
+                    .role(user.getRole())
                     .userProfileCode(user.getUserProfileCode())
                     .totalSalary(salary)
                     .build();
@@ -70,7 +72,7 @@ public class SalaryService {
     public SalaryDetailResponseDto getSalaryDetail(String year, String month, User user) {
         List<TimeCard> timeCards = timeCardRepository.findByYearAndMonthAndUserCode(year, month, user.getUserCode());
         List<SalaryResponseDto> collect = timeCards.stream()
-                .map(t -> new SalaryResponseDto(t.getMonth(), t.getDay(), t.getWorkTime(), t.getWorkHour(), t.getWorkHour()*9620))
+                .map(t -> new SalaryResponseDto(t.getMonth(), t.getDay(), t.getWorkTime(), t.getWorkHour(), t.getWorkHour()*user.getWage()))
                 .collect(Collectors.toList());
 
         Double totalSalary = collect.stream().mapToDouble(SalaryResponseDto::getWorkHour).sum();

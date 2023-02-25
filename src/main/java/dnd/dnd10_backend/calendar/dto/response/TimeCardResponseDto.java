@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 응답 dto 구현 - 이우진
  * [2023-02-11] 유저 프로필 코드 추가 - 이우진
+ * [2023-02-25] timecard id 값 추가 - 이우진
  */
 
 
@@ -25,6 +26,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Builder
 public class TimeCardResponseDto {
+
+    private Long timeCardId;
 
     private String name;
 
