@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-08] 수정 요청 dto 구현 - 이우진
+ * [2023-02-25] timeCard id 값 추가 - 이우진
  */
 
 
@@ -22,6 +23,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class UpdateTimeCardRequestDto {
+
+    private Long timeCardId;
 
     private String year;
 

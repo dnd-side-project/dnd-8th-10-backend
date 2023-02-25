@@ -1,5 +1,6 @@
 package dnd.dnd10_backend.calendar.dto.response;
 
+import dnd.dnd10_backend.user.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-13] 점장용 직원 급여 조회 응답 dto - 이우진
+ * [2023-02-25] role 값 추가 - 이우진
  */
 
 
@@ -28,6 +30,8 @@ public class StoreSalaryResponseDto {
     private Long userCode;
 
     private String userName;
+
+    private Role role;
 
     private int userProfileCode;
 

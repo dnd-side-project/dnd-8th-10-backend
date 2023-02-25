@@ -35,6 +35,7 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-08] TimeCard 수정, 삭제, 조회 기능 구현 - 이우진
  * [2023-02-10] 근무시간 subString 수정 - 이우진
  * [2023-02-11] 근무시간 변수명 수정, api 요청 변경 - 이우진
+ * [2023-02-25] 수정 API 수정 - 이우진
  */
 
 @RestController
@@ -73,12 +74,12 @@ public class CalendarController {
     @PutMapping("/calendar")
     public void updateTimeCard(HttpServletRequest request,
                                @RequestBody UpdateTimeCardRequestDto requestDto) {
-        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
-                .replace(JwtProperties.TOKEN_PREFIX,"");
+//        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+//                .replace(JwtProperties.TOKEN_PREFIX,"");
+//
+//        User user = userService.getUserByEmail(token);
 
-        User user = userService.getUserByEmail(token);
-
-        calendarService.updateTimeCard(requestDto, user);
+        calendarService.updateTimeCard(requestDto);
     }
 
     //삭제 요청 API

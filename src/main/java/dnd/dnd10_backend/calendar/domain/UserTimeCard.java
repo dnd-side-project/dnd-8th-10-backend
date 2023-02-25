@@ -19,6 +19,7 @@ import javax.persistence.*;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-20] UserTimeCard Entity 정의 - 이우진
+ * [2023-02-25] 수정 메서드 추가 - 이우진
  */
 
 @Entity
@@ -41,4 +42,8 @@ public class UserTimeCard {
     private Long timeCardId;
 
     private String workTime;
+
+    public void update(String workTime) {
+        this.workTime = workTime;
+    }
 }
