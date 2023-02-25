@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.board.domain;
 
 import com.sun.istack.NotNull;
+import dnd.dnd10_backend.common.domain.BaseTimeEntity;
 import dnd.dnd10_backend.user.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,7 +31,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,21 +52,14 @@ public class Post {
 
     private String category;
 
+    /*작성자 정보*/
     private Long userCode;
 
     private String userName;
 
     private Role role;
 
-    //BaseTimeEntity로 만들어서 상속받아서 사용할지 고민
-//    @CreatedDate
-//    @Column(updatable = false)
-//    private LocalDateTime createDate;
-//
-//    @LastModifiedDate
-//    private LocalDateTime modifiedDate;
-
-    //이미지 첨부 기능 추가
+    //*****이미지 첨부 기능 추가 필요******
 
     public Post updateView(int viewCount) {
         this.viewCount = viewCount + 1;
