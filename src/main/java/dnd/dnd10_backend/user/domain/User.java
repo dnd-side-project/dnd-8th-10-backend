@@ -1,6 +1,5 @@
 package dnd.dnd10_backend.user.domain;
 
-import dnd.dnd10_backend.auth.domain.Token;
 import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.checkList.domain.CheckList;
 import dnd.dnd10_backend.store.domain.Store;
@@ -38,7 +37,6 @@ import java.util.List;
  * [2023-02-11] workPlace 삭제
  * [2023-02-20] 체크리스트에 대한 연관 관계 추가 - 원지윤
  * [2023-02-20] timecard 연관 관계 삭제 - 이우진
- * [2023-02-24] 토큰 연관관계 추가 - 원지윤
  */
 @Entity
 @Data
@@ -72,9 +70,6 @@ public class User implements UserDetails {
     @Column(name = "work_time")
     private String workTime;
 
-    @Column(name = "wage")
-    private double wage;
-
     @Column(name = "user_role")
     private String userRole;
 
@@ -83,25 +78,20 @@ public class User implements UserDetails {
     private Timestamp createTime;
 
     @ManyToOne
-    @JoinColumn(name = "store_idx", insertable = false)
+    @JoinColumn(name = "store_idx", insertable = false, updatable = false)
     private Store store;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<CheckList> CheckList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "id")
-    private Token token;
-
     @Builder
     public User(Long kakaoId, String kakaoNickname,
-                String kakaoEmail, String userRole, double wage) {
+                String kakaoEmail, String userRole) {
 
         this.kakaoId = kakaoId;
         this.kakaoNickname = kakaoNickname;
         this.kakaoEmail = kakaoEmail;
         this.userRole = userRole;
-        this.wage = wage;
     }
 
     @Builder(builderMethodName = "dtoBuilder")
@@ -109,7 +99,6 @@ public class User implements UserDetails {
         this.role = requestDto.getRole();
         this.phoneNumber = requestDto.getPhoneNumber();
         this.workTime = requestDto.getWorkTime();
-        this.wage = requestDto.getWage();
         this.store = store;
     }
 
