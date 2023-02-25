@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -60,7 +61,7 @@ public class DefaultCheckListService {
         }
         return;
     }
-
+    
     /**
      * 일주일 지난 기록들을 삭제하는 메소드
      */
@@ -75,6 +76,38 @@ public class DefaultCheckListService {
         return;
     }
 
+    /**
+     * 현재 날자 기준으로 사용자의 업무일자에 기본 시재를 저장해주는 함수
+     * @param user
+     */
+    public void saveFirstDefaultCheckList(User user){
+        LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul")); // 현재시간
+        DayOfWeek dayOfWeek = now.getDayOfWeek();
+        int dayOfWeekNumber = dayOfWeek.getValue(); //월 - 1 일 - 7
+
+        LocalDate startDay = now;
+        if(dayOfWeekNumber < 7)
+            startDay = now.minusDays(dayOfWeekNumber);
+        
+        String[] workDayList = user.getWorkTime().split(",");
+        for(String workDay: workDayList){
+            String day = workDay.substring(0,1);
+            int saveDay = 0;
+            switch (day){
+                case "월" : saveDay = 1; break;
+                case "화" : saveDay = 2; break;
+                case "수" : saveDay = 3; break;
+                case "목" : saveDay = 4; break;
+                case "금" : saveDay = 5; break;
+                case "토" : saveDay = 6; break;
+                case "일": break;
+            }
+            saveDefaultCheckList(startDay.plusDays(saveDay), user);
+        }
+        
+        return;
+    }
+    
     /**
      * 기본 체크리스트를 생성해주는 메소드
      * @param date checkList를 등록할 날짜

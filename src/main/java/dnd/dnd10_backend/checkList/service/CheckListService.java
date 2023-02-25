@@ -200,7 +200,10 @@ public class CheckListService {
         DayOfWeek dayOfWeek = now.getDayOfWeek();
         int dayOfWeekNumber = dayOfWeek.getValue(); //월 - 1 일 - 7
 
-        LocalDate startDay = now.minusDays(dayOfWeekNumber);
+        LocalDate startDay = now;
+
+        if(dayOfWeekNumber < 7)
+            startDay = now.minusDays(dayOfWeekNumber);
 
         for(int i=0;i<7;i++){
             List<CheckList> list = checkListRepository
