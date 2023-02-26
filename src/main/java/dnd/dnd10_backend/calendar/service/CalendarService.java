@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
  * [2023-02-20] timeCardRepository user 사용 메서드 userCode로 변경 - 이우진
  * [2023-02-25] 수정 요청 인자 수정 - 이우진
  * [2023-02-25] saveTimeCard workTime 값 수정 - 이우진
+ * [2023-02-26] 삭제 요청 인자 수정 - 이우진
  */
 @Service
 @RequiredArgsConstructor
@@ -101,12 +102,12 @@ public class CalendarService {
     }
 
     @Transactional
-    public void deleteTimeCard(String year, String month, String day, User user) {
+    public void deleteTimeCard(Long timeCardId) {
 
-        TimeCard timeCard = timeCardRepository.findByYearAndMonthAndDayAndUserCode(year, month, day, user.getUserCode())
+        TimeCard timeCard = timeCardRepository.findById(timeCardId)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD));
 
-        UserTimeCard userTimeCard = userTimeCardRepository.findByTimeCardId(timeCard.getId())
+        UserTimeCard userTimeCard = userTimeCardRepository.findByTimeCardId(timeCardId)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_TIMECARD));
         timeCardRepository.delete(timeCard);
         userTimeCardRepository.delete(userTimeCard);
