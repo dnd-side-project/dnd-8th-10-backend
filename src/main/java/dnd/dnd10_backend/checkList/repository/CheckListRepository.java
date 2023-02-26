@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 public interface CheckListRepository extends JpaRepository<CheckList, Long> {
     @Query(value = "select * from (select * from check_list c1 where c1.user_code = :user and c1.check_date = :date and c1.status = 'N' order by c1.check_idx DESC LIMIT 1000000) as A " + "UNION ALL "
-            +"select * from ( select * from check_list c2 where c2.user_code = :user and c2.check_date = :date and c2.status = 'Y' order by c2.modified_time ASC LIMIT 1000000) as B", nativeQuery=true)
+            +"select * from ( select * from check_list c2 where c2.user_code = :user and c2.check_date = :date and c2.status = 'Y' order by c2.checked_time ASC LIMIT 1000000) as B", nativeQuery=true)
     List<CheckList> findCheckListByDateAndUser(@Param("date")LocalDate date, @Param("user") User user);
 
     @Override

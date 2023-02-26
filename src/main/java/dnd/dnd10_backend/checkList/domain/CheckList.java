@@ -2,13 +2,16 @@ package dnd.dnd10_backend.checkList.domain;
 
 import dnd.dnd10_backend.checkList.dto.request.CheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.request.UpdateCheckListRequestDto;
+import dnd.dnd10_backend.common.domain.BaseTimeEntity;
 import dnd.dnd10_backend.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -32,6 +35,7 @@ import java.util.Date;
 @Entity
 @Data
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class) // 추가
 @Table(name = "check_list")
 public class CheckList {
     @Id
@@ -49,18 +53,16 @@ public class CheckList {
     @ColumnDefault("N")
     private String status;
 
-    @Column(name = "create_time",nullable = false,updatable = false)
-    @CreationTimestamp
-    private Timestamp createTime;
-
-    @Column(name = "modified_time",nullable = false)
-    @LastModifiedDate
-    private LocalDateTime modifiedTime;
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_code")
     private User user;
+
+    @CreatedDate
+    @Column(name = "create_time", updatable = false)
+    private LocalDateTime createTime;
+
+    @Column(name = "checked_time")
+    private LocalDateTime checkedTime;
 
     @Builder
     public CheckList(LocalDate date, String content, String status, User user) {
@@ -68,7 +70,7 @@ public class CheckList {
         this.content = content;
         this.status = status;
         this.user = user;
-        this.modifiedTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
+        this.checkedTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     public CheckList(CheckListRequestDto requestDto, User user) {
@@ -76,7 +78,6 @@ public class CheckList {
         this.content = requestDto.getContent();
         this.status = requestDto.getStatus();
         this.user = user;
-        this.modifiedTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     public void update(UpdateCheckListRequestDto requestDto){
