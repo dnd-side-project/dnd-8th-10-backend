@@ -141,11 +141,16 @@ public class CheckListService {
         CheckList checkList = checkListRepository.findById(requestDto.getCheckIdx())
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_CHECKLIST));
 
-        if(!checkList.getUser().equals(user))
+        if(!checkList.getUser().equals(user)) {
             throw new CustomerNotFoundException(CodeStatus.UNAUTHORIZED_UPDATED_USER);
+        }
+
+        if(requestDto.getStatus().equals("Y") && checkList.getStatus().equals("N")) {
+            checkList.setCheckedTime(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+        }
+
         //체크리스트 내용 업데이트
         checkList.update(requestDto);
-        
         //업데이트 내용 저장
         checkListRepository.save(checkList);
 
