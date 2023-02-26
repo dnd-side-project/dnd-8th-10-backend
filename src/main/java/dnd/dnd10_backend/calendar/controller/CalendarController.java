@@ -36,6 +36,7 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-10] 근무시간 subString 수정 - 이우진
  * [2023-02-11] 근무시간 변수명 수정, api 요청 변경 - 이우진
  * [2023-02-25] 수정 API 수정 - 이우진
+ * [2023-02-25] 삭제 API 인자 변경 - 이우진
  */
 
 @RestController
@@ -85,15 +86,13 @@ public class CalendarController {
     //삭제 요청 API
     @DeleteMapping("/calendar")
     public void deleteTimeCard(HttpServletRequest request,
-                               @RequestParam String year,
-                               @RequestParam String month,
-                               @RequestParam String day) {
+                               @RequestParam Long timeCardId) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         User user = userService.getUserByEmail(token);
 
-        calendarService.deleteTimeCard(year, month, day, user);
+        calendarService.deleteTimeCard(timeCardId);
     }
 
     //오늘 날짜를 누른 경우
