@@ -85,7 +85,7 @@ public class InventoryController {
     }
 
     /**
-     *
+     * 시재 업데이트 api
      * @param requestDto
      * @param request
      * @return
@@ -104,6 +104,12 @@ public class InventoryController {
         return ResponseEntity.ok().body(response);
     }
 
+    /**
+     * 시재 업데이트 기록 조회 api
+     * @param category 시재의 종류
+     * @param request
+     * @return
+     */
     @GetMapping("/inventory/record")
     public ResponseEntity getInventoryRecord(@RequestParam(value = "category", required = false)Category category,
                                               HttpServletRequest request){
@@ -112,6 +118,24 @@ public class InventoryController {
         List<InventoryRecordListResponseDto> responseDtoList = recordService.findInventoryUpdateRecords(category, token);
         SingleResponse<List<InventoryRecordListResponseDto>> response = responseService.getResponse(responseDtoList,
                 CodeStatus.SUCCESS_SEARCHED_INVENTORY);
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 시재 삭제 api
+     * @param inventoryIdx 삭제하려는 시재의 idx
+     * @param request
+     * @return
+     */
+    @DeleteMapping("/inventory")
+    public ResponseEntity deleteInventory(@RequestParam Long inventoryIdx,
+                                          HttpServletRequest request){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+        inventoryService.deleteInventory(inventoryIdx, token);
+
+        SingleResponse<String> response = responseService.getResponse("",CodeStatus.SUCCESS_DELETED_INVENTORY);
+
         return ResponseEntity.ok().body(response);
     }
 
