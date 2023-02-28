@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.board.controller;
 
 import dnd.dnd10_backend.board.dto.request.PostCreateDto;
+import dnd.dnd10_backend.board.dto.request.PostUpdateDto;
 import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
 import dnd.dnd10_backend.board.dto.response.PostResponseDto;
 import dnd.dnd10_backend.board.service.BoardService;
@@ -30,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-28] 게시글 작성, 삭제, 조회 기능 개발 - 이우진
- * [2023-03-01] 게시글 체크 기능 개발 - 이우진
+ * [2023-03-01] 게시글 체크, 수정 기능 개발 - 이우진
  */
 
 @RestController
@@ -98,6 +99,17 @@ public class BoardController {
     }
 
     //게시글 수정
+    @PutMapping("board/{postId}")
+    public ResponseEntity update(@PathVariable Long postId,
+                                 @RequestBody PostUpdateDto dto) {
+        boardService.update(postId, dto);
+
+        PostResponseDto responseDto = boardService.get(postId);
+        SingleResponse<PostResponseDto> singleResponse =
+                responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POST);
+
+        return ResponseEntity.ok().body(singleResponse);
+    }
 
     //게시글 체크
     @PostMapping("board/{postId}/check")

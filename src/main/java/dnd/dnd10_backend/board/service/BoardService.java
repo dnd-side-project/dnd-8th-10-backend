@@ -3,6 +3,7 @@ package dnd.dnd10_backend.board.service;
 import dnd.dnd10_backend.board.domain.Post;
 import dnd.dnd10_backend.board.domain.PostCheck;
 import dnd.dnd10_backend.board.dto.request.PostCreateDto;
+import dnd.dnd10_backend.board.dto.request.PostUpdateDto;
 import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
 import dnd.dnd10_backend.board.dto.response.CommentResponseDto;
 import dnd.dnd10_backend.board.dto.response.PostResponseDto;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-28] 게시글 작성, 조회, 삭제 개발 - 이우진
- * [2023-03-01] 게시글 체크 기능 개발 - 이우진
+ * [2023-03-01] 게시글 체크, 수정 기능 개발 - 이우진
  */
 
 @Service
@@ -41,6 +42,14 @@ public class BoardService {
     @Transactional
     public void write(PostCreateDto postCreateDto, User user) {
         postRepository.save(postCreateDto.toEntity(user));
+    }
+
+    @Transactional
+    public void update(Long postId, PostUpdateDto dto) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+
+        post.update(dto.getTitle(), dto.getContent(), dto.getCategory());
+        postRepository.save(post);
     }
 
     @Transactional
