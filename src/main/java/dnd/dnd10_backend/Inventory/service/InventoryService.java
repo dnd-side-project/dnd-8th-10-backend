@@ -154,6 +154,18 @@ public class InventoryService {
     }
 
     /**
+     * 시재를 삭제하는 메소드
+     * @param inventoryIdx 삭제하려는 시재의 idx
+     * @param token access token
+     */
+    public void deleteInventory(Long inventoryIdx, final String token){
+        User user = userService.getUserByEmail(token);
+        Inventory inventory = inventoryRepository.findById(inventoryIdx)
+                .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_INVENTORY));
+        inventoryRepository.delete(inventory);
+    }
+
+    /**
      * List<Inventory>를  List<InventoryResponseDto> 변환시켜주는 메소드
      * @param inventoryList 변환시키려는 List<Inventory>
      * @return
@@ -166,6 +178,12 @@ public class InventoryService {
         return responseList;
     }
 
+    /**
+     * 현재 시간에 근무기록이 존재하는지 확인하는 메소드
+     * @param user 사용자
+     * @param store 현재 일하고 있는 편의점
+     * @return
+     */
     public TimeCard findTimeCard(User user, Store store){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 현재시간
