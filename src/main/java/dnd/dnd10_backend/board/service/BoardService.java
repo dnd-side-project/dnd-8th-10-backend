@@ -1,9 +1,12 @@
 package dnd.dnd10_backend.board.service;
 
 import dnd.dnd10_backend.board.domain.Post;
+import dnd.dnd10_backend.board.domain.PostCheck;
 import dnd.dnd10_backend.board.dto.request.PostCreateDto;
+import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
 import dnd.dnd10_backend.board.dto.response.CommentResponseDto;
 import dnd.dnd10_backend.board.dto.response.PostResponseDto;
+import dnd.dnd10_backend.board.repository.PostCheckRepository;
 import dnd.dnd10_backend.board.repository.PostRepository;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
@@ -32,6 +35,7 @@ import java.util.stream.Collectors;
 public class BoardService {
 
     private final PostRepository postRepository;
+    private final PostCheckRepository postCheckRepository;
 
     @Transactional
     public void write(PostCreateDto postCreateDto, User user) {
@@ -68,5 +72,43 @@ public class BoardService {
                 .modifiedDate(post.getModifiedDate())
                 .comments(post.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList()))
                 .build();
+    }
+
+    //게시글 체크
+    public boolean findCheck(Long postId, User user) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+
+        return postCheckRepository.existsByPostAndUser(post, user);
+    }
+
+    @Transactional
+    public CheckResponseDto checkPost(Long postId, User user) {
+        //체크를 누르지 않은 상태의 경우
+        if(!findCheck(postId, user)) {
+            Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+            post.plusCheck(post.getCheckCount());
+            postRepository.save(post);
+            PostCheck postCheck = PostCheck.builder()
+                    .post(post)
+                    .user(user)
+                    .build();
+            postCheckRepository.save(postCheck);
+
+            return CheckResponseDto.builder()
+                    .checkCount(post.getCheckCount())
+                    .status(true)
+                    .build();
+        } else {
+            //이미 체크 버튼을 눌렀었던 경우
+            Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+            postCheckRepository.deleteByPostAndUser(post, user);
+            post.minusCheck(post.getCheckCount());
+            postRepository.save(post);
+
+            return CheckResponseDto.builder()
+                    .checkCount(post.getCheckCount()) // 값이 반영되는지 확인해야함
+                    .status(false)
+                    .build();
+        }
     }
 }

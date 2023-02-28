@@ -30,6 +30,7 @@ public enum CodeStatus {
     SUCCESS_UPDATED_USER(201, "사용자 정보 수정에 성공하였습니다."),
     SUCCESS_UPDATED_POST(201, "게시글 수정에 성공하였습니다."),
     SUCCESS_UPDATED_COMMENT(201, "댓글 수정에 성공하였습니다."),
+    SUCCESS_UPDATED_POSTCHECK(201, "게시글 체크 수정에 성공하였습니다"),
     SUCCESS_CREATED_USER(201, "사용자 등록에 성공하였습니다."),
     SUCCESS_DELETED_USER(200, "사용자 삭제에 성공하였습니다."),
     SUCCESS_DELETE_POST(200, "게시글 삭제에 성공하였습니다."),

@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.board.controller;
 
 import dnd.dnd10_backend.board.dto.request.PostCreateDto;
+import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
 import dnd.dnd10_backend.board.dto.response.PostResponseDto;
 import dnd.dnd10_backend.board.service.BoardService;
 import dnd.dnd10_backend.calendar.dto.response.TimeCardResponseDto;
@@ -53,8 +54,7 @@ public class BoardController {
     }
 
     @DeleteMapping("/board/post/{postId}")
-    public ResponseEntity delete(HttpServletRequest request,
-                                 @PathVariable Long postId) {
+    public ResponseEntity delete(@PathVariable Long postId) {
         boardService.delete(postId);
         return ResponseEntity.ok(postId);
     }
@@ -99,6 +99,20 @@ public class BoardController {
     //게시글 수정
 
     //게시글 체크
+    @PostMapping("board/{postId}/check")
+    public ResponseEntity check(HttpServletRequest request,
+                                @PathVariable Long postId) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
+        CheckResponseDto responseDto = boardService.checkPost(postId, user);
+        SingleResponse<CheckResponseDto> singleResponse =
+                responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POSTCHECK);
+
+        return ResponseEntity.ok().body(singleResponse);
+    }
 
     //게시판 홈화면 조회
 
