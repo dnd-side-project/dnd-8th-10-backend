@@ -8,6 +8,19 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+/**
+ * 패키지명 dnd.dnd10_backend.board.domain
+ * 클래스명 PostCheck
+ * 클래스설명
+ * 작성일 2023-03-01
+ *
+ * @author 이우진
+ * @version 1.0
+ * [수정내용]
+ * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-21] 게시글 체크 엔티티 개발 - 이우진
+ */
+
 @Entity
 @Getter
 @NoArgsConstructor

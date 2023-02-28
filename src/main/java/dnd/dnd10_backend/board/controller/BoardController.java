@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-28] 게시글 작성, 삭제, 조회 기능 개발 - 이우진
+ * [2023-03-01] 게시글 체크 기능 개발 - 이우진
  */
 
 @RestController
