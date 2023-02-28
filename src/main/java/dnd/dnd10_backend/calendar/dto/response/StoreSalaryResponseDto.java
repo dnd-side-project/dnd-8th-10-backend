@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-13] 점장용 직원 급여 조회 응답 dto - 이우진
  * [2023-02-25] role 값 추가 - 이우진
+ * [2023-03-01] 시급 값 리턴 추가 - 이우진
  */
 
 
@@ -36,4 +37,6 @@ public class StoreSalaryResponseDto {
     private int userProfileCode;
 
     private Double totalSalary;
+
+    private Double wage;
 }

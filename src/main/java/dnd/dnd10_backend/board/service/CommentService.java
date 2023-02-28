@@ -15,7 +15,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+/**
+ * 패키지명 dnd.dnd10_backend.board.service
+ * 클래스명 CommentService
+ * 클래스설명
+ * 작성일 2023-02-28
+ *
+ * @author 이우진
+ * @version 1.0
+ * [수정내용]
+ * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-02-28] 댓글 작성, 수정, 삭제 개발 - 이우진
+ */
 
 @Service
 @RequiredArgsConstructor
