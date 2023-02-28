@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
  * [2023-02-13] 점장 급여 조회 기능, 상세 조회 기능 개발 - 이우진
  * [2023-02-20] timeCardRepository user 사용 메서드 userCode로 변경 - 이우진
  * [2023-02-25] 시급 값 변경 - 이우진
+ * [2023-03-01] 시급 값 리턴 추가 - 이우진
  */
 
 @Service
@@ -62,6 +63,7 @@ public class SalaryService {
                     .role(user.getRole())
                     .userProfileCode(user.getUserProfileCode())
                     .totalSalary(salary)
+                    .wage(user.getWage())
                     .build();
 
             dtos.add(responseDto);
@@ -84,6 +86,7 @@ public class SalaryService {
                 .workTime(user.getWorkTime())
                 .totalSalary(totalSalary)
                 .daySalary(collect)
+                .wage(user.getWage())
                 .build();
     }
 }

@@ -26,11 +26,19 @@ public enum CodeStatus {
 
     SUCCESS_SEARCHED_TIMECARD(200, "근무 내역 조회에 성공하였습니다."),
     SUCCESS_SEARCHED_WORKDAY(200, "근무 일자 조회에 성공하였습니다."),
-    SUCCESS_SEARCHED_SALARY(200, "급여 조회에 성공하였습니다"),
+    SUCCESS_SEARCHED_SALARY(200, "급여 조회에 성공하였습니다."),
+    SUCCESS_SEARCHED_POST(200, "게시글 조회에 성공하였습니다."),
 
     SUCCESS_UPDATED_USER(201, "사용자 정보 수정에 성공하였습니다."),
+    SUCCESS_UPDATED_POST(201, "게시글 수정에 성공하였습니다."),
+    SUCCESS_UPDATED_COMMENT(201, "댓글 수정에 성공하였습니다."),
+    SUCCESS_UPDATED_POSTCHECK(201, "게시글 체크 수정에 성공하였습니다"),
     SUCCESS_CREATED_USER(201, "사용자 등록에 성공하였습니다."),
     SUCCESS_DELETED_USER(200, "사용자 삭제에 성공하였습니다."),
+    SUCCESS_DELETE_POST(200, "게시글 삭제에 성공하였습니다."),
+    SUCCESS_DELETE_COMMENT(200, "댓글 삭제에 성공하였습니다."),
+    SUCCESS_CREATED_POST(201, "게시글 등록에 성공하였습니다."),
+    SUCCESS_CREATED_COMMENT(201, "댓글 등록에 성공하였습니다."),
 
     SUCCESS_SEARCHED_CHECKLIST(200, "체크리스트 조회에 성공하였습니다."),
     SUCCESS_UPDATED_CHECKLIST(200, "체크리스트 수정에 성공하였습니다."),
@@ -50,7 +58,10 @@ public enum CodeStatus {
     NOT_FOUND_USER(404,"찾을 수 없는 사용자입니다."),
     NOT_FOUND_TIMECARD(404,"찾을 수 없는 근무이력입니다."),
     NOT_FOUND_CHECKLIST(404,"찾을 수 없는 체크리스트입니다."),
+    NOT_FOUND_POST(404, "찾을 수 없는 게시글입니다."),
+    NOT_FOUND_COMMENT(404, "찾을 수 없는 댓글입니다."),
     NOT_FOUND_INVENTORY(404,"찾을 수 없는 시재입니다."),
+
     UNAUTHORIZED_DELETED_USER(401,"삭제 가능한 사용자가 아닙니다."),
     UNAUTHORIZED_UPDATED_USER(401,"업데이트 가능한 사용자가 아닙니다."),
     ALREADY_CREATED_INVENTORY(400, "이미 존재하는 담배입니다.");
