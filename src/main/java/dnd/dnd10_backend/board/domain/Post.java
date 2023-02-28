@@ -12,6 +12,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * 패키지명 dnd.dnd10_backend.board.domain
@@ -60,6 +61,10 @@ public class Post extends BaseTimeEntity {
     private Role role;
 
     //*****이미지 첨부 기능 추가 필요******
+
+    @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
+    @OrderBy("id asc")
+    private List<Comment> comments; //댓글
 
     public Post updateView(int viewCount) {
         this.viewCount = viewCount + 1;
