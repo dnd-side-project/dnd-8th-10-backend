@@ -4,9 +4,12 @@ import dnd.dnd10_backend.Inventory.domain.InventoryUpdateRecord;
 import dnd.dnd10_backend.Inventory.domain.enums.Category;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryRecordListResponseDto;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryRecordResponseDto;
+import dnd.dnd10_backend.Inventory.dto.response.InventoryRecordTodayResponseDto;
 import dnd.dnd10_backend.Inventory.repository.InventoryUpdateRecordRepository;
 import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.calendar.repository.TimeCardRepository;
+import dnd.dnd10_backend.common.domain.enums.CodeStatus;
+import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.service.UserService;
@@ -41,6 +44,7 @@ import java.util.List;
 public class InventoryRecordService {
 
     private final InventoryUpdateRecordRepository recordRepository;
+    private final TimeCardRepository timeCardRepository;
     private final UserService userService;
 
     /**
@@ -93,6 +97,38 @@ public class InventoryRecordService {
             List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCardAndCategory(i.getTimeCard(), category);
             responseDtoList.add(InventoryRecordListResponseDto.of(i.getUserName(),
                     i.getUserProfileCode(),i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
+        }
+        return responseDtoList;
+    }
+
+    public List<InventoryRecordTodayResponseDto> findInventoryUpdateRecordToday(final String token) {
+        User user = userService.getUserByEmail(token);
+        Store store = user.getStore();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 현재시간
+        List<TimeCard> list = timeCardRepository.findByStoreName(store.getStoreName());
+        List<InventoryRecordTodayResponseDto> responseDtoList = new ArrayList<>();
+
+        for (TimeCard t : list) {
+            String[] time = t.getWorkTime().split("~");
+
+            String month = t.getMonth().length() < 2 ? "0" + t.getMonth() : t.getMonth();
+            String day = t.getDay().length() < 2 ? "0" + t.getDay() : t.getDay();
+            String[] HM1 = time[0].split(":");
+            String[] HM2 = time[1].split(":");
+            LocalDateTime startTime = LocalDateTime.parse(t.getYear() + "-" + month + "-" + day + " " + HM1[0] + ":" + HM1[1] + ":00", formatter);
+            LocalDateTime endTime = LocalDateTime.parse(t.getYear() + "-" + month + "-" + day + " " + HM2[0] + ":" + HM2[1] + ":00", formatter);
+
+            if ((now.minusHours(24).isAfter(startTime) && now.minusHours(24).isAfter(endTime)) || startTime.isEqual(now) || endTime.isEqual(now)) {
+                List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCard(t);
+                if(recordList.size() < 1) continue;
+                String inventorySummumation = recordList.size() < 2 ? recordList.get(0).getInventoryName() : recordList.get(0).getInventoryName() + " 외 " + String.valueOf(recordList.size()-1);
+                responseDtoList.add(InventoryRecordTodayResponseDto.of(
+                        recordList.get(0),
+                        inventorySummumation
+                ));
+            }
+
         }
         return responseDtoList;
     }
