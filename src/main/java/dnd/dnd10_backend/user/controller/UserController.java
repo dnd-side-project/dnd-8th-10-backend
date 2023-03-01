@@ -126,13 +126,15 @@ public class UserController {
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         tokenService.deleteRefreshToken(token, refreshToken);
+
+        userService.getLogout((String)session.getAttribute("oauthToken"));
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if(auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
 
         //카카오 세션 로그아웃웃
-        userService.getLogout((String)session.getAttribute("oauthToken"));
         SingleResponse singleResponse = responseService.getResponse("",CodeStatus.SUCCESS);
         return ResponseEntity.ok().body(singleResponse);
     }

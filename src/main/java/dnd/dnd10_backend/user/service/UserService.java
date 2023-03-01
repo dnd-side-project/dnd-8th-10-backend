@@ -184,7 +184,7 @@ public class UserService {
             System.out.println("responseCode : " + responseCode);
 
             if(responseCode ==400)
-                throw new RuntimeException("카카오 로그아웃 도중 오류 발생");
+                throw new CustomerNotFoundException("카카오 로그아웃 도중 오류 발생");
 
 
             BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
