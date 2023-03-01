@@ -32,8 +32,8 @@ public class Token {
     @Column(length = 300)
     private String refreshToken;
 
-    @OneToOne
-    @JoinColumn(name = "user_code")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_code")
     private User user;
 
     @Builder

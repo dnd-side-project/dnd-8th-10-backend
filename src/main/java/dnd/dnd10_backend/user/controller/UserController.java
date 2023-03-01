@@ -6,12 +6,20 @@ import dnd.dnd10_backend.common.service.ResponseService;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
+import dnd.dnd10_backend.user.service.TokenService;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * 패키지명 dnd.dnd10_backend.user.controller
@@ -37,6 +45,7 @@ public class UserController {
 
     private final UserService userService;
     private final ResponseService responseService;
+    private final TokenService tokenService;
 
     /**
      * 사용자 정보 조회 api
@@ -97,5 +106,34 @@ public class UserController {
         userService.deleteUser(token);
         SingleResponse<String> response = responseService.getResponse("",CodeStatus.SUCCESS_DELETED_USER);
         return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 로그아웃 api
+     * @param request
+     * @param response
+     * @param session
+     * @return
+     */
+    @GetMapping("/user/logout")
+    public ResponseEntity logout(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 HttpSession session){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        String refreshToken = request.getHeader(JwtProperties.RT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        tokenService.deleteRefreshToken(token, refreshToken);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if(auth != null){
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+
+        //카카오 세션 로그아웃웃
+        userService.getLogout((String)session.getAttribute("oauthToken"));
+        SingleResponse singleResponse = responseService.getResponse("",CodeStatus.SUCCESS);
+        return ResponseEntity.ok().body(singleResponse);
     }
 }
