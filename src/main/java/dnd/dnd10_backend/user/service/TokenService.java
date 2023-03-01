@@ -6,8 +6,6 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dnd.dnd10_backend.auth.domain.Token;
-import dnd.dnd10_backend.auth.repository.TokenRepository;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
@@ -53,7 +51,6 @@ import static com.auth0.jwt.JWT.require;
 public class TokenService {
 
     private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
     private final CustomUserDetailsService customUserDetailsService;
     private final UserService userService;
 
@@ -126,16 +123,9 @@ public class TokenService {
             userRepository.save(user);
         }
 
-
-        Token refreshToken = Token.builder()
-                .user(user)
-                .refreshToken(createRefreshToken(user)).build();
-
-        tokenRepository.save(refreshToken);
-
         //List에 각각 access token과 refresh token 차례로 넣어줌
         tokenList.add(createToken(user));
-        tokenList.add(refreshToken.getRefreshToken());
+        tokenList.add(createRefreshToken(user));
 
         return tokenList;
     }
@@ -173,8 +163,6 @@ public class TokenService {
                 .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.RT_EXP_TIME))
 
                 .withClaim("id", user.getUserCode())
-                .withClaim("email", user.getKakaoEmail())
-                .withClaim("nickname", user.getKakaoNickname())
 
                 .sign(Algorithm.HMAC512(JwtProperties.SECRET));
 
@@ -197,22 +185,11 @@ public class TokenService {
                 .getClaim("id").asLong();
 
         User user = userRepository.findByUserCode(userCode);
-        List<Token> refreshTokenList = tokenRepository.findByUser(user);
 
-        for(Token refreshToken: refreshTokenList){
-            if(refreshToken.getRefreshToken().equals(token)){ //DB의 refresh token과 front로부터 받아온 refresh toekn이 다를 때
-                refreshToken.refreshUpdate(createRefreshToken(user));
-                tokenRepository.save(refreshToken);
+        tokenList.add(createToken(user));
+        tokenList.add(createRefreshToken(user));
 
-                //List에 각각 access token과 refresh token 차례로 넣어줌
-                tokenList.add(createToken(user));
-                tokenList.add(refreshToken.getRefreshToken());
-
-                return tokenList;
-            }
-        }
-
-        throw new RuntimeException("옳지 않은 토큰");
+        return tokenList;
     }
 
     /**
@@ -236,18 +213,6 @@ public class TokenService {
         return false;
     }
 
-    /**
-     * refresh token을 삭제하는 메소드
-     * @param token access token
-     */
-    public void deleteRefreshToken(final String token, final String refreshToken){
-        User user = userService.getUserByEmail(token);
-
-        Token deleteToken = tokenRepository.findByUserAndRefreshToken(user, refreshToken)
-                .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.INVALID_TOKEN));
-
-        tokenRepository.delete(deleteToken);
-    }
     /**
      * userCode로 권한 찾는 메소드
      * @param userCode
