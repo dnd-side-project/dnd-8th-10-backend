@@ -125,11 +125,14 @@ public class UserController {
         String refreshToken = request.getHeader(JwtProperties.RT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
-        tokenService.deleteRefreshToken(token, refreshToken);
+        String kakaoToken = (String)session.getAttribute("oauthToken");
 
-        userService.getLogout((String)session.getAttribute("oauthToken"));
+        if(kakaoToken != null && !"".equals(kakaoToken)){
+            userService.getLogout(kakaoToken);
+        }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
         if(auth != null){
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
