@@ -4,6 +4,7 @@ import dnd.dnd10_backend.Inventory.domain.enums.Category;
 import dnd.dnd10_backend.Inventory.dto.request.CreateInventoryRequestDto;
 import dnd.dnd10_backend.Inventory.dto.request.UpdateInventoryListRequestDto;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryRecordListResponseDto;
+import dnd.dnd10_backend.Inventory.dto.response.InventoryRecordTodayResponseDto;
 import dnd.dnd10_backend.Inventory.dto.response.InventoryResponseDto;
 import dnd.dnd10_backend.Inventory.service.InventoryRecordService;
 import dnd.dnd10_backend.Inventory.service.InventoryService;
@@ -117,6 +118,22 @@ public class InventoryController {
                 .replace(JwtProperties.TOKEN_PREFIX,"");
         List<InventoryRecordListResponseDto> responseDtoList = recordService.findInventoryUpdateRecords(category, token);
         SingleResponse<List<InventoryRecordListResponseDto>> response = responseService.getResponse(responseDtoList,
+                CodeStatus.SUCCESS_SEARCHED_INVENTORY);
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
+     * 오늘 시재 기록 조회 api
+     * @param request
+     * @return
+     */
+    @GetMapping("/inventory/record/today")
+    public ResponseEntity getInventoryRecordToday(HttpServletRequest request){
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        List<InventoryRecordTodayResponseDto> responseDtoList = recordService.findInventoryUpdateRecordToday(token);
+        SingleResponse<List<InventoryRecordTodayResponseDto>> response = responseService.getResponse(responseDtoList,
                 CodeStatus.SUCCESS_SEARCHED_INVENTORY);
         return ResponseEntity.ok().body(response);
     }
