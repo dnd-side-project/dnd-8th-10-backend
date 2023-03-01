@@ -55,6 +55,7 @@ public class TokenService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
     private final CustomUserDetailsService customUserDetailsService;
+    private final UserService userService;
 
     //환경 변수 가져오기
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -124,17 +125,11 @@ public class TokenService {
 
             userRepository.save(user);
         }
-        Token refreshToken = tokenRepository.findByUser(user);
 
-        if(refreshToken != null){
-            refreshToken.refreshUpdate(createRefreshToken(user));
-        }
-        else{
-            refreshToken = Token.builder()
-                    .user(user)
-                    .refreshToken(createRefreshToken(user)).build();
 
-        }
+        Token refreshToken = Token.builder()
+                .user(user)
+                .refreshToken(createRefreshToken(user)).build();
 
         tokenRepository.save(refreshToken);
 
@@ -202,23 +197,22 @@ public class TokenService {
                 .getClaim("id").asLong();
 
         User user = userRepository.findByUserCode(userCode);
-        Token refreshToken = tokenRepository.findByUser(user);
+        List<Token> refreshTokenList = tokenRepository.findByUser(user);
 
-        //DB의 refreshToken과 비교
-        if(!refreshToken.getRefreshToken().equals(token)){ //DB의 refresh token과 front로부터 받아온 refresh toekn이 다를 때
-            throw new RuntimeException("옳지 않은 토큰");
+        for(Token refreshToken: refreshTokenList){
+            if(refreshToken.getRefreshToken().equals(token)){ //DB의 refresh token과 front로부터 받아온 refresh toekn이 다를 때
+                refreshToken.refreshUpdate(createRefreshToken(user));
+                tokenRepository.save(refreshToken);
 
+                //List에 각각 access token과 refresh token 차례로 넣어줌
+                tokenList.add(createToken(user));
+                tokenList.add(refreshToken.getRefreshToken());
+
+                return tokenList;
+            }
         }
 
-        //refresh token 재발급
-        refreshToken.refreshUpdate(createRefreshToken(user));
-        tokenRepository.save(refreshToken);
-
-        //List에 각각 access token과 refresh token 차례로 넣어줌
-        tokenList.add(createToken(user));
-        tokenList.add(refreshToken.getRefreshToken());
-
-        return tokenList;
+        throw new RuntimeException("옳지 않은 토큰");
     }
 
     /**
@@ -242,12 +236,28 @@ public class TokenService {
         return false;
     }
 
+    /**
+     * refresh token을 삭제하는 메소드
+     * @param token access token
+     */
+    public void deleteRefreshToken(final String token, final String refreshToken){
+        User user = userService.getUserByEmail(token);
+
+        Token deleteToken = tokenRepository.findByUserAndRefreshToken(user, refreshToken)
+                .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.INVALID_TOKEN));
+
+        tokenRepository.delete(deleteToken);
+    }
+    /**
+     * userCode로 권한 찾는 메소드
+     * @param userCode
+     * @return
+     */
     public Authentication getAuthentication(Long userCode) {
         User user = userRepository.findByUserCode(userCode);
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(user.getKakaoEmail());
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
-
 
     /**
      * 카카오 서버에 접근해서 사용자의 정보를 받아오는 함수

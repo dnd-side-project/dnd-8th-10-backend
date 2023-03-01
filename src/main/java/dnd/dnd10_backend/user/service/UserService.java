@@ -1,6 +1,8 @@
 package dnd.dnd10_backend.user.service;
 
 import com.auth0.jwt.algorithms.Algorithm;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dnd.dnd10_backend.Inventory.service.DefaultInventoryService;
 import dnd.dnd10_backend.checkList.service.DefaultCheckListService;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
@@ -15,6 +17,15 @@ import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 
 import static com.auth0.jwt.JWT.require;
 
@@ -36,6 +47,7 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-20] 사용자 삭제에 대한 메소드 추가 - 원지윤
  * [2023-02-24] 사용자 생성 시 발생하는 에러 해결 - 원지윤
  * [2023-02-24] 사용자 등록과 업데이트 함수 분리 - 원지윤
+ * [2023-03-01] 카카오 소셜 로그아웃 추가 - 원지윤
  */
 @Service
 @RequiredArgsConstructor
@@ -56,7 +68,6 @@ public class UserService {
                 .getClaim("id").asLong();
         User user = userRepository.findByUserCode(userCode);
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
-
 
         return UserCreateResponseDto.of(user);
     }
@@ -157,10 +168,43 @@ public class UserService {
     }
 
     /**
-     * access token으로 사용자를 찾는 메소드
-     * @param token access token
-     * @return
+     * 카카오 소셜 로그아웃
+     * @param kakaoToken 카카오 access token
      */
+    public void getLogout(final String kakaoToken) {
+        String reqURL ="https://kapi.kakao.com/v1/user/logout";
+
+        try {
+            URL url = new URL(reqURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+
+            conn.setRequestProperty("Authorization", "Bearer " + kakaoToken);
+            int responseCode = conn.getResponseCode();
+            System.out.println("responseCode : " + responseCode);
+
+            if(responseCode ==400)
+                throw new RuntimeException("카카오 로그아웃 도중 오류 발생");
+
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            String br_line = "";
+            String result = "";
+            while ((br_line = br.readLine()) != null) {
+                result += br_line;
+            }
+        } catch(IOException e) {
+
+        }
+
+    }
+
+    /**
+         * access token으로 사용자를 찾는 메소드
+         * @param token access token
+         * @return
+         */
     public UserResponseDto findUser(final String token){
         User user = getUserByEmail(token);
         Store store = findStoreNameByUser(user);

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /**
@@ -47,10 +48,13 @@ public class TokenController {
     @GetMapping("/token")
     public ResponseEntity getLogin(@RequestParam("code") String code,
                                    @RequestParam("isLocal") boolean isLocal,
-                                   HttpServletRequest request) { //(1)
+                                   HttpServletRequest request,
+                                   HttpSession session) { //(1)
 
         // 넘어온 인가 코드를 통해 access_token 발급
         OauthToken oauthToken = tokenService.getAccessToken(code, isLocal);
+
+        session.setAttribute("oauthToken", oauthToken);
 
         // 발급 받은 accessToken 으로 카카오 회원 정보 DB 저장 후 JWT 를 생성
         List<String> tokenList = tokenService.saveUserAndGetToken(oauthToken.getAccess_token());

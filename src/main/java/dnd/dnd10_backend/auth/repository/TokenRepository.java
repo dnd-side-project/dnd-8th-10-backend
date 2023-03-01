@@ -4,6 +4,7 @@ import dnd.dnd10_backend.auth.domain.Token;
 import dnd.dnd10_backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,5 +20,7 @@ import java.util.Optional;
  */
 
 public interface TokenRepository extends JpaRepository<Token, Long> {
-    public Token findByUser(User user);
+    public List<Token> findByUser(User user);
+
+    public Optional<Token> findByUserAndRefreshToken(User user,String token);
 }

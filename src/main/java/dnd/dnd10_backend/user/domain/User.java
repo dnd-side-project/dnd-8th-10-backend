@@ -89,9 +89,8 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<CheckList> CheckList = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "id")
-    private Token token;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Token> tokenList = new ArrayList<>();
 
     @Builder
     public User(Long kakaoId, String kakaoNickname,
