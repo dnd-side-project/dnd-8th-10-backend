@@ -2,6 +2,7 @@ package dnd.dnd10_backend.board.domain;
 
 import com.sun.istack.NotNull;
 import dnd.dnd10_backend.common.domain.BaseTimeEntity;
+import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -59,6 +60,10 @@ public class Post extends BaseTimeEntity {
     private String userName;
 
     private Role role;
+
+    @ManyToOne
+    @JoinColumn(name = "store_idx")
+    private Store store;
 
     //*****이미지 첨부 기능 추가 필요******
 

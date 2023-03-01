@@ -6,6 +6,7 @@ import dnd.dnd10_backend.board.dto.request.PostCreateDto;
 import dnd.dnd10_backend.board.dto.request.PostUpdateDto;
 import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
 import dnd.dnd10_backend.board.dto.response.CommentResponseDto;
+import dnd.dnd10_backend.board.dto.response.PostListResponseDto;
 import dnd.dnd10_backend.board.dto.response.PostResponseDto;
 import dnd.dnd10_backend.board.repository.PostCheckRepository;
 import dnd.dnd10_backend.board.repository.PostRepository;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +33,7 @@ import java.util.stream.Collectors;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-28] 게시글 작성, 조회, 삭제 개발 - 이우진
  * [2023-03-01] 게시글 체크, 수정 기능 개발 - 이우진
+ * [2023-03-01] 카테고리 별 게시글 리스트 조회 기능 개발 - 이우진
  */
 
 @Service
@@ -120,5 +124,24 @@ public class BoardService {
                     .status(false)
                     .build();
         }
+    }
+
+    public List<PostListResponseDto> getPostList(String category, User user) {
+
+        List<Post> posts = new ArrayList<>();
+
+        if(category == "전체") {
+            posts = postRepository.findByStore(user.getStore());
+        } else {
+            posts = postRepository.findByCategoryAndStore(category, user.getStore());
+        }
+
+
+        List<PostListResponseDto> postList = posts.stream()
+                .map(p -> new PostListResponseDto(p.getId(), p.getTitle(), p.getCategory(), p.getCheckCount(), p.getUserName(), p.getRole(), p.getCreateDate(), p.getModifiedDate()))
+                .collect(Collectors.toList());
+
+        return postList;
+
     }
 }

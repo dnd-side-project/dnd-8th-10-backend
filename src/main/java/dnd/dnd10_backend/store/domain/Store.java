@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.store.domain;
 
 import dnd.dnd10_backend.Inventory.domain.Inventory;
+import dnd.dnd10_backend.board.domain.Post;
 import dnd.dnd10_backend.user.domain.User;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ import java.util.List;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-03-01] 게시글 연관관계 매핑 추가
  */
 @Entity
 @Data
@@ -39,6 +41,9 @@ public class Store {
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Inventory> inventoryList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
+    private List<Post> Posts = new ArrayList<>();
 
     @Builder
     public Store(String storeName, String storeLocation){
