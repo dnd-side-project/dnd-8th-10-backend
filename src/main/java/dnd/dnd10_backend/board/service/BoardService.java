@@ -128,7 +128,7 @@ public class BoardService {
 
     public List<PostListResponseDto> getPostList(String category, User user) {
 
-        if(category == "all") {
+        if(category.equals("all")) {
             List<Post> posts = postRepository.findByStore(user.getStore());
             List<PostListResponseDto> postList = posts.stream()
                     .map(p -> new PostListResponseDto(p.getId(), p.getTitle(), p.getCategory(), p.getCheckCount(), p.getUserName(), p.getRole(), p.getCreateDate(), p.getModifiedDate()))
@@ -136,8 +136,8 @@ public class BoardService {
 
             return postList;
         } else {
-            List<Post> posts = postRepository.findByCategoryAndStore(category, user.getStore());
-            List<PostListResponseDto> postList = posts.stream()
+            List<Post> posts2 = postRepository.findByCategoryAndStore(category, user.getStore());
+            List<PostListResponseDto> postList = posts2.stream()
                     .map(p -> new PostListResponseDto(p.getId(), p.getTitle(), p.getCategory(), p.getCheckCount(), p.getUserName(), p.getRole(), p.getCreateDate(), p.getModifiedDate()))
                     .collect(Collectors.toList());
 
