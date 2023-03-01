@@ -3,6 +3,7 @@ package dnd.dnd10_backend.board.controller;
 import dnd.dnd10_backend.board.dto.request.PostCreateDto;
 import dnd.dnd10_backend.board.dto.request.PostUpdateDto;
 import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
+import dnd.dnd10_backend.board.dto.response.PostListResponseDto;
 import dnd.dnd10_backend.board.dto.response.PostResponseDto;
 import dnd.dnd10_backend.board.service.BoardService;
 import dnd.dnd10_backend.calendar.dto.response.TimeCardResponseDto;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 패키지명 dnd.dnd10_backend.board.controller
@@ -32,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-28] 게시글 작성, 삭제, 조회 기능 개발 - 이우진
  * [2023-03-01] 게시글 체크, 수정 기능 개발 - 이우진
+ * [2023-03-01] 카테고리 별 게시글 리스트 조회 기능 개발 - 이우진
  */
 
 @RestController
@@ -43,7 +46,7 @@ public class BoardController {
     private final UserService userService;
     private final ResponseService responseService;
 
-    @PostMapping("/board/post")
+    @PostMapping("/board")
     public void post(HttpServletRequest request,
                      @RequestBody PostCreateDto createDto) {
 
@@ -55,7 +58,7 @@ public class BoardController {
         boardService.write(createDto, user);
     }
 
-    @DeleteMapping("/board/post/{postId}")
+    @DeleteMapping("/board/{postId}")
     public ResponseEntity delete(@PathVariable Long postId) {
         boardService.delete(postId);
         return ResponseEntity.ok(postId);
@@ -128,6 +131,19 @@ public class BoardController {
     }
 
     //게시판 홈화면 조회
+    @GetMapping("board/category")
+    public ResponseEntity postList(HttpServletRequest request,
+                                   @RequestParam String category) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
 
+        User user = userService.getUserByEmail(token);
+
+        List<PostListResponseDto> responseDto = boardService.getPostList(category, user);
+        SingleResponse<List<PostListResponseDto>> singleResponse =
+                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
+
+        return ResponseEntity.ok().body(singleResponse);
+    }
     //게시글 검색
 }

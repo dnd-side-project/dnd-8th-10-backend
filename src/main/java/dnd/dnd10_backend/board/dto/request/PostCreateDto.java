@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.board.dto.request;
 
 import dnd.dnd10_backend.board.domain.Post;
+import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,6 +18,7 @@ import lombok.NoArgsConstructor;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-28] 게시글 작성 dto - 이우진
+ * [2023-03-01] category 값 추가 - 이우진
  */
 
 @NoArgsConstructor
@@ -40,6 +42,7 @@ public class PostCreateDto {
                 .userCode(user.getUserCode())
                 .userName(user.getUsername())
                 .role(user.getRole())
+                .store(user.getStore())
                 .build();
     }
 }
