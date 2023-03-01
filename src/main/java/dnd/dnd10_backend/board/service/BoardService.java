@@ -130,7 +130,7 @@ public class BoardService {
 
         List<Post> posts = new ArrayList<>();
 
-        if(category == "전체") {
+        if(category == "all") {
             posts = postRepository.findByStore(user.getStore());
         } else {
             posts = postRepository.findByCategoryAndStore(category, user.getStore());
