@@ -43,7 +43,7 @@ public class BoardController {
     private final UserService userService;
     private final ResponseService responseService;
 
-    @PostMapping("/board/post")
+    @PostMapping("/board")
     public void post(HttpServletRequest request,
                      @RequestBody PostCreateDto createDto) {
 
@@ -55,7 +55,7 @@ public class BoardController {
         boardService.write(createDto, user);
     }
 
-    @DeleteMapping("/board/post/{postId}")
+    @DeleteMapping("/board/{postId}")
     public ResponseEntity delete(@PathVariable Long postId) {
         boardService.delete(postId);
         return ResponseEntity.ok(postId);
