@@ -52,4 +52,5 @@ public class PostResponseDto {
 
     private List<CommentResponseDto> comments;
 
+    private boolean check;
 }

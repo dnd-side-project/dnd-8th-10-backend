@@ -54,7 +54,7 @@ public class CommentController {
 
         commentService.save(dto, user, postId);
 
-        PostResponseDto responseDto = boardService.get(postId);
+        PostResponseDto responseDto = boardService.get(postId, user);
 
         SingleResponse<PostResponseDto> response
                 = responseService.getResponse(responseDto, CodeStatus.SUCCESS_CREATED_COMMENT);
@@ -64,12 +64,18 @@ public class CommentController {
 
     //댓글 수정
     @PutMapping("board/{postId}/{commentId}")
-    public ResponseEntity commentUpdate(@PathVariable Long postId,
+    public ResponseEntity commentUpdate(HttpServletRequest request,
+                                        @PathVariable Long postId,
                                         @PathVariable Long commentId,
                                         @RequestBody CommentUpdateDto dto) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
         commentService.update(commentId, dto);
 
-        PostResponseDto responseDto = boardService.get(postId);
+        PostResponseDto responseDto = boardService.get(postId, user);
 
         SingleResponse<PostResponseDto> response
                 = responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_COMMENT);
@@ -79,11 +85,17 @@ public class CommentController {
 
     //댓글 삭제
     @DeleteMapping("/board/{postId}/{commentId}")
-    public ResponseEntity commentDelete(@PathVariable Long postId,
+    public ResponseEntity commentDelete(HttpServletRequest request,
+                                        @PathVariable Long postId,
                                         @PathVariable Long commentId) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
         commentService.delete(commentId);
 
-        PostResponseDto responseDto = boardService.get(postId);
+        PostResponseDto responseDto = boardService.get(postId, user);
 
         SingleResponse<PostResponseDto> response
                 = responseService.getResponse(responseDto, CodeStatus.SUCCESS_DELETE_COMMENT);

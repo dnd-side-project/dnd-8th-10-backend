@@ -69,8 +69,9 @@ public class BoardService {
         postRepository.save(post);
     }
 
-    public PostResponseDto get(Long postId) {
+    public PostResponseDto get(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+
 
         return PostResponseDto.builder()
                 .postId(post.getId())
@@ -85,6 +86,7 @@ public class BoardService {
                 .createDate(post.getCreateDate())
                 .modifiedDate(post.getModifiedDate())
                 .comments(post.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList()))
+                .check(postCheckRepository.existsByPostAndUser(post, user))
                 .build();
     }
 
@@ -136,12 +138,21 @@ public class BoardService {
 
             return postList;
         } else {
-            List<Post> posts2 = postRepository.findByCategoryAndStore(category, user.getStore());
-            List<PostListResponseDto> postList = posts2.stream()
+            List<Post> posts = postRepository.findByCategoryAndStore(category, user.getStore());
+            List<PostListResponseDto> postList = posts.stream()
                     .map(p -> new PostListResponseDto(p.getId(), p.getTitle(), p.getCategory(), p.getCheckCount(), p.getUserName(), p.getRole(), p.getCreateDate(), p.getModifiedDate()))
                     .collect(Collectors.toList());
 
             return postList;
         }
+    }
+
+    public List<PostListResponseDto> postSearch(String keyword, User user) {
+        List<Post> posts = postRepository.search(keyword, user.getStore());
+        List<PostListResponseDto> postList = posts.stream()
+                .map(p -> new PostListResponseDto(p.getId(), p.getTitle(), p.getCategory(), p.getCheckCount(), p.getUserName(), p.getRole(), p.getCreateDate(), p.getModifiedDate()))
+                .collect(Collectors.toList());
+
+        return postList;
     }
 }

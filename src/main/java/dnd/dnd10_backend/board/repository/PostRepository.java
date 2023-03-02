@@ -8,5 +8,12 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findByCategoryAndStore(String category, Store store);
+
     List<Post> findByStore(Store store);
+
+    List<Post> findByTitleContainingOrContentContainingOrUserNameContainingAndStore(String keyword1, String keyword2, String keyword3, Store store);
+
+    default List<Post> search(String keyword, Store store) {
+        return findByTitleContainingOrContentContainingOrUserNameContainingAndStore(keyword, keyword, keyword, store);
+    }
 }
