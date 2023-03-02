@@ -68,6 +68,11 @@ public class BoardController {
     public ResponseEntity get(@PathVariable Long postId,
                               HttpServletRequest request,
                               HttpServletResponse response) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
         //조회수 중복 방지 로직
         Cookie oldCookie = null;
         Cookie[] cookies = request.getCookies();
@@ -94,7 +99,7 @@ public class BoardController {
             response.addCookie(newCookie);
         }
 
-        PostResponseDto responseDto = boardService.get(postId);
+        PostResponseDto responseDto = boardService.get(postId, user);
         SingleResponse<PostResponseDto> singleResponse =
                 responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
 
@@ -103,11 +108,17 @@ public class BoardController {
 
     //게시글 수정
     @PutMapping("board/{postId}")
-    public ResponseEntity update(@PathVariable Long postId,
+    public ResponseEntity update(HttpServletRequest request,
+                                 @PathVariable Long postId,
                                  @RequestBody PostUpdateDto dto) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
         boardService.update(postId, dto);
 
-        PostResponseDto responseDto = boardService.get(postId);
+        PostResponseDto responseDto = boardService.get(postId, user);
         SingleResponse<PostResponseDto> singleResponse =
                 responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POST);
 
@@ -145,5 +156,20 @@ public class BoardController {
 
         return ResponseEntity.ok().body(singleResponse);
     }
+
     //게시글 검색
+    @GetMapping("board/search")
+    public ResponseEntity postSearch(HttpServletRequest request,
+                                     @RequestParam String keyword) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
+        List<PostListResponseDto> responseDto = boardService.postSearch(keyword, user);
+        SingleResponse<List<PostListResponseDto>> singleResponse =
+                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
+
+        return ResponseEntity.ok().body(singleResponse);
+    }
 }
