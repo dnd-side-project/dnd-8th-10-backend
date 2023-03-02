@@ -22,6 +22,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -129,6 +130,7 @@ public class InventoryRecordService {
             }
 
         }
+        Collections.reverse(responseDtoList);
         return responseDtoList;
     }
 
