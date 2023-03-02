@@ -71,6 +71,7 @@ public class BoardService {
 
     public PostResponseDto get(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+        boolean check = postCheckRepository.existsByPostAndUser(post, user);
 
 
         return PostResponseDto.builder()
@@ -86,7 +87,7 @@ public class BoardService {
                 .createDate(post.getCreateDate())
                 .modifiedDate(post.getModifiedDate())
                 .comments(post.getComments().stream().map(CommentResponseDto::new).collect(Collectors.toList()))
-                .check(postCheckRepository.existsByPostAndUser(post, user))
+                .check(check)
                 .build();
     }
 
