@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
+ * [2023-03-02] 이메일 필드 추가 - 원지윤
  */
 @Getter
 @AllArgsConstructor
@@ -23,6 +24,7 @@ public class UserStoreResponseDto {
     private int userProfileCode;
     private String userName;
     private Role role;
+    private String email;
     private String phoneNumber;
     private String workTime;
     private double wage;
@@ -32,6 +34,7 @@ public class UserStoreResponseDto {
                 user.getUserProfileCode(),
                 user.getUsername(),
                 user.getRole(),
+                user.getKakaoEmail(),
                 user.getPhoneNumber(),
                 user.getWorkTime(),
                 user.getWage()
