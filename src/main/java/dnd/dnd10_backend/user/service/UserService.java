@@ -26,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.util.List;
 
 import static com.auth0.jwt.JWT.require;
 
@@ -112,6 +113,13 @@ public class UserService {
 
         //requestDto로 user 정보 update
         user.updateUser(requestDto, store);
+
+        List<User> userList = userRepository.findByKakaoNickname(user.getUsername());
+//        if(userList.size() > 0){
+//            for(int i=0;i<userList.size();i++) {
+//
+//            }
+//        }
         user.setUserProfileCode((count%10)+1);
 
         //user 정보 저장
