@@ -165,7 +165,7 @@ public class ImageService {
 //            String[] fileAr = fileTime.split("_");
 //            String filePath = fileAr[0];
 
-            String fileDir = image.getStoredFilePath()+"."+image.getExtension(); // 파일경로
+            String fileDir = image.getStoredFilePath()+image.getExtension(); // 파일경로
 
             try{
                 fis = new FileInputStream(fileDir);
