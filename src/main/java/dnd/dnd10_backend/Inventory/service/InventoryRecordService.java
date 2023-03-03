@@ -116,7 +116,13 @@ public class InventoryRecordService {
             String month = t.getMonth().length() < 2 ? "0" + t.getMonth() : t.getMonth();
             String day = t.getDay().length() < 2 ? "0" + t.getDay() : t.getDay();
             String[] HM1 = time[0].split(":");
+            if(HM1[0].equals("24")){
+                HM1[0] = "00";
+            }
             String[] HM2 = time[1].split(":");
+            if(HM2[0].equals("24")){
+                HM2[0] = "00";
+            }
             LocalDateTime startTime = LocalDateTime.parse(t.getYear() + "-" + month + "-" + day + " " + HM1[0] + ":" + HM1[1] + ":00", formatter);
             LocalDateTime endTime = LocalDateTime.parse(t.getYear() + "-" + month + "-" + day + " " + HM2[0] + ":" + HM2[1] + ":00", formatter);
             if (pointTime.isBefore(startTime) && pointTime.plusDays(1).isAfter(startTime)|| startTime.isEqual(now) || endTime.isEqual(now)) {
