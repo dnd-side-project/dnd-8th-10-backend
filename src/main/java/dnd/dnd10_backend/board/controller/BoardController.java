@@ -160,7 +160,7 @@ public class BoardController {
     }
 
     //체크한 사람 목록
-    @GetMapping("board/{boardId}/check")
+    @GetMapping("board/{postId}/check")
     public ResponseEntity getCheckUserList(@RequestParam Long postId) {
 
         List<CheckUserResponseDto> responseDto = boardService.getCheckUserList(postId);
