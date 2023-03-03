@@ -30,6 +30,8 @@ public class CommentResponseDto {
 
     private String content;
 
+    private int userProfileCode;
+
     private Long userCode;
 
     private String userName;
@@ -43,6 +45,7 @@ public class CommentResponseDto {
     public CommentResponseDto(Comment comment) {
         this.commentId = comment.getId();
         this.content = comment.getContent();
+        this.userProfileCode = comment.getUserProfileCode();
         this.userCode = comment.getUserCode();
         this.userName = comment.getUserName();
         this.role = comment.getRole();
