@@ -115,11 +115,7 @@ public class UserService {
         user.updateUser(requestDto, store);
 
         List<User> userList = userRepository.findByKakaoNickname(user.getUsername());
-//        if(userList.size() > 0){
-//            for(int i=0;i<userList.size();i++) {
-//
-//            }
-//        }
+
         user.setUserProfileCode((count%10)+1);
 
         //user 정보 저장
