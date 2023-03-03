@@ -1,11 +1,14 @@
 package dnd.dnd10_backend.board.controller;
 
+import dnd.dnd10_backend.board.domain.Post;
 import dnd.dnd10_backend.board.dto.request.PostCreateDto;
 import dnd.dnd10_backend.board.dto.request.PostUpdateDto;
 import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
+import dnd.dnd10_backend.board.dto.response.CheckUserResponseDto;
 import dnd.dnd10_backend.board.dto.response.PostListResponseDto;
 import dnd.dnd10_backend.board.dto.response.PostResponseDto;
 import dnd.dnd10_backend.board.service.BoardService;
+import dnd.dnd10_backend.board.service.NoticeService;
 import dnd.dnd10_backend.calendar.dto.response.TimeCardResponseDto;
 import dnd.dnd10_backend.common.domain.SingleResponse;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
@@ -35,6 +38,8 @@ import java.util.List;
  * [2023-02-28] 게시글 작성, 삭제, 조회 기능 개발 - 이우진
  * [2023-03-01] 게시글 체크, 수정 기능 개발 - 이우진
  * [2023-03-01] 카테고리 별 게시글 리스트 조회 기능 개발 - 이우진
+ * [2023-03-02] 게시글 검색 기능 개발 - 이우진
+ * [2023-03-03] 게시글 작성 시 알림 생성, 체크 유저 리스트 반환 api 개발 - 이우진
  */
 
 @RestController
@@ -45,6 +50,7 @@ public class BoardController {
     private final BoardService boardService;
     private final UserService userService;
     private final ResponseService responseService;
+    private final NoticeService noticeService;
 
     @PostMapping("/board")
     public void post(HttpServletRequest request,
@@ -55,7 +61,9 @@ public class BoardController {
 
         User user = userService.getUserByEmail(token);
 
-        boardService.write(createDto, user);
+        Post post = boardService.write(createDto, user);
+
+        noticeService.createNotice(post, user);
     }
 
     @DeleteMapping("/board/{postId}")
@@ -74,6 +82,7 @@ public class BoardController {
         User user = userService.getUserByEmail(token);
 
         //조회수 중복 방지 로직
+        //response.setHeader("Set-Cookie", "Test1=TestCookieValue1; Secure; SameSite=None");
         viewCountUp(postId, request, response);
 
         PostResponseDto responseDto = boardService.get(postId, user);
@@ -146,6 +155,17 @@ public class BoardController {
         List<PostListResponseDto> responseDto = boardService.postSearch(keyword, user);
         SingleResponse<List<PostListResponseDto>> singleResponse =
                 responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
+
+        return ResponseEntity.ok().body(singleResponse);
+    }
+
+    //체크한 사람 목록
+    @GetMapping("board/{boardId}/check")
+    public ResponseEntity getCheckUserList(@RequestParam Long postId) {
+
+        List<CheckUserResponseDto> responseDto = boardService.getCheckUserList(postId);
+        SingleResponse<List<CheckUserResponseDto>> singleResponse =
+                responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POSTCHECK);
 
         return ResponseEntity.ok().body(singleResponse);
     }

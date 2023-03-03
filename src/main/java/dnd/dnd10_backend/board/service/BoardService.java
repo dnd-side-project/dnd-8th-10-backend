@@ -1,13 +1,12 @@
 package dnd.dnd10_backend.board.service;
 
+import dnd.dnd10_backend.board.domain.Notice;
 import dnd.dnd10_backend.board.domain.Post;
 import dnd.dnd10_backend.board.domain.PostCheck;
 import dnd.dnd10_backend.board.dto.request.PostCreateDto;
 import dnd.dnd10_backend.board.dto.request.PostUpdateDto;
-import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
-import dnd.dnd10_backend.board.dto.response.CommentResponseDto;
-import dnd.dnd10_backend.board.dto.response.PostListResponseDto;
-import dnd.dnd10_backend.board.dto.response.PostResponseDto;
+import dnd.dnd10_backend.board.dto.response.*;
+import dnd.dnd10_backend.board.repository.NoticeRepository;
 import dnd.dnd10_backend.board.repository.PostCheckRepository;
 import dnd.dnd10_backend.board.repository.PostRepository;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
@@ -34,6 +33,7 @@ import java.util.stream.Collectors;
  * [2023-02-28] 게시글 작성, 조회, 삭제 개발 - 이우진
  * [2023-03-01] 게시글 체크, 수정 기능 개발 - 이우진
  * [2023-03-01] 카테고리 별 게시글 리스트 조회 기능 개발 - 이우진
+ * [2023-03-03] 알림 생성 기능 추가 - 이우진
  */
 
 @Service
@@ -44,8 +44,10 @@ public class BoardService {
     private final PostCheckRepository postCheckRepository;
 
     @Transactional
-    public void write(PostCreateDto postCreateDto, User user) {
-        postRepository.save(postCreateDto.toEntity(user));
+    public Post write(PostCreateDto postCreateDto, User user) {
+        Post post = postCreateDto.toEntity(user);
+        postRepository.save(post);
+        return post;
     }
 
     @Transactional
@@ -127,6 +129,16 @@ public class BoardService {
                     .status(false)
                     .build();
         }
+    }
+
+    public List<CheckUserResponseDto> getCheckUserList(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+        List<PostCheck> postChecks = postCheckRepository.findByPost(post);
+        List<CheckUserResponseDto> checkUserDtos = postChecks.stream()
+                .map(p -> new CheckUserResponseDto(p.getUser().getUserProfileCode(), p.getUser().getUsername(), p.getUser().getKakaoEmail()))
+                .collect(Collectors.toList());
+
+        return checkUserDtos;
     }
 
     public List<PostListResponseDto> getPostList(String category, User user) {

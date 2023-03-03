@@ -12,3 +12,11 @@ spring:
       ddl-auto: update
     generate-ddl: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true
+        same-site: None
+
