@@ -38,7 +38,7 @@ public class Notice extends BaseTimeEntity {
 
     private String title;
 
-    private boolean read;
+    private boolean checked;
 
     private String type;
 
@@ -46,7 +46,7 @@ public class Notice extends BaseTimeEntity {
     @JoinColumn(name = "user_code")
     private User user;
 
-    public void setRead() {
-        this.read = true;
+    public void setChecked() {
+        this.checked = true;
     }
 }

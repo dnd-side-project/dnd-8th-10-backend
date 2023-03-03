@@ -46,7 +46,7 @@ public class NoticeService {
                     .postId(post.getId())
                     .category(post.getCategory())
                     .title(post.getTitle())
-                    .read(false)
+                    .checked(false)
                     .user(u)
                     .type("post")
                     .build();
@@ -61,7 +61,7 @@ public class NoticeService {
                 .postId(postId)
                 .category(user.getUsername())
                 .title(content)
-                .read(false)
+                .checked(false)
                 .user(addressee)
                 .type("comment")
                 .build();
@@ -71,7 +71,7 @@ public class NoticeService {
     public List<NoticeResponseDto> getNotice(User user) {
         List<Notice> notices = noticeRepository.findByUser(user);
         List<NoticeResponseDto> noticeList = notices.stream()
-                .map(n -> new NoticeResponseDto(n.getId(), n.getPostId(), n.getCategory(), n.getTitle(), n.isRead(), n.getUser().getRole(), n.getUser().getUsername(), n.getCreateDate(), n.getType()))
+                .map(n -> new NoticeResponseDto(n.getId(), n.getPostId(), n.getCategory(), n.getTitle(), n.isChecked(), n.getUser().getRole(), n.getUser().getUsername(), n.getCreateDate(), n.getType()))
                 .collect(Collectors.toList());
 
         return noticeList;
@@ -81,11 +81,11 @@ public class NoticeService {
     @Transactional
     public void read(User user) {
         List<Notice> notices = noticeRepository.findByUser(user);
-        notices.forEach(Notice::setRead);
+        notices.forEach(Notice::setChecked);
     }
 
     public boolean check(User user) {
-        boolean read = false;
-        return noticeRepository.existsByUserAndRead(user, read);
+        boolean checked = false;
+        return noticeRepository.existsByUserAndChecked(user, checked);
     }
 }

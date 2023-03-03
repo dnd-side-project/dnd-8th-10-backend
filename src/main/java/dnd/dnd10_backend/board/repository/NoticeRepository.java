@@ -11,5 +11,5 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
     List<Notice> findByUser(User user);
 
-    boolean existsByUserAndRead(User user, boolean read);
+    boolean existsByUserAndChecked(User user, boolean checked);
 }
