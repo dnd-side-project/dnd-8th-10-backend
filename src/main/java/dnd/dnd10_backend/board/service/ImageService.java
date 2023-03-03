@@ -115,7 +115,7 @@ public class ImageService {
                 String absolutePath = new File("").getAbsolutePath() + File.separator + File.separator;
 
                 // 저장된 파일로 변경하여 이를 보여주기 위함
-                file = new File( path + File.separator + newFileName+"."+originalFileExtension);
+                file = new File( path + File.separator + newFileName+originalFileExtension);
 
                 try {
                     multipartFile.transferTo(file);
