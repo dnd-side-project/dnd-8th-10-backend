@@ -166,11 +166,11 @@ public class ImageService {
 //            String filePath = fileAr[0];
 
             String fileDir = image.getStoredFilePath()+image.getExtension(); // 파일경로
-
+            System.out.println(fileDir);
             try{
                 fis = new FileInputStream(fileDir);
             } catch(FileNotFoundException e){
-                throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_CHECKLIST);
+                throw new CustomerNotFoundException(fileDir);
 //                e.printStackTrace();
             }
 
