@@ -2,8 +2,8 @@ package dnd.dnd10_backend.board.service;
 
 import dnd.dnd10_backend.board.domain.Notice;
 import dnd.dnd10_backend.board.domain.Post;
+import dnd.dnd10_backend.board.dto.request.CommentRequestDto;
 import dnd.dnd10_backend.board.dto.response.NoticeResponseDto;
-import dnd.dnd10_backend.board.dto.response.PostListResponseDto;
 import dnd.dnd10_backend.board.repository.NoticeRepository;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
@@ -55,17 +55,20 @@ public class NoticeService {
     }
 
     @Transactional
-    public void createCommentNotice(User user, String email, Long postId, String content) {
-        User addressee = userRepository.findByKakaoEmail(email);
-        Notice notice = Notice.builder()
-                .postId(postId)
-                .category(user.getUsername())
-                .title(content)
-                .checked(false)
-                .user(addressee)
-                .type("comment")
-                .build();
-        noticeRepository.save(notice);
+    public void createCommentNotice(User user, CommentRequestDto dto, Long postId) {
+        List<String> email = dto.getEmail();
+        for(String e : email) {
+            User addressee = userRepository.findByKakaoEmail(e);
+            Notice notice = Notice.builder()
+                    .postId(postId)
+                    .category(user.getUsername())
+                    .title(dto.getContent())
+                    .checked(false)
+                    .user(addressee)
+                    .type("comment")
+                    .build();
+            noticeRepository.save(notice);
+        }
     }
 
     public List<NoticeResponseDto> getNotice(User user) {

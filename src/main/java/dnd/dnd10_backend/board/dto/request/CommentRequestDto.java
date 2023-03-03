@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 /**
  * 패키지명 dnd.dnd10_backend.board.dto.request
  * 클래스명 CommentCreateDto
@@ -24,10 +26,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class CommentCreateDto {
+public class CommentRequestDto {
 
     private String content;
-    private String email;
+    private List<String> email;
 
     public Comment toEntity(User user, Post post) {
         return Comment.builder()

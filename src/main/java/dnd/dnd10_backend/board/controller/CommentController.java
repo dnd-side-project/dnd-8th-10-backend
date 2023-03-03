@@ -1,12 +1,10 @@
 package dnd.dnd10_backend.board.controller;
 
-import dnd.dnd10_backend.board.dto.request.CommentCreateDto;
-import dnd.dnd10_backend.board.dto.request.CommentUpdateDto;
+import dnd.dnd10_backend.board.dto.request.CommentRequestDto;
 import dnd.dnd10_backend.board.dto.response.PostResponseDto;
 import dnd.dnd10_backend.board.service.BoardService;
 import dnd.dnd10_backend.board.service.CommentService;
 import dnd.dnd10_backend.board.service.NoticeService;
-import dnd.dnd10_backend.checkList.dto.response.CheckListResponseDto;
 import dnd.dnd10_backend.common.domain.SingleResponse;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.service.ResponseService;
@@ -48,7 +46,7 @@ public class CommentController {
     //댓글 작성
     @PostMapping("/board/{postId}/comment")
     public ResponseEntity commentSave(@PathVariable Long postId,
-                                      @RequestBody CommentCreateDto dto,
+                                      @RequestBody CommentRequestDto dto,
                                       HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
@@ -57,7 +55,7 @@ public class CommentController {
 
         //멘션 한 경우 알림 생성
         if(!dto.getEmail().isEmpty()) {
-            noticeService.createCommentNotice(user, dto.getEmail(), postId, dto.getContent());
+            noticeService.createCommentNotice(user, dto, postId);
         }
 
         commentService.save(dto, user, postId);
@@ -75,13 +73,17 @@ public class CommentController {
     public ResponseEntity commentUpdate(HttpServletRequest request,
                                         @PathVariable Long postId,
                                         @PathVariable Long commentId,
-                                        @RequestBody CommentUpdateDto dto) {
+                                        @RequestBody CommentRequestDto dto) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         User user = userService.getUserByEmail(token);
 
         commentService.update(commentId, dto, user);
+
+        if(!dto.getEmail().isEmpty()) {
+            noticeService.createCommentNotice(user, dto, postId);
+        }
 
         PostResponseDto responseDto = boardService.get(postId, user);
 
