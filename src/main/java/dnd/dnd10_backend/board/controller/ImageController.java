@@ -18,7 +18,7 @@ public class ImageController {
 
     @PostMapping(value = "/image/upload/{postId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity uploadImages(@RequestPart List<MultipartFile> files,
-                                      @RequestParam Long postId) throws Exception{
+                                      @PathVariable("postId") Long postId) throws Exception{
         List<Image> list = imageService.parseFileInfo(postId, files);
         return ResponseEntity.ok().body("저장 완료");
     }
