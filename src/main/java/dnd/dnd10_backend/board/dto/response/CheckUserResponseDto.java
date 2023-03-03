@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CheckUserResponseDto {
 
-    private int userCode;
+    private int userProfileCode;
 
     private String userName;
 
