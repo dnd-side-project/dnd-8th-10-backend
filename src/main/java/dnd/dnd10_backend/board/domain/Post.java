@@ -72,7 +72,7 @@ public class Post extends BaseTimeEntity {
     @OrderBy("id asc")
     private List<Comment> comments; //댓글
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<PostCheck> PostCheck = new ArrayList<>();
 
     public Post updateView(int viewCount) {
