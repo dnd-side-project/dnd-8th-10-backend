@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.user.domain;
 
 import dnd.dnd10_backend.board.domain.Notice;
+import dnd.dnd10_backend.board.domain.PostCheck;
 import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.checkList.domain.CheckList;
 import dnd.dnd10_backend.store.domain.Store;
@@ -91,6 +92,9 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Notice> Notice = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<PostCheck> PostCheck = new ArrayList<>();
 
     @Builder
     public User(Long kakaoId, String kakaoNickname,

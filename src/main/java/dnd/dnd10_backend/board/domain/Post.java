@@ -13,6 +13,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,6 +71,9 @@ public class Post extends BaseTimeEntity {
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @OrderBy("id asc")
     private List<Comment> comments; //댓글
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<PostCheck> PostCheck = new ArrayList<>();
 
     public Post updateView(int viewCount) {
         this.viewCount = viewCount + 1;
