@@ -35,6 +35,7 @@ public class CommentRequestDto {
         return Comment.builder()
                 .content(content)
                 .userCode(user.getUserCode())
+                .userProfileCode(user.getUserProfileCode())
                 .userName(user.getUsername())
                 .role(user.getRole())
                 .post(post)

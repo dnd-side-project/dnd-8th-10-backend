@@ -41,6 +41,8 @@ public class Comment extends BaseTimeEntity {
     /*작성자 정보*/
     private Long userCode;
 
+    private int userProfileCode;
+
     private String userName;
 
     private Role role;
