@@ -3,10 +3,7 @@ package dnd.dnd10_backend.board.controller;
 import dnd.dnd10_backend.board.domain.Post;
 import dnd.dnd10_backend.board.dto.request.PostCreateDto;
 import dnd.dnd10_backend.board.dto.request.PostUpdateDto;
-import dnd.dnd10_backend.board.dto.response.CheckResponseDto;
-import dnd.dnd10_backend.board.dto.response.CheckUserResponseDto;
-import dnd.dnd10_backend.board.dto.response.PostListResponseDto;
-import dnd.dnd10_backend.board.dto.response.PostResponseDto;
+import dnd.dnd10_backend.board.dto.response.*;
 import dnd.dnd10_backend.board.service.BoardService;
 import dnd.dnd10_backend.board.service.NoticeService;
 import dnd.dnd10_backend.calendar.dto.response.TimeCardResponseDto;
@@ -64,7 +61,14 @@ public class BoardController {
         Post post = boardService.write(createDto, user);
 
         noticeService.createNotice(post, user);
-        SingleResponse<Post> response = responseService.getResponse(post, CodeStatus.SUCCESS);
+
+        PostSimpleResponseDto responseDto = PostSimpleResponseDto.builder()
+                .postId(post.getId())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .build();
+
+        SingleResponse<PostSimpleResponseDto> response = responseService.getResponse(responseDto, CodeStatus.SUCCESS);
         return ResponseEntity.ok().body(response);
     }
 

@@ -28,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     public List<User> findByKakaoNickname(String userName);
 
+    public User findByKakaoNicknameAndUserProfileCode(String userName, int userProfileCode);
+
 }
