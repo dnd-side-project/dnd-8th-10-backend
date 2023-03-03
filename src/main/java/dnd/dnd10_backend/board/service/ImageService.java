@@ -8,11 +8,14 @@ import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.util.Date;
 
@@ -23,17 +26,27 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 패키지명 dnd.dnd10_backend.board.service
+ * 클래스명 ImageService
+ * 클래스설명
+ * 작성일 2023-03-02
+ *
+ * @author 원지윤
+ * @version 1.0
+ * [수정내용]
+ * 예시) [2022-09-17] 주석추가 - 원지윤
+ */
+
 @Service
 @RequiredArgsConstructor
 public class ImageService {
 
     private final ImageRepository imageRepository;
     private final PostRepository postRepository;
-    // 파일이 저장되는 경로
-//    private static final String serverPath = "src/main/resources/file/";
 
     private String serverPath = "/home/dnd/upload/";
-//    private String serverPath = "E:\\";
+
     /**
      * 이미지를 저장하는 메소드
      * @param postId
@@ -57,6 +70,8 @@ public class ImageService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         String currentDate = simpleDateFormat.format(new Date());
 
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
 
         String path = serverPath+"images/" + currentDate;
 
@@ -65,15 +80,18 @@ public class ImageService {
         if (!file.exists()) {
             // mkdir() 함수와 다른 점은 상위 디렉토리가 존재하지 않을 때 그것까지 생성
             file.mkdirs();
-//            String cmd = "chmod 777 " + path;
-//            Runtime rt = Runtime.getRuntime();
-//            Process p = rt.exec(cmd);
-//            p.waitFor();
         }
 
         // 파일들을 이제 만져볼 것이다
         for (MultipartFile multipartFile : multipartFiles) {
-            // 파일이 비어 있지 않을 때 작업을 시작해야 오류가 나지 않는다
+            // 이미 DB에 게시글과 함께 존재하는 파일인지 확인
+            boolean isEmpty = imageRepository.findAllByPostAndOriginalFileName(post, multipartFile.getOriginalFilename())
+                    .isEmpty();
+            //이미 있으면 기존의 파일을 삭제
+            if(!isEmpty){
+                deleteImage(postId, multipartFile.getOriginalFilename());
+            }
+
             if (!multipartFile.isEmpty()) {
                 // jpeg, png, gif 파일들만 받아서 처리할 예정
                 String contentType = multipartFile.getContentType();
@@ -94,8 +112,6 @@ public class ImageService {
                         break;
                     }
                 }
-                Post post = postRepository.findById(postId)
-                        .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
                 // 각 이름은 겹치면 안되므로 나노 초까지 동원하여 지정
                 String newFileName = Long.toString(System.nanoTime());
                 // 생성 후 리스트에 추가
@@ -136,18 +152,27 @@ public class ImageService {
     public void deleteImage(Long postId, String fileName) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
-        Image image = imageRepository.findAllByPostAndSavedFileName(post, fileName)
+        Image image = imageRepository.findAllByPostAndOriginalFileName(post, fileName)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.FAIL));
 
         //TODO
         // - 서버에 있는 파일 삭제하는 부분 추가
 
+        try{
+            String srcFileName = URLDecoder.decode(fileName,"UTF-8");
+            File file = new File(image.getStoredFilePath()+image.getExtension());
+            boolean result = file.delete();
+
+        }catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }
+
         imageRepository.delete(image);
     }
 
     /**
-     *
-     * @param postId
+     * 이미지 삭제하는 메소드
+     * @param postId 삭제하려는 이미지가 있는 게시글의 id
      * @return
      * @throws IOException
      */
@@ -162,16 +187,12 @@ public class ImageService {
             FileInputStream fis = null;
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-//            String[] fileAr = fileTime.split("_");
-//            String filePath = fileAr[0];
-
             String fileDir = image.getStoredFilePath()+image.getExtension(); // 파일경로
             System.out.println(fileDir);
             try{
                 fis = new FileInputStream(fileDir);
             } catch(FileNotFoundException e){
-                throw new CustomerNotFoundException(fileDir);
-//                e.printStackTrace();
+                e.printStackTrace();
             }
 
             int readCount = 0;
