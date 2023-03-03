@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserStoreResponseDto {
+    private Long userCode;
     private int userProfileCode;
     private String userName;
     private Role role;
@@ -31,6 +32,7 @@ public class UserStoreResponseDto {
 
     public static UserStoreResponseDto of(User user){
         return new UserStoreResponseDto(
+                user.getUserCode(),
                 user.getUserProfileCode(),
                 user.getUsername(),
                 user.getRole(),
