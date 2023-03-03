@@ -51,9 +51,12 @@ public class BoardService {
     }
 
     @Transactional
-    public void update(Long postId, PostUpdateDto dto) {
+    public void update(Long postId, PostUpdateDto dto, User user) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
 
+        if(!user.getUserCode().equals(post.getUserCode())) {
+            throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
+        }
         post.update(dto.getTitle(), dto.getContent(), dto.getCategory());
         postRepository.save(post);
     }

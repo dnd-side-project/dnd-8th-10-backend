@@ -81,7 +81,7 @@ public class CommentController {
 
         User user = userService.getUserByEmail(token);
 
-        commentService.update(commentId, dto);
+        commentService.update(commentId, dto, user);
 
         PostResponseDto responseDto = boardService.get(postId, user);
 
