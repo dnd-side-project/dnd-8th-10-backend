@@ -170,7 +170,8 @@ public class ImageService {
             try{
                 fis = new FileInputStream(fileDir);
             } catch(FileNotFoundException e){
-                e.printStackTrace();
+                throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_CHECKLIST);
+//                e.printStackTrace();
             }
 
             int readCount = 0;
@@ -185,7 +186,7 @@ public class ImageService {
                 fis.close();
                 baos.close();
             } catch(IOException e){
-                throw new RuntimeException("File Error");
+                throw new CustomerNotFoundException(CodeStatus.FAIL);
             }
             printImages.add(fileArray);
         }
