@@ -54,7 +54,7 @@ public class CommentController {
         User user = userService.getUserByEmail(token);
 
         //멘션 한 경우 알림 생성
-        if(!dto.getEmail().isEmpty()) {
+        if(!dto.getUserCode().isEmpty()) {
             noticeService.createCommentNotice(user, dto, postId);
         }
 
@@ -81,7 +81,7 @@ public class CommentController {
 
         commentService.update(commentId, dto, user);
 
-        if(!dto.getEmail().isEmpty()) {
+        if(!dto.getUserCode().isEmpty()) {
             noticeService.createCommentNotice(user, dto, postId);
         }
 

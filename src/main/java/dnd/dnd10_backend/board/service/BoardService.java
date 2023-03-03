@@ -138,7 +138,7 @@ public class BoardService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
         List<PostCheck> postChecks = postCheckRepository.findByPost(post);
         List<CheckUserResponseDto> checkUserDtos = postChecks.stream()
-                .map(p -> new CheckUserResponseDto(p.getUser().getUserProfileCode(), p.getUser().getUsername(), p.getUser().getKakaoEmail()))
+                .map(p -> new CheckUserResponseDto(p.getUser().getUserCode(), p.getUser().getUserProfileCode(), p.getUser().getUsername(), p.getUser().getKakaoEmail()))
                 .collect(Collectors.toList());
 
         return checkUserDtos;

@@ -29,7 +29,7 @@ import java.util.List;
 public class CommentRequestDto {
 
     private String content;
-    private List<String> email;
+    private List<Long> userCode;
 
     public Comment toEntity(User user, Post post) {
         return Comment.builder()
