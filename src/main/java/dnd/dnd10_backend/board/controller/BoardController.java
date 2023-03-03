@@ -53,7 +53,7 @@ public class BoardController {
     private final NoticeService noticeService;
 
     @PostMapping("/board")
-    public void post(HttpServletRequest request,
+    public ResponseEntity post(HttpServletRequest request,
                      @RequestBody PostCreateDto createDto) {
 
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
@@ -64,6 +64,8 @@ public class BoardController {
         Post post = boardService.write(createDto, user);
 
         noticeService.createNotice(post, user);
+        SingleResponse<Post> response = responseService.getResponse(post, CodeStatus.SUCCESS);
+        return ResponseEntity.ok().body(response);
     }
 
     @DeleteMapping("/board/{postId}")
