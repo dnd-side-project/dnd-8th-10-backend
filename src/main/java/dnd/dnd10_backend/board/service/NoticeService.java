@@ -2,8 +2,8 @@ package dnd.dnd10_backend.board.service;
 
 import dnd.dnd10_backend.board.domain.Notice;
 import dnd.dnd10_backend.board.domain.Post;
+import dnd.dnd10_backend.board.dto.request.CommentRequestDto;
 import dnd.dnd10_backend.board.dto.response.NoticeResponseDto;
-import dnd.dnd10_backend.board.dto.response.PostListResponseDto;
 import dnd.dnd10_backend.board.repository.NoticeRepository;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
@@ -46,7 +46,7 @@ public class NoticeService {
                     .postId(post.getId())
                     .category(post.getCategory())
                     .title(post.getTitle())
-                    .read(false)
+                    .checked(false)
                     .user(u)
                     .type("post")
                     .build();
@@ -55,23 +55,26 @@ public class NoticeService {
     }
 
     @Transactional
-    public void createCommentNotice(User user, String email, Long postId, String content) {
-        User addressee = userRepository.findByKakaoEmail(email);
-        Notice notice = Notice.builder()
-                .postId(postId)
-                .category(user.getUsername())
-                .title(content)
-                .read(false)
-                .user(addressee)
-                .type("comment")
-                .build();
-        noticeRepository.save(notice);
+    public void createCommentNotice(User user, CommentRequestDto dto, Long postId) {
+        List<String> email = dto.getEmail();
+        for(String e : email) {
+            User addressee = userRepository.findByKakaoEmail(e);
+            Notice notice = Notice.builder()
+                    .postId(postId)
+                    .category(user.getUsername())
+                    .title(dto.getContent())
+                    .checked(false)
+                    .user(addressee)
+                    .type("comment")
+                    .build();
+            noticeRepository.save(notice);
+        }
     }
 
     public List<NoticeResponseDto> getNotice(User user) {
         List<Notice> notices = noticeRepository.findByUser(user);
         List<NoticeResponseDto> noticeList = notices.stream()
-                .map(n -> new NoticeResponseDto(n.getId(), n.getPostId(), n.getCategory(), n.getTitle(), n.isRead(), n.getUser().getRole(), n.getUser().getUsername(), n.getCreateDate(), n.getType()))
+                .map(n -> new NoticeResponseDto(n.getId(), n.getPostId(), n.getCategory(), n.getTitle(), n.isChecked(), n.getUser().getRole(), n.getUser().getUsername(), n.getCreateDate(), n.getType()))
                 .collect(Collectors.toList());
 
         return noticeList;
@@ -81,11 +84,11 @@ public class NoticeService {
     @Transactional
     public void read(User user) {
         List<Notice> notices = noticeRepository.findByUser(user);
-        notices.forEach(Notice::setRead);
+        notices.forEach(Notice::setChecked);
     }
 
     public boolean check(User user) {
-        boolean read = false;
-        return noticeRepository.existsByUserAndRead(user, read);
+        boolean checked = false;
+        return noticeRepository.existsByUserAndChecked(user, checked);
     }
 }

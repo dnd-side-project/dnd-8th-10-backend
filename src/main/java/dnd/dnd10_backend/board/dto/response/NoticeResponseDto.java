@@ -35,7 +35,7 @@ public class NoticeResponseDto {
 
     private String title;
 
-    private boolean read;
+    private boolean checked;
 
     private Role role;
 
