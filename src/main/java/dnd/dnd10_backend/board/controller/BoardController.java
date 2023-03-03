@@ -102,7 +102,7 @@ public class BoardController {
 
         User user = userService.getUserByEmail(token);
 
-        boardService.update(postId, dto);
+        boardService.update(postId, dto, user);
 
         PostResponseDto responseDto = boardService.get(postId, user);
         SingleResponse<PostResponseDto> singleResponse =
@@ -161,7 +161,7 @@ public class BoardController {
 
     //체크한 사람 목록
     @GetMapping("board/{postId}/check")
-    public ResponseEntity getCheckUserList(@RequestParam Long postId) {
+    public ResponseEntity getCheckUserList(@PathVariable Long postId) {
 
         List<CheckUserResponseDto> responseDto = boardService.getCheckUserList(postId);
         SingleResponse<List<CheckUserResponseDto>> singleResponse =
