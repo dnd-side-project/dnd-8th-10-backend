@@ -56,9 +56,9 @@ public class NoticeService {
 
     @Transactional
     public void createCommentNotice(User user, CommentRequestDto dto, Long postId) {
-        List<String> email = dto.getEmail();
-        for(String e : email) {
-            User addressee = userRepository.findByKakaoEmail(e);
+        List<Long> userCode = dto.getUserCode();
+        for(Long code : userCode) {
+            User addressee = userRepository.findByUserCode(code);
             Notice notice = Notice.builder()
                     .postId(postId)
                     .category(user.getUsername())
