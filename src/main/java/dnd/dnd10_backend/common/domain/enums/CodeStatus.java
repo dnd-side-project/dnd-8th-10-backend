@@ -27,6 +27,8 @@ public enum CodeStatus {
     SUCCESS_SEARCHED_WORKDAY(200, "근무 일자 조회에 성공하였습니다."),
     SUCCESS_SEARCHED_SALARY(200, "급여 조회에 성공하였습니다."),
     SUCCESS_SEARCHED_POST(200, "게시글 조회에 성공하였습니다."),
+    SUCCESS_SEARCHED_NOTICE(200, "알림 조회에 성공하였습니다."),
+    SUCCESS_SEARCHED_POSTCHECK(200, "게시글 체크 조회에 성공하였습니다."),
 
     SUCCESS_UPDATED_USER(201, "사용자 정보 수정에 성공하였습니다."),
     SUCCESS_UPDATED_POST(201, "게시글 수정에 성공하였습니다."),

@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-28] 댓글 작성 dto - 이우진
+ * [2023-03-03] 댓글 멘션 시 이메일 값 추가 - 이우진
  */
 
 @AllArgsConstructor
@@ -26,6 +27,7 @@ import lombok.NoArgsConstructor;
 public class CommentCreateDto {
 
     private String content;
+    private String email;
 
     public Comment toEntity(User user, Post post) {
         return Comment.builder()
