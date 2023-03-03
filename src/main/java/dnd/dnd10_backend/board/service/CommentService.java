@@ -49,7 +49,7 @@ public class CommentService {
     public void update(Long commentId, CommentUpdateDto dto, User user) {
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_COMMENT));
         if(!comment.getUserCode().equals(user.getUserCode())) {
-            throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
+            throw new CustomerNotFoundException(CodeStatus.UNAUTHORIZED_UPDATED_USER);
         }
         comment.update(dto.getContent());
         commentRepository.save(comment);

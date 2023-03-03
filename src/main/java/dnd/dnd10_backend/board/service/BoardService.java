@@ -55,7 +55,7 @@ public class BoardService {
         Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
 
         if(!user.getUserCode().equals(post.getUserCode())) {
-            throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
+            throw new CustomerNotFoundException(CodeStatus.UNAUTHORIZED_UPDATED_USER);
         }
         post.update(dto.getTitle(), dto.getContent(), dto.getCategory());
         postRepository.save(post);
