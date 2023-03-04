@@ -149,14 +149,17 @@ public class ImageService {
         return fileList;
     }
 
+    /**
+     * 이미지 삭제하는 메소드
+     * @param postId 삭제하려는 이미지가 있는 게시글의 id
+     * @return
+     * @throws IOException
+     */
     public void deleteImage(Long postId, String fileName) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
         Image image = imageRepository.findAllByPostAndOriginalFileName(post, fileName)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.FAIL));
-
-        //TODO
-        // - 서버에 있는 파일 삭제하는 부분 추가
 
         try{
             String srcFileName = URLDecoder.decode(fileName,"UTF-8");
@@ -171,11 +174,29 @@ public class ImageService {
     }
 
     /**
-     * 이미지 삭제하는 메소드
-     * @param postId 삭제하려는 이미지가 있는 게시글의 id
-     * @return
-     * @throws IOException
+     * post 삭제 시 image 서버에서 삭제하는 메소드
+     * @param postId 삭제하려는 게시글
      */
+    public void deleteImageByPostId(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+        List<Image> imageList = imageRepository.findAllByPost(post);
+
+        for(Image image: imageList){
+            try{
+                String srcFileName = URLDecoder.decode(image.getOriginalFileName(),"UTF-8");
+                File file = new File(image.getStoredFilePath()+image.getExtension());
+                boolean result = file.delete();
+
+            }catch (UnsupportedEncodingException e){
+                e.printStackTrace();
+            }
+
+            imageRepository.delete(image);
+        }
+    }
+
+
     public List<byte[]> getImage(Long postId) throws IOException {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
