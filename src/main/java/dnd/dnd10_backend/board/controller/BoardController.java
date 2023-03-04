@@ -5,6 +5,7 @@ import dnd.dnd10_backend.board.dto.request.PostCreateDto;
 import dnd.dnd10_backend.board.dto.request.PostUpdateDto;
 import dnd.dnd10_backend.board.dto.response.*;
 import dnd.dnd10_backend.board.service.BoardService;
+import dnd.dnd10_backend.board.service.ImageService;
 import dnd.dnd10_backend.board.service.NoticeService;
 import dnd.dnd10_backend.calendar.dto.response.TimeCardResponseDto;
 import dnd.dnd10_backend.common.domain.SingleResponse;
@@ -48,6 +49,7 @@ public class BoardController {
     private final UserService userService;
     private final ResponseService responseService;
     private final NoticeService noticeService;
+    private final ImageService imageService;
 
     @PostMapping("/board")
     public ResponseEntity post(HttpServletRequest request,
@@ -75,6 +77,7 @@ public class BoardController {
     @DeleteMapping("/board/{postId}")
     public ResponseEntity delete(@PathVariable Long postId) {
         boardService.delete(postId);
+        imageService.deleteImageByPostId(postId);
         return ResponseEntity.ok(postId);
     }
 
