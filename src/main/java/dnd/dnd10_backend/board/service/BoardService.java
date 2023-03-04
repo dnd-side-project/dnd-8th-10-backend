@@ -171,4 +171,13 @@ public class BoardService {
 
         return postList;
     }
+
+    public List<PostListResponseDto> getMyPost(User user) {
+        List<Post> posts = postRepository.findByUserCode(user.getUserCode());
+        List<PostListResponseDto> postList = posts.stream()
+                .map(p -> new PostListResponseDto(p.getId(), p.getTitle(), p.getCategory(), p.getCheckCount(), p.getUserName(), p.getRole(), p.getCreateDate(), p.getModifiedDate()))
+                .collect(Collectors.toList());
+
+        return postList;
+    }
 }

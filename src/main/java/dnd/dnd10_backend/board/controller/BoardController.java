@@ -176,6 +176,20 @@ public class BoardController {
         return ResponseEntity.ok().body(singleResponse);
     }
 
+    @GetMapping("myPost")
+    public ResponseEntity getMyPost(HttpServletRequest request) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
+        List<PostListResponseDto> responseDto = boardService.getMyPost(user);
+        SingleResponse<List<PostListResponseDto>> singleResponse =
+                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
+
+        return ResponseEntity.ok().body(singleResponse);
+    }
+
     //조회수 방지 로직
     private void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
 
