@@ -206,7 +206,7 @@ public class CheckListService {
 
         for(int i=0;i<7;i++){
             List<CheckList> list = checkListRepository
-                    .findCheckListByDateAndAndStatusAndUser(startDay.plusDays(i),"N", user);
+                    .findCheckListByCheckDateAndAndStatusAndUser(startDay.plusDays(i),"N", user);
             if(list.size()>0){
                 weekStatus.add(true);
             }
@@ -226,7 +226,7 @@ public class CheckListService {
     public List<CheckListResponseDto> findCheckListByDate(LocalDate date, User user){
         //날짜로 checkList 찾기
         List<CheckList> checkLists =
-                checkListRepository.findCheckListByDateAndUser(date, user);
+                checkListRepository.findCheckListByCheckDateAndUser(date, user);
 
         //response에 추가
         List<CheckListResponseDto> checkListResponseDtoList = new ArrayList<>();

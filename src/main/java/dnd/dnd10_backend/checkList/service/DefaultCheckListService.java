@@ -116,7 +116,7 @@ public class DefaultCheckListService {
      */
     public List<CheckList> saveDefaultCheckList(LocalDate date,User user){
         List<DefaultCheckList> defaultList = defaultCheckListRepository.findAll();
-        List<CheckList> checkList = checkListRepository.findCheckListByDateAndUser(date, user);
+        List<CheckList> checkList = checkListRepository.findCheckListByCheckDateAndUser(date, user);
         if(!checkList.isEmpty()) return checkList;
 
         for(DefaultCheckList check: defaultList) {
