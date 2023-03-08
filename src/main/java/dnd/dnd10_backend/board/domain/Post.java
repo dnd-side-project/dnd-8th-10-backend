@@ -67,6 +67,8 @@ public class Post extends BaseTimeEntity {
     private Store store;
 
     //*****이미지 첨부 기능 추가 필요******
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
+    private List<Image> images = new ArrayList<>(); //이미지
 
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE)
     @OrderBy("id asc")

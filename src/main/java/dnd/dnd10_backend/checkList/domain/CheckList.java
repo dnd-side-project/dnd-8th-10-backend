@@ -2,23 +2,16 @@ package dnd.dnd10_backend.checkList.domain;
 
 import dnd.dnd10_backend.checkList.dto.request.CheckListRequestDto;
 import dnd.dnd10_backend.checkList.dto.request.UpdateCheckListRequestDto;
-import dnd.dnd10_backend.common.domain.BaseTimeEntity;
 import dnd.dnd10_backend.user.domain.User;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
 
 /**
  * 패키지명 dnd.dnd10_backend.checkList.domain
@@ -33,10 +26,11 @@ import java.util.Date;
  * [2023-02-13] column애 대한 nullable 설정 및 default 지정 - 원지윤
  */
 @Entity
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class) // 추가
-@Table(name = "check_list")
+@Table
 public class CheckList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,13 +38,12 @@ public class CheckList {
     private Long checkIdx;
 
     @Column(name = "check_date",nullable = false)
-    private LocalDate date;
+    private LocalDate checkDate;
 
     @Column(name = "content")
     private String content;
 
     @Column(name = "status",nullable = false)
-    @ColumnDefault("N")
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -65,16 +58,16 @@ public class CheckList {
     private LocalDateTime checkedTime;
 
     @Builder
-    public CheckList(LocalDate date, String content, String status, User user) {
-        this.date = date;
+    public CheckList(LocalDate checkDate, String content, String status, User user) {
+        this.checkDate = checkDate;
         this.content = content;
-        this.status = status;
+        this.status = "N";
         this.user = user;
         this.checkedTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     public CheckList(CheckListRequestDto requestDto, User user) {
-        this.date = requestDto.getDate();
+        this.checkDate = requestDto.getDate();
         this.content = requestDto.getContent();
         this.status = requestDto.getStatus();
         this.user = user;

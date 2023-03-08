@@ -78,8 +78,8 @@ public class BoardController {
 
     @DeleteMapping("/board/{postId}")
     public ResponseEntity delete(@PathVariable Long postId) {
-        boardService.delete(postId);
         imageService.deleteImageByPostId(postId);
+        boardService.delete(postId);
         return ResponseEntity.ok(postId);
     }
 

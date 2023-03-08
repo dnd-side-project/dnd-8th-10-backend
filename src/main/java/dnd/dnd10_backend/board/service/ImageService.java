@@ -182,10 +182,13 @@ public class ImageService {
                 .orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
         List<Image> imageList = imageRepository.findAllByPost(post);
 
+        if(imageList.isEmpty()) return;
+
         for(Image image: imageList){
             try{
                 String srcFileName = URLDecoder.decode(image.getOriginalFileName(),"UTF-8");
-                File file = new File(image.getStoredFilePath()+image.getExtension());
+                String serverPath = image.getStoredFilePath().replace("/",File.separator);
+                File file = new File(serverPath+image.getExtension());
                 boolean result = file.delete();
 
             }catch (UnsupportedEncodingException e){

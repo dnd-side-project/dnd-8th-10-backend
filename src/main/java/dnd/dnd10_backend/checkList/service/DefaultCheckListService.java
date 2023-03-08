@@ -123,7 +123,7 @@ public class DefaultCheckListService {
             checkList.add(
                     CheckList.builder()
                             .user(user)
-                            .date(date)
+                            .checkDate(date)
                             .content(check.getContent())
                             .status("N")
                             .build()

@@ -42,6 +42,7 @@ public class Image {
 
     @NotNull
     private String extension;
+
     @NotNull
     private String storedFilePath;
 
