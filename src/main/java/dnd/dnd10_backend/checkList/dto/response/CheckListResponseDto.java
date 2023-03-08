@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 /**
  * 패키지명 dnd.dnd10_backend.checkList.dto.response
@@ -30,7 +29,7 @@ public class CheckListResponseDto {
 
     public static CheckListResponseDto of(CheckList checkList){
         return new CheckListResponseDto(
-                checkList.getDate(),
+                checkList.getCheckDate(),
                 checkList.getCheckIdx(),
                 checkList.getContent(),
                 checkList.getStatus()

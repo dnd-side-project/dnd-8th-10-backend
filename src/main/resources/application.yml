@@ -8,9 +8,9 @@ spring:
     password: admin123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
+    generate-ddl: true
     hibernate:
       ddl-auto: update
-    generate-ddl: true
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
   servlet:
     multipart:

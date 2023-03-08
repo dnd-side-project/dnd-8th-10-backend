@@ -1,6 +1,5 @@
 package dnd.dnd10_backend.checkList.service;
 
-import dnd.dnd10_backend.calendar.domain.TimeCard;
 import dnd.dnd10_backend.calendar.repository.TimeCardRepository;
 import dnd.dnd10_backend.checkList.domain.CheckList;
 import dnd.dnd10_backend.checkList.dto.request.CheckListRequestDto;
@@ -16,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,11 +22,8 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
-import static com.auth0.jwt.JWT.require;
 
 /**
  * 패키지명 dnd.dnd10_backend.checkList.service
@@ -69,7 +63,7 @@ public class CheckListService {
 
         CheckList checkList = CheckList.builder()
                 .content(requestDto.getContent())
-                .date(requestDto.getDate())
+                .checkDate(requestDto.getDate())
                 .status(requestDto.getStatus())
                 .user(user)
                 .build();
@@ -123,7 +117,7 @@ public class CheckListService {
 
         checkListRepository.delete(checkList);
 
-        return findCheckListByDate(checkList.getDate(), user);
+        return findCheckListByDate(checkList.getCheckDate(), user);
     }
 
     /**
@@ -154,7 +148,7 @@ public class CheckListService {
         //업데이트 내용 저장
         checkListRepository.save(checkList);
 
-        return findCheckListByDate(checkList.getDate(), user);
+        return findCheckListByDate(checkList.getCheckDate(), user);
     }
 
     /**

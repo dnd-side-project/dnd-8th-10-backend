@@ -34,6 +34,6 @@ public interface CheckListRepository extends JpaRepository<CheckList, Long> {
 
     public List<CheckList> findCheckListByDateAndAndStatusAndUser(LocalDate date, String status, User user);
 
-    @Query("select c from CheckList c where c.date <= :date")
+    @Query("select c from CheckList c where c.checkDate <= :date")
     public List<CheckList> findCheckListByPastDate(@Param("date") LocalDate date);
 }
