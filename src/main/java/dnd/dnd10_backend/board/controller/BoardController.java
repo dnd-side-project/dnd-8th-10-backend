@@ -15,6 +15,7 @@ import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 패키지명 dnd.dnd10_backend.board.controller
@@ -197,6 +199,13 @@ public class BoardController {
     private void viewCountUp(Long id, HttpServletRequest req, HttpServletResponse res) {
 
         Cookie oldCookie = null;
+        ResponseCookie responseCookie = ResponseCookie.from("sameSiteCookie", "sameSiteCookieValue")
+                .domain("wise24life.site")
+                .sameSite("None")
+                .secure(true)
+                .path("/")
+                .build();
+        res.addHeader("Set-Cookie", responseCookie.toString());
 
         Cookie[] cookies = req.getCookies();
         if (cookies != null) {
