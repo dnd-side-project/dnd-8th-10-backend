@@ -170,14 +170,17 @@ public class ImageService {
 
         for(Image image : imageList) {
             //image의 이름과 같은 MultipartFile의 이름과 같은게 있는지 확인
-            Optional<MultipartFile> multipartFile = multipartFiles.stream()
+            boolean check =  multipartFiles.stream()
                             .filter(m -> m.getOriginalFilename().equals(image.getOriginalFileName()))
-                            .findFirst();
+                            .findFirst()
+                            .isPresent();
 
             //image에 MultipartFile와 이름기 같은게 없으면 front에서 삭제된 것이므로 이미지 삭제
-            if(multipartFile.isEmpty()) {
+            if(!check) {
                deleteImage(postId, image.getOriginalFileName());
             }
+
+            System.out.println(check);
         }
 
         parseFileInfo(postId, multipartFiles);
