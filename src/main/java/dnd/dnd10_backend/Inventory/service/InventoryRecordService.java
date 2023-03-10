@@ -132,7 +132,7 @@ public class InventoryRecordService {
                 LocalDateTime plusTime = startTime.plusDays(1);
 
                 day = String.valueOf(plusTime.getDayOfMonth());
-                month = String.valueOf(plusTime.getMonth());
+                month = String.valueOf(plusTime.getMonthValue());
                 year = String.valueOf(plusTime.getYear());
             }
             LocalDateTime endTime = LocalDateTime.parse(year +"-"+month+"-"+day+" "+HM2[0]+":"+HM2[1]+":00", formatter);
