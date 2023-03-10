@@ -211,7 +211,10 @@ public class InventoryService {
                 LocalDateTime plusTime = startTime.plusDays(1);
 
                 day = String.valueOf(plusTime.getDayOfMonth());
+
                 month = String.valueOf(plusTime.getMonthValue());
+                month = month.length() < 2 ? "0"+month : month;
+
                 year = String.valueOf(plusTime.getYear());
             }
 
