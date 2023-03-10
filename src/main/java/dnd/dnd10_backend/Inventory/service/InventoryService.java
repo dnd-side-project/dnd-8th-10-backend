@@ -200,12 +200,16 @@ public class InventoryService {
                 HM1[0] = "00";
             }
             String[] HM2 = time[1].split(":");
+
+            LocalDateTime startTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM1[0]+":"+HM1[1]+":00", formatter);
+
             if(HM2[0].equals("24")){
                 HM2[0] = "00";
-                day = String.valueOf(Integer.parseInt(day)+1);
+                day = String.valueOf(startTime.plusDays(1).getDayOfMonth());
             }
-            LocalDateTime startTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM1[0]+":"+HM1[1]+":00", formatter);
             LocalDateTime endTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM2[0]+":"+HM2[1]+":00", formatter);
+            System.out.println(startTime);
+            System.out.println(endTime);
             if((startTime.isBefore(now) && endTime.isAfter(now)) || startTime.isEqual(now) || endTime.isEqual(now)){
                 return t;
             }
