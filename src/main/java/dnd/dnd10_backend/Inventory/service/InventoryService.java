@@ -193,23 +193,30 @@ public class InventoryService {
         for(TimeCard t: list){
             String[] time = t.getWorkTime().split("~");
 
+            String year = t.getYear();
             String month = t.getMonth().length()<2 ? "0"+t.getMonth() : t.getMonth();
             String day = t.getDay().length()<2 ? "0"+t.getDay() : t.getDay();
+
             String[] HM1 = time[0].split(":");
             if(HM1[0].equals("24")){
                 HM1[0] = "00";
             }
+
             String[] HM2 = time[1].split(":");
 
-            LocalDateTime startTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM1[0]+":"+HM1[1]+":00", formatter);
+            LocalDateTime startTime = LocalDateTime.parse(year +"-"+month+"-"+day+" "+HM1[0]+":"+HM1[1]+":00", formatter);
 
             if(HM2[0].equals("24")){
                 HM2[0] = "00";
-                day = String.valueOf(startTime.plusDays(1).getDayOfMonth());
+                LocalDateTime plusTime = startTime.plusDays(1);
+
+                day = String.valueOf(plusTime.getDayOfMonth());
+                month = String.valueOf(plusTime.getMonth());
+                year = String.valueOf(plusTime.getYear());
             }
-            LocalDateTime endTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM2[0]+":"+HM2[1]+":00", formatter);
-            System.out.println(startTime);
-            System.out.println(endTime);
+
+            LocalDateTime endTime = LocalDateTime.parse(year +"-"+month+"-"+day+" "+HM2[0]+":"+HM2[1]+":00", formatter);
+
             if((startTime.isBefore(now) && endTime.isAfter(now)) || startTime.isEqual(now) || endTime.isEqual(now)){
                 return t;
             }
