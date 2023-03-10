@@ -202,6 +202,7 @@ public class InventoryService {
             String[] HM2 = time[1].split(":");
             if(HM2[0].equals("24")){
                 HM2[0] = "00";
+                day = String.valueOf(Integer.parseInt(day)+1);
             }
             LocalDateTime startTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM1[0]+":"+HM1[1]+":00", formatter);
             LocalDateTime endTime = LocalDateTime.parse(t.getYear() +"-"+month+"-"+day+" "+HM2[0]+":"+HM2[1]+":00", formatter);
