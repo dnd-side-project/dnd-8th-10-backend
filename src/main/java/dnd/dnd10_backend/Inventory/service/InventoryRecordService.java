@@ -105,11 +105,15 @@ public class InventoryRecordService {
     public List<InventoryRecordTodayResponseDto> findInventoryUpdateRecordToday(final String token) {
         User user = userService.getUserByEmail(token);
         Store store = user.getStore();
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 현재시간
+
         List<TimeCard> list = timeCardRepository.findByStoreName(store.getStoreName());
         List<InventoryRecordTodayResponseDto> responseDtoList = new ArrayList<>();
+
         LocalDateTime pointTime = LocalDateTime.parse(now.toLocalDate()+" 00:00:00", formatter);
+
         for (TimeCard t : list) {
             String[] time = t.getWorkTime().split("~");
 
@@ -132,6 +136,7 @@ public class InventoryRecordService {
                 LocalDateTime plusTime = startTime.plusDays(1);
 
                 day = String.valueOf(plusTime.getDayOfMonth());
+                day = day.length() < 2 ? "0"+day : day;
 
                 month = String.valueOf(plusTime.getMonthValue());
                 month = month.length() < 2 ? "0"+month : month;
@@ -142,8 +147,11 @@ public class InventoryRecordService {
 
             if (pointTime.isBefore(startTime) && pointTime.plusDays(1).isAfter(startTime)|| startTime.isEqual(now) || endTime.isEqual(now)) {
                 List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCard(t);
+
                 if(recordList.size() < 1) continue;
+
                 String inventorySummumation = recordList.size() < 2 ? recordList.get(0).getInventoryName() : recordList.get(0).getInventoryName() + " 외 " + String.valueOf(recordList.size()-1);
+
                 responseDtoList.add(InventoryRecordTodayResponseDto.of(
                         recordList.get(0),
                         inventorySummumation
