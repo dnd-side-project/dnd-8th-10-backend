@@ -150,7 +150,7 @@ public class InventoryRecordService {
             System.out.println(pointTime.plusDays(1).isAfter(startTime));
             System.out.println("=======================");
             System.out.println(startTime.isBefore(pointTime));
-            System.out.println(pointTime.plusDays(1).isAfter(startTime));
+            System.out.println(startTime.isAfter(pointTime.plusDays(1)));
             System.out.println("=======================");
 
 
