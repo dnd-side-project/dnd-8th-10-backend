@@ -145,8 +145,14 @@ public class InventoryRecordService {
             }
             LocalDateTime endTime = LocalDateTime.parse(year +"-"+month+"-"+day+" "+HM2[0]+":"+HM2[1]+":00", formatter);
 
+            System.out.println("=======================");
             System.out.println(pointTime.isBefore(startTime) );
             System.out.println(pointTime.plusDays(1).isAfter(startTime));
+            System.out.println("=======================");
+            System.out.println(startTime.isBefore(pointTime));
+            System.out.println(pointTime.plusDays(1).isAfter(startTime));
+            System.out.println("=======================");
+
 
             if ((pointTime.isBefore(startTime) && pointTime.plusDays(1).isAfter(startTime))|| startTime.isEqual(now) || endTime.isEqual(now)) {
 
