@@ -16,7 +16,10 @@ import dnd.dnd10_backend.user.dto.response.UserCreateResponseDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -166,36 +169,29 @@ public class UserService {
      * @param token
      */
     public void deleteUser(final String token, final String kakaoToken){
+        RestTemplate rt = new RestTemplate();
 
-        String reqURL ="https://kapi.kakao.com/v1/user/unlink";
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.set("Authorization", "Bearer " + kakaoToken);
 
-        try {
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+                new HttpEntity<>(null, headers);
 
-            conn.setRequestProperty("Authorization", "Bearer " + kakaoToken);
-            int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/unlink",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
 
-            if(responseCode == 400)
-                throw new CustomerNotFoundException("카카오 탈퇴 도중 오류 발생");
-
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String br_line = "";
-            String result = "";
-            while ((br_line = br.readLine()) != null) {
-                result += br_line;
-            }
-        } catch(IOException e) {
-
+        if(response.getStatusCode() == HttpStatus.OK) {
+            User user = getUserByEmail(token);
+            userRepository.delete(user);
         }
 
-        //user 찾기
-        User user = getUserByEmail(token);
-        userRepository.delete(user);
+        throw new CustomerNotFoundException("카카오 탈퇴 도중 오류 발생");
+
     }
 
     /**
@@ -205,29 +201,24 @@ public class UserService {
     public void getLogout(final String kakaoToken) {
         String reqURL ="https://kapi.kakao.com/v1/user/logout";
 
-        try {
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
+        RestTemplate rt = new RestTemplate();
 
-            conn.setRequestProperty("Authorization", "Bearer " + kakaoToken);
-            int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.set("Authorization", "Bearer " + kakaoToken);
 
-            if(responseCode ==400)
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+                new HttpEntity<>(null, headers);
+
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/logout",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
+
+        if(response.getStatusCode() != HttpStatus.OK)
                 throw new CustomerNotFoundException("카카오 로그아웃 도중 오류 발생");
-
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String br_line = "";
-            String result = "";
-            while ((br_line = br.readLine()) != null) {
-                result += br_line;
-            }
-        } catch(IOException e) {
-
-        }
 
     }
 
