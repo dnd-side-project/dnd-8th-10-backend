@@ -11,6 +11,7 @@ spring:
             authorization-grant-type: authorization_code
             client-authentication-method: POST
             client-name: Kakao
+            app-key-admin: 7a28ca54d520bc5eceb71cd6af2e4cc4
             scope:
               - profile_nickname
               - account_email

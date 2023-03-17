@@ -16,8 +16,10 @@ import dnd.dnd10_backend.user.dto.response.UserCreateResponseDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -61,6 +63,9 @@ public class UserService {
     private final StoreRepository storeRepository;
     private final DefaultInventoryService defaultInventoryService;
     private final DefaultCheckListService defaultCheckListService;
+
+    @Value("${spring.security.oauth2.client.registration.kakao.app-key-admin}")
+    String app_key_admin;
 
     /**
      * 토큰 정보로 사용자를 조회하는 메소드
@@ -168,15 +173,22 @@ public class UserService {
      * user를 삭제하는 메소드
      * @param token
      */
-    public void deleteUser(final String token, final String kakaoToken){
+    public void deleteUser(final String token){
         RestTemplate rt = new RestTemplate();
+
+        User user = getUserByEmail(token);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-        headers.set("Authorization", "Bearer " + kakaoToken);
+        headers.set("Authorization", "KakaoAK " + app_key_admin);
+
+        // HttpBody 오브젝트 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("target_id_type", "user_id");
+        params.add("target_id", user.getKakaoId().toString());
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
-                new HttpEntity<>(null, headers);
+                new HttpEntity<>(params, headers);
 
         ResponseEntity<String> response = rt.exchange(
                 "https://kapi.kakao.com/v1/user/unlink",
@@ -188,7 +200,6 @@ public class UserService {
         System.out.println(response.getStatusCode());
 
         if(response.getStatusCode() == HttpStatus.OK) {
-            User user = getUserByEmail(token);
             userRepository.delete(user);
         }
 
