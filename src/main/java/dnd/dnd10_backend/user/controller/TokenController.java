@@ -54,8 +54,8 @@ public class TokenController {
         // 넘어온 인가 코드를 통해 access_token 발급
         OauthToken oauthToken = tokenService.getAccessToken(code, isLocal);
 
-        session.setAttribute("oauthToken", oauthToken);
-
+        session.setAttribute("oauthToken", oauthToken.toString());
+        System.out.println(session.getAttribute("oauthToken"));
         // 발급 받은 accessToken 으로 카카오 회원 정보 DB 저장 후 JWT 를 생성
         List<String> tokenList = tokenService.saveUserAndGetToken(oauthToken.getAccess_token());
 
