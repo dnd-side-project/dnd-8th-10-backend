@@ -201,6 +201,7 @@ public class UserService {
 
         if(response.getStatusCode() == HttpStatus.OK) {
             userRepository.delete(user);
+            return;
         }
 
         throw new CustomerNotFoundException("카카오 탈퇴 도중 오류 발생");
@@ -209,19 +210,24 @@ public class UserService {
 
     /**
      * 카카오 소셜 로그아웃
-     * @param kakaoToken 카카오 access token
+     * @param token access token
      */
-    public void getLogout(final String kakaoToken) {
-        String reqURL ="https://kapi.kakao.com/v1/user/logout";
-
+    public void getLogout(final String token) {
         RestTemplate rt = new RestTemplate();
+
+        User user = getUserByEmail(token);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
-        headers.set("Authorization", "Bearer " + kakaoToken);
+        headers.set("Authorization", "KakaoAK " + app_key_admin);
+
+        // HttpBody 오브젝트 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("target_id_type", "user_id");
+        params.add("target_id", user.getKakaoId().toString());
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
-                new HttpEntity<>(null, headers);
+                new HttpEntity<>(params, headers);
 
         ResponseEntity<String> response = rt.exchange(
                 "https://kapi.kakao.com/v1/user/logout",
