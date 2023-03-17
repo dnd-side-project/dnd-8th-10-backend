@@ -185,6 +185,8 @@ public class UserService {
                 String.class
         );
 
+        System.out.println(response.getStatusCode());
+
         if(response.getStatusCode() == HttpStatus.OK) {
             User user = getUserByEmail(token);
             userRepository.delete(user);
