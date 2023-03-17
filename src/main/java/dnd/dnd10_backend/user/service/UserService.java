@@ -165,7 +165,34 @@ public class UserService {
      * user를 삭제하는 메소드
      * @param token
      */
-    public void deleteUser(final String token){
+    public void deleteUser(final String token, final String kakaoToken){
+
+        String reqURL ="https://kapi.kakao.com/v1/user/unlink";
+
+        try {
+            URL url = new URL(reqURL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+
+            conn.setRequestProperty("Authorization", "Bearer " + kakaoToken);
+            int responseCode = conn.getResponseCode();
+            System.out.println("responseCode : " + responseCode);
+
+            if(responseCode == 400)
+                throw new CustomerNotFoundException("카카오 탈퇴 도중 오류 발생");
+
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            String br_line = "";
+            String result = "";
+            while ((br_line = br.readLine()) != null) {
+                result += br_line;
+            }
+        } catch(IOException e) {
+
+        }
+
         //user 찾기
         User user = getUserByEmail(token);
         userRepository.delete(user);

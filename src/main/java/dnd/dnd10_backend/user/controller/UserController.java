@@ -100,11 +100,19 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/user")
-    public ResponseEntity deleteUser(HttpServletRequest request) {
+    public ResponseEntity deleteUser(HttpServletRequest request
+                                    , HttpSession session) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
-        userService.deleteUser(token);
+
+        String kakaoToken = (String)session.getAttribute("oauthToken");
+
+        if(kakaoToken != null && !"".equals(kakaoToken)){
+            userService.deleteUser(token, kakaoToken);
+        }
+
         SingleResponse<String> response = responseService.getResponse("",CodeStatus.SUCCESS_DELETED_USER);
+
         return ResponseEntity.ok().body(response);
     }
 
@@ -139,6 +147,7 @@ public class UserController {
 
         //카카오 세션 로그아웃웃
         SingleResponse singleResponse = responseService.getResponse("",CodeStatus.SUCCESS);
+
         return ResponseEntity.ok().body(singleResponse);
     }
 }
