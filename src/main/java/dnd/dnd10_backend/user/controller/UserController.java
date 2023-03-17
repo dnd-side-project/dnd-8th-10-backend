@@ -100,17 +100,12 @@ public class UserController {
      * @return
      */
     @DeleteMapping("/user")
-    public ResponseEntity deleteUser(HttpServletRequest request
-                                    , HttpSession session) {
+    public ResponseEntity deleteUser(HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
-        String kakaoToken = (String)session.getAttribute("oauthToken");
-        System.out.println(session.getAttribute("oauthToken"));
-        System.out.println("This is DeleteUser Api");
-        if(kakaoToken != null && !"".equals(kakaoToken)){
-            userService.deleteUser(token, kakaoToken);
-        }
+        userService.deleteUser(token);
+
 
         SingleResponse<String> response = responseService.getResponse("",CodeStatus.SUCCESS_DELETED_USER);
 
