@@ -106,7 +106,7 @@ public class UserController {
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         String kakaoToken = (String)session.getAttribute("oauthToken");
-        System.out.println(kakaoToken);
+        System.out.println(session.getAttribute("oauthToken"));
         System.out.println("This is DeleteUser Api");
         if(kakaoToken != null && !"".equals(kakaoToken)){
             userService.deleteUser(token, kakaoToken);
