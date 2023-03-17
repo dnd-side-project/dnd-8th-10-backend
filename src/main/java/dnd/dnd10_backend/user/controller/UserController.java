@@ -106,7 +106,6 @@ public class UserController {
 
         userService.deleteUser(token);
 
-
         SingleResponse<String> response = responseService.getResponse("",CodeStatus.SUCCESS_DELETED_USER);
 
         return ResponseEntity.ok().body(response);
@@ -129,12 +128,8 @@ public class UserController {
         String refreshToken = request.getHeader(JwtProperties.RT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
-        String kakaoToken = (String)session.getAttribute("oauthToken");
+        userService.getLogout(token);
 
-        System.out.println("This is LogoutUser Api");
-        if(kakaoToken != null && !"".equals(kakaoToken)){
-            userService.getLogout(kakaoToken);
-        }
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
