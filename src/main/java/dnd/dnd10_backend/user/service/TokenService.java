@@ -112,9 +112,9 @@ public class TokenService {
         KakaoProfile profile = findProfile(token);
         List<String> tokenList = new ArrayList<>();
 
-        if(profile.getKakao_account().getEmail().equals(null)) {
-            throw new CustomerNotFoundException(CodeStatus.USER_EMAIL_NULL);
-        }
+//        if(profile.getKakao_account().getEmail().equals(null)) {
+//            throw new CustomerNotFoundException(CodeStatus.USER_EMAIL_NULL);
+//        }
 
         User user = userRepository.findByKakaoEmail(profile.getKakao_account().getEmail());
 
