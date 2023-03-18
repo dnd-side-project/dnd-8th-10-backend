@@ -1,4 +1,4 @@
-# 🏪wise24life
+# 🏪wise24life(슬기로운 편의점 생활)
 > ‘슬편생’은 수기작성과 구두전달에 의존해있던 기존 편의점의 아날로그적인 업무 방식을 디지털화하여 근무자들의 업무 효율을 개선하고자 제작한 서비스입니다. 
 <p align="center">
 <img src = "https://user-images.githubusercontent.com/78727847/226090738-44b5096c-28db-4ac7-adb7-f04d1bec551f.png" width="800px"/>
