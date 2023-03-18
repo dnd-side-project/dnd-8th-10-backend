@@ -125,13 +125,9 @@ public class TokenService {
                     .userRole("ROLE_USER").build();
 
             user = userRepository.save(user);
-            System.out.println("=========================");
-            System.out.println("asdf");
-            System.out.println(profile.getKakao_account().getEmail() == null);
-            System.out.println("gggggg");
-            System.out.println("=========================");
 
-            if(profile.getKakao_account().getEmail() == null) {
+            //카카오 이메일이 없을 경우 임의의 이메일 입력력
+           if(profile.getKakao_account().getEmail() == null) {
                 String email = "temp" + user.getUserCode() +"@wise.com";
                 user.setKakaoEmail(email);
                 userRepository.save(user);
