@@ -114,10 +114,6 @@ public class TokenService {
 
         boolean isNull = false;
 
-        System.out.println("=========================");
-        System.out.println(profile.getKakao_account().is_email_verified);
-        System.out.println("=========================");
-
         User user = userRepository.findByKakaoId(profile.getId());
 
         if(user == null) {
@@ -131,6 +127,7 @@ public class TokenService {
             user = userRepository.save(user);
             System.out.println("=========================");
             System.out.println(user.getKakaoEmail().equals(null));
+            System.out.println(user.getKakaoEmail());
             System.out.println("=========================");
 
             if(!profile.getKakao_account().getHas_email()) {
