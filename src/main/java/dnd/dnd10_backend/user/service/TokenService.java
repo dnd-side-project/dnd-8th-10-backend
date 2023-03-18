@@ -127,8 +127,7 @@ public class TokenService {
             user = userRepository.save(user);
             System.out.println("=========================");
             System.out.println("asdf");
-            System.out.println(user.getKakaoEmail().equals(null));
-            System.out.println(user.getKakaoEmail());
+            System.out.println(profile.getKakao_account().getEmail());
             System.out.println("gggggg");
             System.out.println("=========================");
 
