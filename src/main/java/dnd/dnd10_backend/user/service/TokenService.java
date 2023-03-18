@@ -112,12 +112,13 @@ public class TokenService {
         KakaoProfile profile = findProfile(token);
         List<String> tokenList = new ArrayList<>();
 
-        User user = userRepository.findByKakaoId(profile.getId());
-
         boolean isNull = false;
-        if(profile.getKakao_account().getEmail().equals(null)) {
-            isNull = true;
-        }
+
+        System.out.println("=========================");
+        System.out.println(profile.getKakao_account().getHas_email());
+        System.out.println("=========================");
+
+        User user = userRepository.findByKakaoId(profile.getId());
 
         if(user == null) {
             user = User.builder()
@@ -129,11 +130,7 @@ public class TokenService {
 
             user = userRepository.save(user);
 
-            System.out.println("===============================");
-            System.out.println(isNull);
-            System.out.println("===============================");
-
-            if(isNull) {
+            if(!profile.getKakao_account().getHas_email()) {
                 String email = "temp" + user.getUserCode() +"@wise.com";
                 user.setKakaoEmail(email);
                 userRepository.save(user);
