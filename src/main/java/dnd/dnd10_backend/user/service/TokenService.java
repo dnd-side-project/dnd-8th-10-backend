@@ -127,11 +127,11 @@ public class TokenService {
             user = userRepository.save(user);
             System.out.println("=========================");
             System.out.println("asdf");
-            System.out.println(profile.getKakao_account().getEmail());
+            System.out.println(profile.getKakao_account().getEmail() == null);
             System.out.println("gggggg");
             System.out.println("=========================");
 
-            if(!profile.getKakao_account().getHas_email()) {
+            if(profile.getKakao_account().getEmail() == null) {
                 String email = "temp" + user.getUserCode() +"@wise.com";
                 user.setKakaoEmail(email);
                 userRepository.save(user);
