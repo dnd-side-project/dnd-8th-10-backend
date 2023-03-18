@@ -9,6 +9,7 @@ import dnd.dnd10_backend.user.domain.enums.Role;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -42,7 +43,7 @@ import java.util.List;
  * [2023-02-24] 토큰 연관관계 추가 - 원지윤
  */
 @Entity
-@Data
+@Getter
 @NoArgsConstructor
 @Table(name = "user")
 public class User implements UserDetails {
@@ -114,6 +115,22 @@ public class User implements UserDetails {
         this.workTime = requestDto.getWorkTime();
         this.wage = requestDto.getWage();
         this.store = store;
+    }
+
+    /**
+     * 유저프로필코드를 설정하는 메소드
+     * @param code
+     */
+    public void setUserProfileCode(int code) {
+        this.userProfileCode = code;
+    }
+
+    /**
+     * 카카오 이메일이 null일 시 이메일을 저장하는 메소드
+     * @param email 저장할 임의의 메소드
+     */
+    public void setKakaoEmail(String email) {
+        this.kakaoEmail = email;
     }
 
     @Override

@@ -26,6 +26,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     public User findByUserCode(Long userCode);
 
+    public User findByKakaoId(Long id);
+
     public List<User> findByKakaoNickname(String userName);
 
     public User findByKakaoNicknameAndUserProfileCode(String userName, int userProfileCode);

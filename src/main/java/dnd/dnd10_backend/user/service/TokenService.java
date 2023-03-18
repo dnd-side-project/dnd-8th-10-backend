@@ -112,11 +112,7 @@ public class TokenService {
         KakaoProfile profile = findProfile(token);
         List<String> tokenList = new ArrayList<>();
 
-//        if(profile.getKakao_account().getEmail().equals(null)) {
-//            throw new CustomerNotFoundException(CodeStatus.USER_EMAIL_NULL);
-//        }
-
-        User user = userRepository.findByKakaoEmail(profile.getKakao_account().getEmail());
+        User user = userRepository.findByKakaoId(profile.getId());
 
         if(user == null) {
             user = User.builder()
@@ -126,7 +122,13 @@ public class TokenService {
                     .wage(0)
                     .userRole("ROLE_USER").build();
 
-            userRepository.save(user);
+            user = userRepository.save(user);
+
+            if(user.getKakaoEmail().equals(null)) {
+                String email = "temp" + user.getUserCode() +"@wise.com";
+                user.setKakaoEmail(email);
+                userRepository.save(user);
+            }
         }
 
         //List에 각각 access token과 refresh token 차례로 넣어줌
