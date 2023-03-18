@@ -37,11 +37,11 @@ public class NoticeResponseDto {
 
     private boolean checked;
 
-    private Role role;
-
-    private String userName;
-
     private LocalDateTime createDate;
 
     private String type;
+
+    private String writerName;
+
+    private Role writerRole;
 }
