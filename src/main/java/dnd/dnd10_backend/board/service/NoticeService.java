@@ -103,7 +103,7 @@ public class NoticeService {
     public List<NoticeResponseDto> getNotice(User user) {
         List<Notice> notices = noticeRepository.findByUser(user);
         List<NoticeResponseDto> noticeList = notices.stream()
-                .map(n -> new NoticeResponseDto(n.getId(), n.getPostId(), n.getCategory(), n.getTitle(), n.isChecked(), n.getUser().getRole(), n.getUser().getUsername(), n.getCreateDate(), n.getType()))
+                .map(n -> new NoticeResponseDto(n.getId(), n.getPostId(), n.getCategory(), n.getTitle(), n.isChecked(), n.getCreateDate(), n.getType(), n.getWriterName(), n.getWriterRole()))
                 .collect(Collectors.toList());
 
         return noticeList;
