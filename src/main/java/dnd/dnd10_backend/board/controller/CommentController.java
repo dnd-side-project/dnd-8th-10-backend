@@ -55,10 +55,12 @@ public class CommentController {
 
         //멘션 한 경우 알림 생성
         if(!dto.getUserCode().isEmpty()) {
-            noticeService.createCommentNotice(user, dto, postId);
+            noticeService.createMentionNotice(user, dto, postId);
         }
 
         commentService.save(dto, user, postId);
+
+        noticeService.createCommentNotice(user, dto, postId);
 
         PostResponseDto responseDto = boardService.get(postId, user);
 
@@ -82,7 +84,7 @@ public class CommentController {
         commentService.update(commentId, dto, user);
 
         if(!dto.getUserCode().isEmpty()) {
-            noticeService.createCommentNotice(user, dto, postId);
+            noticeService.createMentionNotice(user, dto, postId);
         }
 
         PostResponseDto responseDto = boardService.get(postId, user);

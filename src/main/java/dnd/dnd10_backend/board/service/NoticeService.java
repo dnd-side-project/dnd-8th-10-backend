@@ -5,6 +5,9 @@ import dnd.dnd10_backend.board.domain.Post;
 import dnd.dnd10_backend.board.dto.request.CommentRequestDto;
 import dnd.dnd10_backend.board.dto.response.NoticeResponseDto;
 import dnd.dnd10_backend.board.repository.NoticeRepository;
+import dnd.dnd10_backend.board.repository.PostRepository;
+import dnd.dnd10_backend.common.domain.enums.CodeStatus;
+import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +37,7 @@ public class NoticeService {
 
     private final NoticeRepository noticeRepository;
     private final UserRepository userRepository;
+    private final PostRepository postRepository;
 
     @Transactional
     public void createNotice(Post post, User user) {
@@ -49,13 +54,15 @@ public class NoticeService {
                     .checked(false)
                     .user(u)
                     .type("post")
+                    .writerName(user.getUsername())
+                    .writerRole(user.getRole())
                     .build();
             noticeRepository.save(notice);
         }
     }
 
     @Transactional
-    public void createCommentNotice(User user, CommentRequestDto dto, Long postId) {
+    public void createMentionNotice(User user, CommentRequestDto dto, Long postId) {
         List<Long> userCode = dto.getUserCode();
         for(Long code : userCode) {
             User addressee = userRepository.findByUserCode(code);
@@ -65,7 +72,29 @@ public class NoticeService {
                     .title(dto.getContent())
                     .checked(false)
                     .user(addressee)
+                    .type("mention")
+                    .writerName(user.getUsername())
+                    .writerRole(user.getRole())
+                    .build();
+            noticeRepository.save(notice);
+        }
+    }
+
+    @Transactional
+    public void createCommentNotice(User user, CommentRequestDto dto, Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new CustomerNotFoundException(CodeStatus.NOT_FOUND_POST));
+
+        if(!Objects.equals(user.getUserCode(), post.getUserCode())) {
+            User postWriter = userRepository.findByUserCode(post.getUserCode());
+            Notice notice = Notice.builder()
+                    .postId(postId)
+                    .category(user.getUsername())
+                    .title(dto.getContent())
+                    .checked(false)
+                    .user(postWriter)
                     .type("comment")
+                    .writerName(user.getUsername())
+                    .writerRole(user.getRole())
                     .build();
             noticeRepository.save(notice);
         }

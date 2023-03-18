@@ -2,6 +2,7 @@ package dnd.dnd10_backend.board.domain;
 
 import dnd.dnd10_backend.common.domain.BaseTimeEntity;
 import dnd.dnd10_backend.user.domain.User;
+import dnd.dnd10_backend.user.domain.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,6 +42,10 @@ public class Notice extends BaseTimeEntity {
     private boolean checked;
 
     private String type;
+
+    private String writerName;
+
+    private Role writerRole;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_code")
