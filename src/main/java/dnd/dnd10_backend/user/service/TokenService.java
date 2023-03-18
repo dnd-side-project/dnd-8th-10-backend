@@ -115,7 +115,7 @@ public class TokenService {
         boolean isNull = false;
 
         System.out.println("=========================");
-        System.out.println(profile.getKakao_account().getHas_email());
+        System.out.println(profile.getKakao_account().is_email_verified);
         System.out.println("=========================");
 
         User user = userRepository.findByKakaoId(profile.getId());
@@ -129,6 +129,9 @@ public class TokenService {
                     .userRole("ROLE_USER").build();
 
             user = userRepository.save(user);
+            System.out.println("=========================");
+            System.out.println(user.getKakaoEmail().equals(null));
+            System.out.println("=========================");
 
             if(!profile.getKakao_account().getHas_email()) {
                 String email = "temp" + user.getUserCode() +"@wise.com";
