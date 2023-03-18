@@ -112,6 +112,8 @@ public class TokenService {
         KakaoProfile profile = findProfile(token);
         List<String> tokenList = new ArrayList<>();
 
+        boolean isNull = false;
+
         User user = userRepository.findByKakaoId(profile.getId());
 
         if(user == null) {
@@ -124,7 +126,8 @@ public class TokenService {
 
             user = userRepository.save(user);
 
-            if(user.getKakaoEmail().equals(null)) {
+            //카카오 이메일이 없을 경우 임의의 이메일 입력력
+           if(profile.getKakao_account().getEmail() == null) {
                 String email = "temp" + user.getUserCode() +"@wise.com";
                 user.setKakaoEmail(email);
                 userRepository.save(user);
