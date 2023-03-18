@@ -16,7 +16,12 @@ import dnd.dnd10_backend.user.dto.response.UserCreateResponseDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -58,6 +63,9 @@ public class UserService {
     private final StoreRepository storeRepository;
     private final DefaultInventoryService defaultInventoryService;
     private final DefaultCheckListService defaultCheckListService;
+
+    @Value("${spring.security.oauth2.client.registration.kakao.app-key-admin}")
+    String app_key_admin;
 
     /**
      * 토큰 정보로 사용자를 조회하는 메소드
@@ -166,41 +174,70 @@ public class UserService {
      * @param token
      */
     public void deleteUser(final String token){
-        //user 찾기
+        RestTemplate rt = new RestTemplate();
+
         User user = getUserByEmail(token);
-        userRepository.delete(user);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.set("Authorization", "KakaoAK " + app_key_admin);
+
+        // HttpBody 오브젝트 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("target_id_type", "user_id");
+        params.add("target_id", user.getKakaoId().toString());
+
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+                new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/unlink",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
+
+        System.out.println(response.getStatusCode());
+
+        if(response.getStatusCode() == HttpStatus.OK) {
+            userRepository.delete(user);
+            return;
+        }
+
+        throw new CustomerNotFoundException("카카오 탈퇴 도중 오류 발생");
+
     }
 
     /**
      * 카카오 소셜 로그아웃
-     * @param kakaoToken 카카오 access token
+     * @param token access token
      */
-    public void getLogout(final String kakaoToken) {
-        String reqURL ="https://kapi.kakao.com/v1/user/logout";
+    public void getLogout(final String token) {
+        RestTemplate rt = new RestTemplate();
 
-        try {
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
+        User user = getUserByEmail(token);
 
-            conn.setRequestProperty("Authorization", "Bearer " + kakaoToken);
-            int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.set("Authorization", "KakaoAK " + app_key_admin);
 
-            if(responseCode ==400)
+        // HttpBody 오브젝트 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("target_id_type", "user_id");
+        params.add("target_id", user.getKakaoId().toString());
+
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+                new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/logout",
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
+
+        if(response.getStatusCode() != HttpStatus.OK)
                 throw new CustomerNotFoundException("카카오 로그아웃 도중 오류 발생");
-
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String br_line = "";
-            String result = "";
-            while ((br_line = br.readLine()) != null) {
-                result += br_line;
-            }
-        } catch(IOException e) {
-
-        }
 
     }
 

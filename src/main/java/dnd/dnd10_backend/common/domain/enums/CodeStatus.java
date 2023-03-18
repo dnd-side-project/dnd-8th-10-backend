@@ -52,6 +52,7 @@ public enum CodeStatus {
     SUCCESS_DELETED_INVENTORY(200, "시재 삭제에 성공하였습니다."),
 
     //40X
+    USER_EMAIL_NULL(400, "사용자 이메일 미제공"),
     ACCESS_TOKEN_EXPIRED(401,"엑세스 토큰이 만료되었습니다."),
     REFRESH_TOKEN_EXPIRED(401,"리프레쉬 토큰이 만료되었습니다."),
     INVALID_TOKEN(401,"유효하지 않은 토큰입니다."),
@@ -62,7 +63,6 @@ public enum CodeStatus {
     NOT_FOUND_POST(404, "찾을 수 없는 게시글입니다."),
     NOT_FOUND_COMMENT(404, "찾을 수 없는 댓글입니다."),
     NOT_FOUND_INVENTORY(404,"찾을 수 없는 시재입니다."),
-
     UNAUTHORIZED_DELETED_USER(401,"삭제 가능한 사용자가 아닙니다."),
     UNAUTHORIZED_UPDATED_USER(401,"업데이트 가능한 사용자가 아닙니다."),
     ALREADY_CREATED_INVENTORY(400, "이미 존재하는 담배입니다.");
