@@ -20,6 +20,7 @@ import lombok.Setter;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  * [2023-02-02] 사용자 휴대전화 번호 추가 - 원지윤
  * [2023-02-12] 사용자 프로필 인식 코드 추가 - 원지윤
+ * [2023-03-20] 필드명 통일 kakaoEmail -> email - 원지윤
  */
 @Getter
 @AllArgsConstructor
@@ -27,7 +28,7 @@ import lombok.Setter;
 public class UserResponseDto {
     private Long userCode;
     private String userName;
-    private String kakaoEmail;
+    private String email;
     private int userProfileCode;
     private Role role;
     private String phoneNumber;
