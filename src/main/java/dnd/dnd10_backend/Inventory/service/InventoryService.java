@@ -179,6 +179,19 @@ public class InventoryService {
     }
 
     /**
+     * 현재 시간의 timeCard가 존재하는지 확인하는 메소드
+     * @param token access token
+     * @return
+     */
+    public void checkWorkTime(final String token) {
+        User user = userService.getUserByEmail(token);
+        Store store = user.getStore();
+
+        TimeCard timeCard = findTimeCard(user, store);
+        return;
+    }
+
+    /**
      * 현재 시간에 근무기록이 존재하는지 확인하는 메소드
      * @param user 사용자
      * @param store 현재 일하고 있는 편의점
