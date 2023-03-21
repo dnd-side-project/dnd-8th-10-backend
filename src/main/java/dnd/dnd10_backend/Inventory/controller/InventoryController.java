@@ -106,6 +106,22 @@ public class InventoryController {
     }
 
     /**
+     * 시재 점검가능한 시간인지 확인하는 api
+     * @param request
+     * @return
+     */
+    @GetMapping("/inventory/workTime")
+    public ResponseEntity getTimeCard(HttpServletRequest request) {
+        String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+        inventoryService.checkWorkTime(token);
+
+        SingleResponse response = responseService.getResponse(null, CodeStatus.SUCCESS);
+
+        return ResponseEntity.ok().body(response);
+    }
+
+    /**
      * 시재 업데이트 기록 조회 api
      * @param category 시재의 종류
      * @param request
