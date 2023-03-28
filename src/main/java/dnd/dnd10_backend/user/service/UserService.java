@@ -1,36 +1,38 @@
 package dnd.dnd10_backend.user.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import dnd.dnd10_backend.auth.domain.Token;
-import dnd.dnd10_backend.auth.repository.TokenRepository;
+import dnd.dnd10_backend.Inventory.service.DefaultInventoryService;
+import dnd.dnd10_backend.checkList.service.DefaultCheckListService;
+import dnd.dnd10_backend.common.domain.enums.CodeStatus;
+import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
+import dnd.dnd10_backend.store.domain.Store;
+import dnd.dnd10_backend.store.repository.StoreRepository;
 import dnd.dnd10_backend.user.domain.User;
-import dnd.dnd10_backend.user.oauth.domain.KakaoProfile;
-import dnd.dnd10_backend.user.oauth.domain.OauthToken;
+import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
+import dnd.dnd10_backend.user.dto.response.UserCreateResponseDto;
+import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpResponse;
 import java.util.List;
 
-import static com.auth0.jwt.JWT.create;
 import static com.auth0.jwt.JWT.require;
 
 /**
@@ -43,235 +45,233 @@ import static com.auth0.jwt.JWT.require;
  * @version 1.0
  * [수정내용]
  * 예시) [2022-09-17] 주석추가 - 원지윤
- * [2022-01-21] refresh token에 대한 내용 수정 - 원지윤
+ * [2023-01-21] refresh token에 대한 내용 수정 - 원지윤
+ * [2023-02-02] token관련 service 분리 - 원지윤
+ * [2023-02-06] getUserByToken 오타 수정 - 이우진
+ * [2023-02-06] getUserByEmail 리턴값 엔티티로 수정 - 이우진
+ * [2023-02-13] findByUserCode 추가 - 이우진
+ * [2023-02-20] 사용자 삭제에 대한 메소드 추가 - 원지윤
+ * [2023-02-24] 사용자 생성 시 발생하는 에러 해결 - 원지윤
+ * [2023-02-24] 사용자 등록과 업데이트 함수 분리 - 원지윤
+ * [2023-03-01] 카카오 소셜 로그아웃 추가 - 원지윤
  */
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Autowired
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final StoreRepository storeRepository;
+    private final DefaultInventoryService defaultInventoryService;
+    private final DefaultCheckListService defaultCheckListService;
 
-    @Autowired
-    TokenRepository tokenRepository;
-
-    //환경 변수 가져오기
-    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
-    String client_id;
-
-    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
-    String client_secret;
-
-    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
-    String redirect_uri;
+    @Value("${spring.security.oauth2.client.registration.kakao.app-key-admin}")
+    String app_key_admin;
 
     /**
-     * 인가 코드를 통해 access_token 발급
-     * @param code 인가 코드
-     * @return access_token
+     * 토큰 정보로 사용자를 조회하는 메소드
+     * @param token access token
+     * @return
      */
-    public OauthToken getAccessToken(String code) {
+    public UserCreateResponseDto getUserByToken(final String token){
+        Long userCode = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
+                .getClaim("id").asLong();
+        User user = userRepository.findByUserCode(userCode);
+        if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
+        return UserCreateResponseDto.of(user);
+    }
+
+    /**
+     * 이메일로 사용자를 조회하는 메소드
+     * @param token access token
+     * @return
+     */
+    public User getUserByEmail(final String token){
+        String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
+                .getClaim("email").asString();
+        //user 찾기
+        User user = userRepository.findByKakaoEmail(email);
+        if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
+
+        return user;
+    }
+
+    /**
+     * 사용자 등록하는 메소드
+     * @param requestDto client한테서 받아온 사용자 정보
+     * @return UserResponseDto
+     */
+    public UserResponseDto saveUser(UserSaveRequestDto requestDto, final String token){
+        //user 찾기
+        User user = getUserByEmail(token);
+
+        Store store = storeRepository.findStoreByStoreName(requestDto.getWorkPlace());
+
+        if(store == null){
+            store = Store.builder()
+                    .storeName(requestDto.getWorkPlace())
+                    .storeLocation(requestDto.getWorkLocation())
+                    .build();
+
+            store = storeRepository.save(store);
+            defaultInventoryService.saveDafaultInventories(store);
+        }
+
+        int count = userRepository.findByStore(store).size();
+
+        //requestDto로 user 정보 update
+        user.updateUser(requestDto, store);
+
+        List<User> userList = userRepository.findByKakaoNickname(user.getUsername());
+
+        user.setUserProfileCode((count%10)+1);
+
+        //user 정보 저장
+        userRepository.save(user);
+
+        //사용자 출근요일에 기본 체크리스트 추가
+        defaultCheckListService.saveFirstDefaultCheckList(user);
+
+        return UserResponseDto.of(user,store);
+    }
+
+    /**
+     * 사용자 정보를 업데이트하는 함수
+     * @param requestDto
+     * @param token
+     * @return
+     */
+    public UserResponseDto updateUser(UserSaveRequestDto requestDto, final String token){
+        //user 찾기
+        User user = getUserByEmail(token);
+
+        Store store = storeRepository.findStoreByStoreName(requestDto.getWorkPlace());
+
+        if(store == null){
+            store = Store.builder()
+                    .storeName(requestDto.getWorkPlace())
+                    .storeLocation(requestDto.getWorkLocation())
+                    .build();
+
+            store = storeRepository.save(store);
+            defaultInventoryService.saveDafaultInventories(store);
+        }
+
+        //requestDto로 user 정보 update
+        user.updateUser(requestDto, store);
+
+        //user 정보 저장
+        userRepository.save(user);
+
+        //사용자 출근요일에 기본 체크리스트 추가
+        defaultCheckListService.saveFirstDefaultCheckList(user);
+
+        return UserResponseDto.of(user,store);
+    }
+
+    /**
+     * user를 삭제하는 메소드
+     * @param token
+     */
+    public void deleteUser(final String token){
         RestTemplate rt = new RestTemplate();
+
+        User user = getUserByEmail(token);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.set("Authorization", "KakaoAK " + app_key_admin);
 
         // HttpBody 오브젝트 생성
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", client_id);
-        params.add("redirect_uri", redirect_uri);
-        params.add("code", code);
-        params.add("client_secret", client_secret);
+        params.add("target_id_type", "user_id");
+        params.add("target_id", user.getKakaoId().toString());
 
         HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
                 new HttpEntity<>(params, headers);
 
-        ResponseEntity<String> accessTokenResponse = rt.exchange(
-                "https://kauth.kakao.com/oauth/token",
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/unlink",
                 HttpMethod.POST,
                 kakaoTokenRequest,
                 String.class
         );
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        OauthToken oauthToken = null;
-        try {
-            oauthToken = objectMapper.readValue(accessTokenResponse.getBody(), OauthToken.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
+        System.out.println(response.getStatusCode());
+
+        if(response.getStatusCode() == HttpStatus.OK) {
+            userRepository.delete(user);
+            return;
         }
 
-        return oauthToken;
+        throw new CustomerNotFoundException("카카오 탈퇴 도중 오류 발생");
+
     }
 
     /**
-     * 신규 사용자 저장 및 JWT토큰 생성하는 함수
-     * @param token access_token
-     * @return access token과 refresh token List
-     */
-    public List<String> saveUserAndGetToken(String token) {
-        KakaoProfile profile = findProfile(token);
-        List<String> tokenList = new ArrayList<>();
-        User user = userRepository.findByKakaoEmail(profile.getKakao_account().getEmail());
-        if(user == null) {
-            user = User.builder()
-                    .kakaoId(profile.getId())
-                    .kakaoProfileImg(profile.getKakao_account().getProfile().getProfile_image_url())
-                    .kakaoNickname(profile.getKakao_account().getProfile().getNickname())
-                    .kakaoEmail(profile.getKakao_account().getEmail())
-                    .userRole("ROLE_USER").build();
-
-            userRepository.save(user);
-        }
-        Token refreshToken = tokenRepository.findByUser(user);
-
-        if(refreshToken != null){
-            refreshToken.refreshUpdate(createRefreshToken(user));
-        }
-        else{
-            refreshToken = Token.builder()
-                    .user(user)
-                    .refreshToken(createRefreshToken(user)).build();
-
-        }
-
-        tokenRepository.save(refreshToken);
-        
-        //List에 각각 access token과 refresh token 차례로 넣어줌
-        tokenList.add(createToken(user));
-        tokenList.add(refreshToken.getRefreshToken());
-
-        return tokenList;
-    }
-
-    /**
-     * JWT토큰 생성하는 함수
-     * @param user 사용자
-     * @return 발급한 JWT토큰
-     */
-    public String createToken(User user) {
-
-        String jwtToken = JWT.create()
-
-                .withSubject(user.getKakaoEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.AT_EXP_TIME))
-
-                .withClaim("id", user.getUserCode())
-                .withClaim("nickname", user.getKakaoNickname())
-
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-        return jwtToken;
-    }
-
-    /**
-     * refresh토큰 생성하는 함수
-     * @param user 사용자
-     * @return 발급한 refresh token
-     */
-    public String createRefreshToken(User user) {
-
-        String refreshToken = JWT.create()
-
-                .withSubject(user.getKakaoEmail())
-                .withExpiresAt(new Date(System.currentTimeMillis()+ JwtProperties.RT_EXP_TIME))
-
-                .withClaim("id", user.getUserCode())
-                .withClaim("nickname", user.getKakaoNickname())
-
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
-
-        return refreshToken;
-    }
-
-    /**
-     * refresh token을 받아 access token과 refresh toekn 재발급
-     * @param token refresh token
-     * @return access token과 refresh token List
-     */
-    public List<String> reissueRefreshToken(String token){
-        List<String> tokenList = new ArrayList<>();
-        //refreshToken 만료 확인
-        if(!validateToken(token)){ //refresh token까지 만료 되었을 때
-            throw new RuntimeException("다시 로그인해주세요");
-        }
-        
-        Long userCode = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-                .getClaim("id").asLong();
-
-        User user = userRepository.findByUserCode(userCode);
-        Token refreshToken = tokenRepository.findByUser(user);
-
-        //DB의 refreshToken과 비교
-        if(!refreshToken.getRefreshToken().equals(token)){ //DB의 refresh token과 front로부터 받아온 refresh toekn이 다를 때
-            throw new RuntimeException("옳지 않은 토큰");
-
-        }
-
-        //refresh token 재발급
-        refreshToken.refreshUpdate(createRefreshToken(user));
-        tokenRepository.save(refreshToken);
-        
-        //List에 각각 access token과 refresh token 차례로 넣어줌
-        tokenList.add(createToken(user));
-        tokenList.add(refreshToken.getRefreshToken());
-
-        return tokenList;
-    }
-    
-    /**
-     * 토큰 정보를 검증하는 메서드
-     * @param token 토큰
-     * @return 토큰 검증 여부
-     */
-    public boolean validateToken(String token) {
-        Long userCode = null;
-        try {
-            userCode = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
-                    .getClaim("id").asLong();
-            return true;
-        }catch (TokenExpiredException e) {
-            //토큰이 만료되었습니다.
-            e.printStackTrace();
-        } catch (JWTVerificationException e) {
-            //유효하지 않은 토큰입니다.
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    /**
-     * 카카오 서버에 접근해서 사용자의 정보를 받아오는 함수
+     * 카카오 소셜 로그아웃
      * @param token access token
-     * @return 사용자의 정보
      */
-    public KakaoProfile findProfile(String token) {
-
+    public void getLogout(final String token) {
         RestTemplate rt = new RestTemplate();
 
+        User user = getUserByEmail(token);
+
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + token);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.set("Authorization", "KakaoAK " + app_key_admin);
 
-        HttpEntity<MultiValueMap<String, String>> kakaoProfileRequest =
-                new HttpEntity<>(headers);
+        // HttpBody 오브젝트 생성
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("target_id_type", "user_id");
+        params.add("target_id", user.getKakaoId().toString());
 
-        // Http 요청 (POST 방식) 후, response 변수에 응답을 받음
-        ResponseEntity<String> kakaoProfileResponse = rt.exchange(
-                "https://kapi.kakao.com/v2/user/me",
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest =
+                new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/logout",
                 HttpMethod.POST,
-                kakaoProfileRequest,
+                kakaoTokenRequest,
                 String.class
         );
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        KakaoProfile kakaoProfile = null;
-        try {
-            kakaoProfile = objectMapper.readValue(kakaoProfileResponse.getBody(), KakaoProfile.class);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
+        if(response.getStatusCode() != HttpStatus.OK)
+                throw new CustomerNotFoundException("카카오 로그아웃 도중 오류 발생");
 
-        return kakaoProfile;
     }
+
+    /**
+         * access token으로 사용자를 찾는 메소드
+         * @param token access token
+         * @return
+         */
+    public UserResponseDto findUser(final String token){
+        User user = getUserByEmail(token);
+        Store store = findStoreNameByUser(user);
+        return UserResponseDto.of(user,store);
+    }
+
+    /**
+     * 사용자 정보로 매장 정보를 찾는 메소드
+     * @param user
+     * @return
+     */
+    public Store findStoreNameByUser(User user){
+        Store store = storeRepository.findStoreByStoreIdx(user.getStore().getStoreIdx());
+        if(store == null) throw new CustomerNotFoundException();
+        return store;
+    }
+
+    /**
+     * userCode를 통해 user를 찾는 메소드
+     * @param userCode
+     * @return
+     */
+    public User findByUserCode(Long userCode) {
+        User user = userRepository.findByUserCode(userCode);
+        return user;
+    }
+
+
 }

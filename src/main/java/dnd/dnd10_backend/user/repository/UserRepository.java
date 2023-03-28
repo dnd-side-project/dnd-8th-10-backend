@@ -1,7 +1,13 @@
 package dnd.dnd10_backend.user.repository;
 
+import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+
 /**
  * 패키지명 dnd.dnd10_backend.user.repository
  * 클래스명 UserRepository
@@ -16,5 +22,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface UserRepository extends JpaRepository<User, Long> {
     public User findByKakaoEmail(String kakaoEmail);
 
+    public List<User> findByStore(Store store);
+
     public User findByUserCode(Long userCode);
+
+    public User findByKakaoId(Long id);
+
+    public List<User> findByKakaoNickname(String userName);
+
+    public User findByKakaoNicknameAndUserProfileCode(String userName, int userProfileCode);
+
 }

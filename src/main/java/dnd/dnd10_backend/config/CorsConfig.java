@@ -1,5 +1,6 @@
 package dnd.dnd10_backend.config;
 
+import dnd.dnd10_backend.config.jwt.JwtProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -25,11 +26,20 @@ public class CorsConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
+        config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOriginPattern("*");
+
         config.addAllowedHeader("*");
+        config.addAllowedHeader(JwtProperties.AT_HEADER_STRING);
+        config.addAllowedHeader(JwtProperties.RT_HEADER_STRING);
+
         config.addExposedHeader("*");
+        config.addExposedHeader(JwtProperties.AT_HEADER_STRING);
+        config.addExposedHeader(JwtProperties.RT_HEADER_STRING);
+
         config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/api/**", config);
+
+        source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
 }

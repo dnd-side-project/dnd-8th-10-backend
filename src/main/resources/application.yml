@@ -8,7 +8,19 @@ spring:
     password: admin123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    hibernate:
-      ddl-auto: create
     generate-ddl: true
+    hibernate:
+      ddl-auto: update
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+server:
+  servlet:
+    session:
+      cookie:
+        secure: true
+        same-site: None
