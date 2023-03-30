@@ -38,7 +38,7 @@ public class DefaultCheckListService {
     /**
      * 매주 일요일 0시 0분 0초에 사용자들이 일하는 시간의 기본 체크리스트를 생성해주는 메소드
      */
-    @Scheduled(cron = "0 47 0 * * MON") //매주 일요일 오전 12시마다 실행
+    @Scheduled(cron = "0 0 0 * * SUN") //매주 일요일 오전 12시마다 실행
     public void saveDefaultCheckListByScheduled() {
         List<User> userList = userRepository.findAll();
         LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul")); // 현재시간
@@ -61,7 +61,7 @@ public class DefaultCheckListService {
                    case "토" : saveDay = 6; break;
                    case "일": break;
                }
-               saveDefaultCheckList(now.plusDays(saveDay-1), user);
+               saveDefaultCheckList(now.plusDays(saveDay), user);
            }
         }
         return;
