@@ -69,6 +69,7 @@ public class TokenController {
                 .secure(true)
                 .httpOnly(true)
                 .path("/")
+                .maxAge(JwtProperties.RT_EXP_TIME)
                 .build();
 
         res.addHeader("Set-Cookie", responseCookie.toString());
@@ -87,15 +88,35 @@ public class TokenController {
      * @return
      */
     @GetMapping("/token/refresh")
-    public ResponseEntity refresh(HttpServletRequest request){
+    public ResponseEntity refresh(HttpServletRequest request,
+                                  HttpServletResponse res){
 
-        List<String> tokenList = tokenService.reissueRefreshToken(request.getHeader(JwtProperties.RT_HEADER_STRING)
-                                                                    .replace(JwtProperties.TOKEN_PREFIX,""));
+        Cookie[] cookies = request.getCookies();
+
+        String refreshToken = null;
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(JwtProperties.RT_HEADER_STRING)) {
+                    refreshToken = cookie.getValue();
+                }
+            }
+        }
+        List<String> tokenList = tokenService.reissueRefreshToken(refreshToken);
 
         //발급 받은 jwtToken, refreshToken header에 저장
         HttpHeaders headers = new HttpHeaders();
         headers.add(JwtProperties.AT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(0));
-        headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
+
+        ResponseCookie responseCookie = ResponseCookie.from(JwtProperties.RT_HEADER_STRING, tokenList.get(1))
+                .sameSite("None")
+                .secure(true)
+                .httpOnly(true)
+                .path("/")
+                .maxAge(JwtProperties.RT_EXP_TIME)
+                .build();
+
+        res.addHeader("Set-Cookie", responseCookie.toString());
 
         //response body 설정
         UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
