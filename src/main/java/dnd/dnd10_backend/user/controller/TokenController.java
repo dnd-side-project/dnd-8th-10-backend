@@ -69,7 +69,7 @@ public class TokenController {
                 .secure(true)
                 .httpOnly(true)
                 .path("/")
-                .maxAge(JwtProperties.RT_EXP_TIME)
+                .maxAge(7 * 24 * 60 * 60)
                 .build();
 
         res.addHeader("Set-Cookie", responseCookie.toString());
@@ -113,7 +113,7 @@ public class TokenController {
                 .secure(true)
                 .httpOnly(true)
                 .path("/")
-                .maxAge(JwtProperties.RT_EXP_TIME)
+                .maxAge(7 * 24 * 60 * 60)
                 .build();
 
         res.addHeader("Set-Cookie", responseCookie.toString());
