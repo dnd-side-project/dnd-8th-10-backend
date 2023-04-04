@@ -65,8 +65,7 @@ public class TokenController {
         headers.add(JwtProperties.AT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(0));
 
         ResponseCookie responseCookie = ResponseCookie.from(JwtProperties.RT_HEADER_STRING, tokenList.get(1))
-                .domain("wise24life.site")
-                .sameSite("Strict")
+                .sameSite("None")
                 .secure(true)
                 .httpOnly(true)
                 .path("/")
