@@ -11,16 +11,13 @@ import dnd.dnd10_backend.user.service.TokenService;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -52,7 +49,7 @@ public class TokenController {
     public ResponseEntity getLogin(@RequestParam("code") String code,
                                    @RequestParam("isLocal") boolean isLocal,
                                    HttpServletRequest request,
-                                   HttpServletResponse res) { //(1)
+                                   HttpSession session) { //(1)
 
         // 넘어온 인가 코드를 통해 access_token 발급
         OauthToken oauthToken = tokenService.getAccessToken(code, isLocal);
@@ -60,24 +57,15 @@ public class TokenController {
         // 발급 받은 accessToken 으로 카카오 회원 정보 DB 저장 후 JWT 를 생성
         List<String> tokenList = tokenService.saveUserAndGetToken(oauthToken.getAccess_token());
 
-        //발급 받은 jwtToken header에 저장
+        //발급 받은 jwtToken, refreshToken header에 저장
         HttpHeaders headers = new HttpHeaders();
         headers.add(JwtProperties.AT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(0));
-
-        ResponseCookie responseCookie = ResponseCookie.from(JwtProperties.RT_HEADER_STRING, tokenList.get(1))
-                .sameSite("None")
-                .secure(true)
-                .httpOnly(true)
-                .path("/")
-                .maxAge(7 * 24 * 60 * 60)
-                .build();
-
-        res.addHeader("Set-Cookie", responseCookie.toString());
+        headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
 
         //response body 설정
         UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
         SingleResponse<UserCreateResponseDto> response = responseService.getResponse(userResponseDto,
-                                                                CodeStatus.SUCCESS_SOCIAL_LOGIN);
+                CodeStatus.SUCCESS_SOCIAL_LOGIN);
 
         return ResponseEntity.ok().headers(headers).body(response);
     }
@@ -88,40 +76,20 @@ public class TokenController {
      * @return
      */
     @GetMapping("/token/refresh")
-    public ResponseEntity refresh(HttpServletRequest request,
-                                  HttpServletResponse res){
+    public ResponseEntity refresh(HttpServletRequest request){
 
-        Cookie[] cookies = request.getCookies();
-
-        String refreshToken = null;
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals(JwtProperties.RT_HEADER_STRING)) {
-                    refreshToken = cookie.getValue();
-                }
-            }
-        }
-        List<String> tokenList = tokenService.reissueRefreshToken(refreshToken);
+        List<String> tokenList = tokenService.reissueRefreshToken(request.getHeader(JwtProperties.RT_HEADER_STRING)
+                .replace(JwtProperties.TOKEN_PREFIX,""));
 
         //발급 받은 jwtToken, refreshToken header에 저장
         HttpHeaders headers = new HttpHeaders();
         headers.add(JwtProperties.AT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(0));
-
-        ResponseCookie responseCookie = ResponseCookie.from(JwtProperties.RT_HEADER_STRING, tokenList.get(1))
-                .sameSite("None")
-                .secure(true)
-                .httpOnly(true)
-                .path("/")
-                .maxAge(7 * 24 * 60 * 60)
-                .build();
-
-        res.addHeader("Set-Cookie", responseCookie.toString());
+        headers.add(JwtProperties.RT_HEADER_STRING, JwtProperties.TOKEN_PREFIX + tokenList.get(1));
 
         //response body 설정
         UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
         SingleResponse<UserCreateResponseDto> response = responseService.getResponse(userResponseDto,
-                                                                CodeStatus.SUCCESS_TOKEN_REISSUED);
+                CodeStatus.SUCCESS_TOKEN_REISSUED);
 
         return ResponseEntity.ok().headers(headers).body(response);
     }
