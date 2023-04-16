@@ -6,8 +6,8 @@
 
 ## 💻프로젝트 소개
 ### 1. 개발 기간
-* 23.01.08일 ~ 23.03.31(예정)
-### 2. 배포 주소 
+* 23.01.08일 ~ 23.03.31
+### 2. 배포 주소 (서버 이전중입니다.)
  - [https://www.wise24life.site](https://www.wise24life.site/)
 ### 3. 주요 기능
 #### 💰 슬편생에서 출근을 기록하고, 급여까지 계산해요!
@@ -38,4 +38,12 @@
     </td>
   </tr>
 </table>
+
+### 5. 기술 스택
+- `java 8`
+- `jdk 1.8.0`
+- **IDE** : IntelliJ
+- **Framework**: Spring boot 2.6.x
+- **DataBase** : MariaDB
+- **ORM** : JPA
 
