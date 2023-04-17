@@ -68,7 +68,7 @@ public class TokenService {
      */
     public OauthToken getAccessToken(String code, boolean isLocal) {
         String redirect_uri = isLocal ? "http://localhost:3000/login/oauth2/callback"
-                : "https://fabulous-pony-8bfa39.netlify.app/login/oauth2/callback";
+                : "https://www.wise24life.site/login/oauth2/callback";
         RestTemplate rt = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();

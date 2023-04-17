@@ -65,7 +65,7 @@ public class TokenController {
         //response body 설정
         UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
         SingleResponse<UserCreateResponseDto> response = responseService.getResponse(userResponseDto,
-                                                                CodeStatus.SUCCESS_SOCIAL_LOGIN);
+                CodeStatus.SUCCESS_SOCIAL_LOGIN);
 
         return ResponseEntity.ok().headers(headers).body(response);
     }
@@ -79,7 +79,7 @@ public class TokenController {
     public ResponseEntity refresh(HttpServletRequest request){
 
         List<String> tokenList = tokenService.reissueRefreshToken(request.getHeader(JwtProperties.RT_HEADER_STRING)
-                                                                    .replace(JwtProperties.TOKEN_PREFIX,""));
+                .replace(JwtProperties.TOKEN_PREFIX,""));
 
         //발급 받은 jwtToken, refreshToken header에 저장
         HttpHeaders headers = new HttpHeaders();
@@ -89,7 +89,7 @@ public class TokenController {
         //response body 설정
         UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
         SingleResponse<UserCreateResponseDto> response = responseService.getResponse(userResponseDto,
-                                                                CodeStatus.SUCCESS_TOKEN_REISSUED);
+                CodeStatus.SUCCESS_TOKEN_REISSUED);
 
         return ResponseEntity.ok().headers(headers).body(response);
     }
