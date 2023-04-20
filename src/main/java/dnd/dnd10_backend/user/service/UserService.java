@@ -99,7 +99,7 @@ public class UserService {
     /**
      * 사용자 등록하는 메소드
      * @param requestDto client한테서 받아온 사용자 정보
-     * @return UserResponseDto
+     * @return 응답해주려는 user 정보
      */
     public UserResponseDto saveUser(UserSaveRequestDto requestDto, final String token){
         //user 찾기
@@ -137,9 +137,9 @@ public class UserService {
 
     /**
      * 사용자 정보를 업데이트하는 함수
-     * @param requestDto
-     * @param token
-     * @return
+     * @param requestDto 업데이트 하려는 정보
+     * @param token access token
+     * @return 응답해주려는 user 정보
      */
     public UserResponseDto updateUser(UserSaveRequestDto requestDto, final String token){
         //user 찾기
@@ -171,7 +171,7 @@ public class UserService {
 
     /**
      * user를 삭제하는 메소드
-     * @param token
+     * @param token access token
      */
     public void deleteUser(final String token){
         RestTemplate rt = new RestTemplate();
@@ -255,7 +255,7 @@ public class UserService {
     /**
      * 사용자 정보로 매장 정보를 찾는 메소드
      * @param user
-     * @return
+     * @return 사용자가 포함되어있는 Store
      */
     public Store findStoreNameByUser(User user){
         Store store = storeRepository.findStoreByStoreIdx(user.getStore().getStoreIdx());
@@ -266,7 +266,7 @@ public class UserService {
     /**
      * userCode를 통해 user를 찾는 메소드
      * @param userCode
-     * @return
+     * @return userCode로 찾은 User정보
      */
     public User findByUserCode(Long userCode) {
         User user = userRepository.findByUserCode(userCode);

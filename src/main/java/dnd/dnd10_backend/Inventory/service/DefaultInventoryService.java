@@ -31,7 +31,7 @@ public class DefaultInventoryService {
 
     /**
      * 기본 시재들을 저장하는 메소드
-     * @param store
+     * @param store 시재를 업데이트하려는 store 정보
      */
     public void saveDafaultInventories(Store store){
         List<DefaultInventory> list = defaultInventoryRepository.findAll();
