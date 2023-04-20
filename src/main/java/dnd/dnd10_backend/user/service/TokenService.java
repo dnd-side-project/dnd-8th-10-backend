@@ -227,7 +227,7 @@ public class TokenService {
     /**
      * userCode로 권한 찾는 메소드
      * @param userCode
-     * @return
+     * @return 권한정보
      */
     public Authentication getAuthentication(Long userCode) {
         User user = userRepository.findByUserCode(userCode);

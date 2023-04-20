@@ -87,9 +87,9 @@ public class InventoryRecordService {
 
     /**
      * 카테고리별 시재 기록을 조회하는 메소드
-     * @param list
-     * @param category
-     * @return
+     * @param list 업데이트하려는 시재 기록들의 정보
+     * @param category 시재 카테고리 정보
+     * @return 응답해주려는 inventoryRecord의 정보
      */
     public List<InventoryRecordListResponseDto> findInventoryUpdateRecordsByCategory(List<InventoryUpdateRecord> list, Category category){
         List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
@@ -102,6 +102,11 @@ public class InventoryRecordService {
         return responseDtoList;
     }
 
+    /**
+     * 오늘 업데이트한 시재 목록들을 조회하는 메소드
+     * @param token access token
+     * @return 응답해주려는 inventoryRecord 목록
+     */
     public List<InventoryRecordTodayResponseDto> findInventoryUpdateRecordToday(final String token) {
         User user = userService.getUserByEmail(token);
         Store store = user.getStore();
@@ -168,7 +173,7 @@ public class InventoryRecordService {
     /**
      * List<InventoryUpdateRecord>를 List<InventoryRecordResponseDto>로 변환시켜주는 메소드
      * @param recordList 변환시키려는 list
-     * @return
+     * @return List타입의 InventoryRecordResponseDto 목록
      */
     public List<InventoryRecordResponseDto> convertToInventoryRecordToDto(List<InventoryUpdateRecord> recordList){
         List<InventoryRecordResponseDto> responseDtoList = new ArrayList<>();
