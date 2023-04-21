@@ -42,8 +42,8 @@
 </table>
 
 ### 5. 기술 스택
-- `java 8`
-- `jdk 1.8.0`
+- `java 11`
+- `jdk 11.0.18`
 - **IDE** : IntelliJ
 - **Framework**: Spring boot 2.6.x
 - **DataBase** : MariaDB
