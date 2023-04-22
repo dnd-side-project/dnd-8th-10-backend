@@ -1,7 +1,7 @@
 spring:
  config:
   import:
-    - optional:classpath:./application-auth.yml
+   - optional:classpath:./application-auth.yml
  datasource:
   url: jdbc:mysql://13.239.132.208:3306/dnd10
   username: root
@@ -11,7 +11,7 @@ spring:
   generate-ddl: true
   hibernate:
    ddl-auto: update
-   database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
  servlet:
   multipart:
    enabled: true
