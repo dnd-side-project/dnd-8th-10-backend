@@ -1,26 +1,26 @@
 spring:
-  config:
-    import:
-      - optional:classpath:./application-auth.yml
-  datasource:
-    url: jdbc:mysql://13.239.132.208:3306/dnd10
-    username: root
-    password: admin123
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    generate-ddl: true
-    hibernate:
-      ddl-auto: update
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 100MB
-      max-request-size: 100MB
+ config:
+  import:
+    - optional:classpath:./application-auth.yml
+ datasource:
+  url: jdbc:mysql://13.239.132.208:3306/dnd10
+  username: root
+  password: admin123
+  driver-class-name: com.mysql.cj.jdbc.Driver
+ jpa:
+  generate-ddl: true
+  hibernate:
+   ddl-auto: update
+   database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+ servlet:
+  multipart:
+   enabled: true
+   max-file-size: 100MB
+   max-request-size: 100MB
 
 server:
-  servlet:
-    session:
-      cookie:
-        secure: true
-        same-site: None
+ servlet:
+  session:
+   cookie:
+    secure: true
+    same-site: None

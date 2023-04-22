@@ -12,6 +12,7 @@ import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
+import dnd.dnd10_backend.user.dto.response.UserStoreResponseDto;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 패키지명 dnd.dnd10_backend.Inventory.service
@@ -74,14 +76,11 @@ public class InventoryRecordService {
      * @return
      */
     public List<InventoryRecordListResponseDto> findAllInventoryUpdateRecords(List<InventoryUpdateRecord> list){
-        List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
-
-        for(InventoryUpdateRecord i : list){
-            List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCard(i.getTimeCard());
-            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUserName(),
-                    i.getUserProfileCode(),
-                    i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
-        }
+        List<InventoryRecordListResponseDto> responseDtoList = list.stream()
+                .map(t -> {
+                    List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCard(t.getTimeCard());
+                    return InventoryRecordListResponseDto.of(t.getUserName(),t.getUserProfileCode(),t.getTimeCard(),convertToInventoryRecordToDto(recordList));
+                }).collect(Collectors.toList());
         return responseDtoList;
     }
 
@@ -92,13 +91,11 @@ public class InventoryRecordService {
      * @return 응답해주려는 inventoryRecord의 정보
      */
     public List<InventoryRecordListResponseDto> findInventoryUpdateRecordsByCategory(List<InventoryUpdateRecord> list, Category category){
-        List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
-
-        for(InventoryUpdateRecord i : list){
-            List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCardAndCategory(i.getTimeCard(), category);
-            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUserName(),
-                    i.getUserProfileCode(),i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
-        }
+        List<InventoryRecordListResponseDto> responseDtoList = list.stream()
+                .map(t -> {
+                    List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCardAndCategory(t.getTimeCard(), category);
+                    return InventoryRecordListResponseDto.of(t.getUserName(),t.getUserProfileCode(),t.getTimeCard(),convertToInventoryRecordToDto(recordList));
+                }).collect(Collectors.toList());
         return responseDtoList;
     }
 
@@ -176,10 +173,9 @@ public class InventoryRecordService {
      * @return List타입의 InventoryRecordResponseDto 목록
      */
     public List<InventoryRecordResponseDto> convertToInventoryRecordToDto(List<InventoryUpdateRecord> recordList){
-        List<InventoryRecordResponseDto> responseDtoList = new ArrayList<>();
-        for(InventoryUpdateRecord ir: recordList){
-            responseDtoList.add(InventoryRecordResponseDto.of(ir));
-        }
+        List<InventoryRecordResponseDto> responseDtoList = recordList.stream()
+                .map(t -> InventoryRecordResponseDto.of(t))
+                .collect(Collectors.toList());
         return responseDtoList;
     }
 
@@ -193,11 +189,7 @@ public class InventoryRecordService {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 현재시간
         LocalDateTime endDateTime = now.minusDays(60); //60일 전 날짜 계산
         List<InventoryUpdateRecord> list = recordRepository.findPastRecord(endDateTime);
-
-        for(InventoryUpdateRecord i: list){
-            recordRepository.delete(i);
-        }
-
+        recordRepository.deleteAll(list);
         return;
     }
 }

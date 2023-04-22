@@ -242,10 +242,10 @@ public class UserService {
     }
 
     /**
-         * access token으로 사용자를 찾는 메소드
-         * @param token access token
-         * @return
-         */
+     * access token으로 사용자를 찾는 메소드
+     * @param token access token
+     * @return
+     */
     public UserResponseDto findUser(final String token){
         User user = getUserByEmail(token);
         Store store = findStoreNameByUser(user);
