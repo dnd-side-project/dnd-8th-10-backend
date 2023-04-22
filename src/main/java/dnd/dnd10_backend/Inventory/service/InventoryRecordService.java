@@ -12,6 +12,7 @@ import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.exception.CustomerNotFoundException;
 import dnd.dnd10_backend.store.domain.Store;
 import dnd.dnd10_backend.user.domain.User;
+import dnd.dnd10_backend.user.dto.response.UserStoreResponseDto;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 패키지명 dnd.dnd10_backend.Inventory.service
@@ -74,34 +76,34 @@ public class InventoryRecordService {
      * @return
      */
     public List<InventoryRecordListResponseDto> findAllInventoryUpdateRecords(List<InventoryUpdateRecord> list){
-        List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
-
-        for(InventoryUpdateRecord i : list){
-            List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCard(i.getTimeCard());
-            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUserName(),
-                    i.getUserProfileCode(),
-                    i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
-        }
+        List<InventoryRecordListResponseDto> responseDtoList = list.stream()
+                .map(t -> {
+                    List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCard(t.getTimeCard());
+                    return InventoryRecordListResponseDto.of(t.getUserName(),t.getUserProfileCode(),t.getTimeCard(),convertToInventoryRecordToDto(recordList));
+                }).collect(Collectors.toList());
         return responseDtoList;
     }
 
     /**
      * 카테고리별 시재 기록을 조회하는 메소드
-     * @param list
-     * @param category
-     * @return
+     * @param list 업데이트하려는 시재 기록들의 정보
+     * @param category 시재 카테고리 정보
+     * @return 응답해주려는 inventoryRecord의 정보
      */
     public List<InventoryRecordListResponseDto> findInventoryUpdateRecordsByCategory(List<InventoryUpdateRecord> list, Category category){
-        List<InventoryRecordListResponseDto> responseDtoList = new ArrayList<>();
-
-        for(InventoryUpdateRecord i : list){
-            List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCardAndCategory(i.getTimeCard(), category);
-            responseDtoList.add(InventoryRecordListResponseDto.of(i.getUserName(),
-                    i.getUserProfileCode(),i.getTimeCard(),convertToInventoryRecordToDto(recordList)));
-        }
+        List<InventoryRecordListResponseDto> responseDtoList = list.stream()
+                .map(t -> {
+                    List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCardAndCategory(t.getTimeCard(), category);
+                    return InventoryRecordListResponseDto.of(t.getUserName(),t.getUserProfileCode(),t.getTimeCard(),convertToInventoryRecordToDto(recordList));
+                }).collect(Collectors.toList());
         return responseDtoList;
     }
 
+    /**
+     * 오늘 업데이트한 시재 목록들을 조회하는 메소드
+     * @param token access token
+     * @return 응답해주려는 inventoryRecord 목록
+     */
     public List<InventoryRecordTodayResponseDto> findInventoryUpdateRecordToday(final String token) {
         User user = userService.getUserByEmail(token);
         Store store = user.getStore();
@@ -168,13 +170,12 @@ public class InventoryRecordService {
     /**
      * List<InventoryUpdateRecord>를 List<InventoryRecordResponseDto>로 변환시켜주는 메소드
      * @param recordList 변환시키려는 list
-     * @return
+     * @return List타입의 InventoryRecordResponseDto 목록
      */
     public List<InventoryRecordResponseDto> convertToInventoryRecordToDto(List<InventoryUpdateRecord> recordList){
-        List<InventoryRecordResponseDto> responseDtoList = new ArrayList<>();
-        for(InventoryUpdateRecord ir: recordList){
-            responseDtoList.add(InventoryRecordResponseDto.of(ir));
-        }
+        List<InventoryRecordResponseDto> responseDtoList = recordList.stream()
+                .map(t -> InventoryRecordResponseDto.of(t))
+                .collect(Collectors.toList());
         return responseDtoList;
     }
 
@@ -188,11 +189,7 @@ public class InventoryRecordService {
         LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul")); // 현재시간
         LocalDateTime endDateTime = now.minusDays(60); //60일 전 날짜 계산
         List<InventoryUpdateRecord> list = recordRepository.findPastRecord(endDateTime);
-
-        for(InventoryUpdateRecord i: list){
-            recordRepository.delete(i);
-        }
-
+        recordRepository.deleteAll(list);
         return;
     }
 }

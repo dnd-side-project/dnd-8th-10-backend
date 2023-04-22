@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 패키지명 dnd.dnd10_backend.Inventory.service
@@ -31,21 +32,15 @@ public class DefaultInventoryService {
 
     /**
      * 기본 시재들을 저장하는 메소드
-     * @param store
+     * @param store 시재를 업데이트하려는 store 정보
      */
     public void saveDafaultInventories(Store store){
         List<DefaultInventory> list = defaultInventoryRepository.findAll();
+        List<Inventory> inventoryList = list.stream()
+                                    .map( t -> new Inventory(t.getInventoryName(),0,t.getCategory(),store))
+                                    .collect(Collectors.toList());
 
-        for(DefaultInventory i: list){
-            Inventory inventory = Inventory.builder()
-                    .inventoryName(i.getInventoryName())
-                    .inventoryCount(0)
-                    .category(i.getCategory())
-                    .store(store)
-                    .build();
-
-            inventoryRepository.save(inventory);
-        }
+        inventoryRepository.saveAll(inventoryList);
         return;
     }
 }

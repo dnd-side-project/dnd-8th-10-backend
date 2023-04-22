@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 패키지명 dnd.dnd10_backend.store.service
@@ -32,6 +33,11 @@ public class StoreService {
     private final UserRepository userRepository;
     private final UserService userService;
 
+    /**
+     *  사용자가 포함되어있는 store정보를 조회하는 메소드
+     * @param token access token
+     * @return 응답해주려는 store 정보
+     */
     public StoreResponseDto getStoreInfo(final String token){
         User user = userService.getUserByEmail(token);
 
@@ -40,11 +46,15 @@ public class StoreService {
         return StoreResponseDto.of(store, convertUserToDto(userRepository.findByStore(store)));
     }
 
+    /**
+     * List<User>를 List<UserStoreResponseDto> 변환해주는 메소드
+     * @param userList List타입의 user목록
+     * @return List타입의 UserStoreResponseDto목록
+     */
     public List<UserStoreResponseDto> convertUserToDto(List<User> userList){
-        List<UserStoreResponseDto> responseDtoList = new ArrayList<>();
-        for(User user: userList){
-            responseDtoList.add(UserStoreResponseDto.of(user));
-        }
+        List<UserStoreResponseDto> responseDtoList = userList.stream()
+                .map(t -> UserStoreResponseDto.of(t))
+                .collect(Collectors.toList());
         return responseDtoList;
     }
 }

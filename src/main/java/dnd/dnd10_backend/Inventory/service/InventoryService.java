@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 패키지명 dnd.dnd10_backend.Inventory.service
@@ -54,7 +55,7 @@ public class InventoryService {
     /**
      * inventory를 모두 조회하는 메소드
      * @param token access token
-     * @return
+     * @return 응답해주려는 inventory 목록
      */
     public List<InventoryResponseDto> findAll(final String token){
         User user = userService.getUserByEmail(token);
@@ -67,7 +68,7 @@ public class InventoryService {
      * category에 따라 inventory를 찾아주는 메소드
      * @param category 조회하려는 category
      * @param token access token
-     * @return
+     * @return 응답해주려는 inventory 목록
      */
     public List<InventoryResponseDto> findByCategory(Category category, final String token){
         User user = userService.getUserByEmail(token);
@@ -80,7 +81,7 @@ public class InventoryService {
      * 새로운 담배 저장 메소드
      * @param requestDto 저장하려는 담배 정보를 담은 dto
      * @param token access token
-     * @return
+     * @return 응답해주려는 inventory 목록
      */
     public List<InventoryResponseDto> saveInventory(CreateInventoryRequestDto requestDto, final String token){
         User user = userService.getUserByEmail(token);
@@ -104,9 +105,9 @@ public class InventoryService {
 
     /**
      * 시재 업데이트 메소드
-     * @param listRequestDto
-     * @param token
-     * @return
+     * @param listRequestDto 업데이트하려는 시재 정보
+     * @param token access token
+     * @return 응답해주려는 inventory 정보 목록
      */
     public List<InventoryResponseDto> updateInventory(UpdateInventoryListRequestDto listRequestDto, final String token){
         User user = userService.getUserByEmail(token);
@@ -167,21 +168,19 @@ public class InventoryService {
 
     /**
      * List<Inventory>를  List<InventoryResponseDto> 변환시켜주는 메소드
-     * @param inventoryList 변환시키려는 List<Inventory>
-     * @return
+     * @param inventoryList List타입의 Inventory 목록
+     * @return List타입의 InventoryResponseDto 목록
      */
     public List<InventoryResponseDto> convertInventoryToDto(List<Inventory> inventoryList){
-        List<InventoryResponseDto> responseList = new ArrayList<>();
-        for(Inventory inventory: inventoryList){
-            responseList.add(InventoryResponseDto.of(inventory));
-        }
+        List<InventoryResponseDto> responseList = inventoryList.stream()
+                .map(t -> InventoryResponseDto.of(t))
+                .collect(Collectors.toList());
         return responseList;
     }
 
     /**
      * 현재 시간의 timeCard가 존재하는지 확인하는 메소드
      * @param token access token
-     * @return
      */
     public void checkWorkTime(final String token) {
         User user = userService.getUserByEmail(token);
@@ -195,7 +194,7 @@ public class InventoryService {
      * 현재 시간에 근무기록이 존재하는지 확인하는 메소드
      * @param user 사용자
      * @param store 현재 일하고 있는 편의점
-     * @return
+     * @return 근무 기록 정보
      */
     public TimeCard findTimeCard(User user, Store store){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
