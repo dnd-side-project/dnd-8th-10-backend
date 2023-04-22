@@ -7,7 +7,7 @@
 ## 💻프로젝트 소개
 ### 1. 개발 기간
 * 23.01.08일 ~ 23.03.31
-### 2. 배포 주소 (서버 이전중입니다.)
+### 2. 배포 주소
  - [https://www.wise24life.site](https://www.wise24life.site/)
 ### 3. 주요 기능
 > [상세 기능 보러가기](https://github.com/dnd-side-project/dnd-8th-10-backend/wiki)
@@ -42,8 +42,8 @@
 </table>
 
 ### 5. 기술 스택
-- `java 8`
-- `jdk 1.8.0`
+- `java 11`
+- `jdk 11.0.18`
 - **IDE** : IntelliJ
 - **Framework**: Spring boot 2.6.x
 - **DataBase** : MariaDB
