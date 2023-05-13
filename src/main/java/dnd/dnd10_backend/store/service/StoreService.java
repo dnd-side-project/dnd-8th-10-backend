@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StoreService {
     private final StoreRepository storeRepository;
-    private final UserRepository userRepository;
     private final UserService userService;
 
     /**
@@ -41,9 +40,9 @@ public class StoreService {
     public StoreResponseDto getStoreInfo(final String token){
         User user = userService.getUserByEmail(token);
 
-        Store store = user.getStore();
+        Store store = storeRepository.findStoreByStoreIdx(user.getStore().getStoreIdx());
 
-        return StoreResponseDto.of(store, convertUserToDto(userRepository.findByStore(store)));
+        return StoreResponseDto.of(store, convertUserToDto(store.getUserList()));
     }
 
     /**

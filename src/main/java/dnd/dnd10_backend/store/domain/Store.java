@@ -45,6 +45,9 @@ public class Store {
     @OneToMany(mappedBy = "store", cascade = CascadeType.REMOVE)
     private List<Post> Posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<User> UserList = new ArrayList<>();
+
     @Builder
     public Store(String storeName, String storeLocation){
         this.storeName = storeName;

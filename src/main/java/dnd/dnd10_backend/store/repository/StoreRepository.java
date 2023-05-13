@@ -2,6 +2,9 @@ package dnd.dnd10_backend.store.repository;
 
 import dnd.dnd10_backend.store.domain.Store;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
 /**
  * 패키지명 dnd.dnd10_backend.store.repository
  * 클래스명 StoreRepository
@@ -16,6 +19,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface StoreRepository extends JpaRepository<Store, Long> {
     public Store findStoreByStoreName(String storeName);
 
-    public Store findStoreByStoreIdx(Long StoreIdx);
+    @Query("select distinct(s) from Store s join fetch s.UserList where s.storeIdx = :storeIdx")
+    public Store findStoreByStoreIdx(@Param("storeIdx") Long storeIdx);
 
 }
