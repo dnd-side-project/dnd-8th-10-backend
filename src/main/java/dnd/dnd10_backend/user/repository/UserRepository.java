@@ -20,11 +20,13 @@ import java.util.List;
  * 예시) [2022-09-17] 주석추가 - 원지윤
  */
 public interface UserRepository extends JpaRepository<User, Long> {
-    public User findByKakaoEmail(String kakaoEmail);
+    @Query("select distinct(u) from User u join fetch u.store where u.kakaoEmail = :email")
+    public User findByKakaoEmail(@Param("email")String kakaoEmail);
 
     public List<User> findByStore(Store store);
 
-    public User findByUserCode(Long userCode);
+    @Query("select distinct(u) from User u join fetch u.store where u.userCode = :userCode")
+    public User findByUserCode(@Param("userCode") Long userCode);
 
     public User findByKakaoId(Long id);
 

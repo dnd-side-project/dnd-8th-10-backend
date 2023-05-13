@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * 패키지명 dnd.dnd10_backend.checkList.service
  * 클래스명 DefaultCheckListService
@@ -74,10 +76,7 @@ public class DefaultCheckListService {
     public void deleteCheckListByScheduled(){
         LocalDate date = LocalDate.now(ZoneId.of("Asia/Seoul")).minusDays(2);
         List<CheckList> checkList = checkListRepository.findCheckListByPastDate(date);
-
-        for(CheckList cl: checkList){
-            checkListRepository.delete(cl);
-        }
+        checkListRepository.deleteAll(checkList);
         return;
     }
 
@@ -124,16 +123,9 @@ public class DefaultCheckListService {
         List<CheckList> checkList = checkListRepository.findCheckListByCheckDateAndUser(date, user);
         if(!checkList.isEmpty()) return checkList;
 
-        for(DefaultCheckList check: defaultList) {
-            checkList.add(
-                    CheckList.builder()
-                            .user(user)
-                            .checkDate(date)
-                            .content(check.getContent())
-                            .status("N")
-                            .build()
-            );
-        }
+        checkList.stream()
+                .map(t -> new CheckList(date,t.getContent(),"N",user))
+                .collect(Collectors.toList());
 
         checkListRepository.saveAll(checkList);
         return checkList;

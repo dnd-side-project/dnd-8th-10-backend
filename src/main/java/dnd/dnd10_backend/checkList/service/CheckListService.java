@@ -24,6 +24,7 @@ import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 /**
  * 패키지명 dnd.dnd10_backend.checkList.service
@@ -229,11 +230,9 @@ public class CheckListService {
                 checkListRepository.findCheckListByCheckDateAndUser(date, user);
 
         //response에 추가
-        List<CheckListResponseDto> checkListResponseDtoList = new ArrayList<>();
-
-        for(CheckList cl: checkLists){
-            checkListResponseDtoList.add(CheckListResponseDto.of(cl));
-        }
+        List<CheckListResponseDto> checkListResponseDtoList = checkLists.stream()
+                .map(t -> CheckListResponseDto.of(t))
+                .collect(Collectors.toList());
 
         return checkListResponseDtoList;
     }

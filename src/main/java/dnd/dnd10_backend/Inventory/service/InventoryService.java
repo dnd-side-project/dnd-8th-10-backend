@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 패키지명 dnd.dnd10_backend.Inventory.service
@@ -171,10 +172,9 @@ public class InventoryService {
      * @return List타입의 InventoryResponseDto 목록
      */
     public List<InventoryResponseDto> convertInventoryToDto(List<Inventory> inventoryList){
-        List<InventoryResponseDto> responseList = new ArrayList<>();
-        for(Inventory inventory: inventoryList){
-            responseList.add(InventoryResponseDto.of(inventory));
-        }
+        List<InventoryResponseDto> responseList = inventoryList.stream()
+                .map(t -> InventoryResponseDto.of(t))
+                .collect(Collectors.toList());
         return responseList;
     }
 
