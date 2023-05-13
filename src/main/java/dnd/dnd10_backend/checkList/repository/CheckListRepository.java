@@ -30,7 +30,8 @@ public interface CheckListRepository extends JpaRepository<CheckList, Long> {
     List<CheckList> findCheckListByCheckDateAndUser(@Param("date")LocalDate date, @Param("user") User user);
 
     @Override
-    Optional<CheckList> findById(Long checkIdx);
+    @Query("select c from CheckList c join fetch c.user where c.checkIdx =:checkIdx")
+    Optional<CheckList> findById(@Param(("checkIdx")) Long checkIdx);
 
     public List<CheckList> findCheckListByCheckDateAndAndStatusAndUser(LocalDate date, String status, User user);
 

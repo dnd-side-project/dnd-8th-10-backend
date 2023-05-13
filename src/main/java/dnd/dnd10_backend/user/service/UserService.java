@@ -248,19 +248,8 @@ public class UserService {
      */
     public UserResponseDto findUser(final String token){
         User user = getUserByEmail(token);
-        Store store = findStoreNameByUser(user);
+        Store store = user.getStore();
         return UserResponseDto.of(user,store);
-    }
-
-    /**
-     * 사용자 정보로 매장 정보를 찾는 메소드
-     * @param user
-     * @return 사용자가 포함되어있는 Store
-     */
-    public Store findStoreNameByUser(User user){
-        Store store = storeRepository.findStoreByStoreIdx(user.getStore().getStoreIdx());
-        if(store == null) throw new CustomerNotFoundException();
-        return store;
     }
 
     /**
