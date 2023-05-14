@@ -123,7 +123,7 @@ public class DefaultCheckListService {
         List<CheckList> checkList = checkListRepository.findCheckListByCheckDateAndUser(date, user);
         if(!checkList.isEmpty()) return checkList;
 
-        checkList.stream()
+        checkList= defaultList.stream()
                 .map(t -> new CheckList(date,t.getContent(),"N",user))
                 .collect(Collectors.toList());
 
