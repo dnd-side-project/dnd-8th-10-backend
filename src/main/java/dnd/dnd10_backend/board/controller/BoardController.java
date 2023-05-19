@@ -49,7 +49,6 @@ public class BoardController {
 
     private final BoardService boardService;
     private final UserService userService;
-    private final ResponseService responseService;
     private final NoticeService noticeService;
     private final ImageService imageService;
 
@@ -72,7 +71,7 @@ public class BoardController {
                 .content(post.getContent())
                 .build();
 
-        SingleResponse<PostSimpleResponseDto> response = responseService.getResponse(responseDto, CodeStatus.SUCCESS);
+        SingleResponse<PostSimpleResponseDto> response = ResponseService.getResponse(responseDto, CodeStatus.SUCCESS);
         return ResponseEntity.ok().body(response);
     }
 
@@ -98,7 +97,7 @@ public class BoardController {
 
         PostResponseDto responseDto = boardService.get(postId, user);
         SingleResponse<PostResponseDto> singleResponse =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
 
         return ResponseEntity.ok().body(singleResponse);
     }
@@ -117,7 +116,7 @@ public class BoardController {
 
         PostResponseDto responseDto = boardService.get(postId, user);
         SingleResponse<PostResponseDto> singleResponse =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POST);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POST);
 
         return ResponseEntity.ok().body(singleResponse);
     }
@@ -133,7 +132,7 @@ public class BoardController {
 
         CheckResponseDto responseDto = boardService.checkPost(postId, user);
         SingleResponse<CheckResponseDto> singleResponse =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POSTCHECK);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POSTCHECK);
 
         return ResponseEntity.ok().body(singleResponse);
     }
@@ -149,7 +148,7 @@ public class BoardController {
 
         List<PostListResponseDto> responseDto = boardService.getPostList(category, user);
         SingleResponse<List<PostListResponseDto>> singleResponse =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
 
         return ResponseEntity.ok().body(singleResponse);
     }
@@ -165,7 +164,7 @@ public class BoardController {
 
         List<PostListResponseDto> responseDto = boardService.postSearch(keyword, user);
         SingleResponse<List<PostListResponseDto>> singleResponse =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
 
         return ResponseEntity.ok().body(singleResponse);
     }
@@ -176,7 +175,7 @@ public class BoardController {
 
         List<CheckUserResponseDto> responseDto = boardService.getCheckUserList(postId);
         SingleResponse<List<CheckUserResponseDto>> singleResponse =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POSTCHECK);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_POSTCHECK);
 
         return ResponseEntity.ok().body(singleResponse);
     }
@@ -190,7 +189,7 @@ public class BoardController {
 
         List<PostListResponseDto> responseDto = boardService.getMyPost(user);
         SingleResponse<List<PostListResponseDto>> singleResponse =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_POST);
 
         return ResponseEntity.ok().body(singleResponse);
     }

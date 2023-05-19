@@ -39,7 +39,6 @@ public class CommentController {
 
     private final CommentService commentService;
     private final UserService userService;
-    private final ResponseService responseService;
     private final BoardService boardService;
     private final NoticeService noticeService;
 
@@ -65,7 +64,7 @@ public class CommentController {
         PostResponseDto responseDto = boardService.get(postId, user);
 
         SingleResponse<PostResponseDto> response
-                = responseService.getResponse(responseDto, CodeStatus.SUCCESS_CREATED_COMMENT);
+                = ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_CREATED_COMMENT);
 
         return ResponseEntity.ok().body(response);
     }
@@ -90,7 +89,7 @@ public class CommentController {
         PostResponseDto responseDto = boardService.get(postId, user);
 
         SingleResponse<PostResponseDto> response
-                = responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_COMMENT);
+                = ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_COMMENT);
 
         return ResponseEntity.ok().body(response);
     }
@@ -110,7 +109,7 @@ public class CommentController {
         PostResponseDto responseDto = boardService.get(postId, user);
 
         SingleResponse<PostResponseDto> response
-                = responseService.getResponse(responseDto, CodeStatus.SUCCESS_DELETE_COMMENT);
+                = ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_DELETE_COMMENT);
 
         return ResponseEntity.ok().body(response);
     }

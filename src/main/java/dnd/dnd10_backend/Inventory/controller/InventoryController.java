@@ -38,7 +38,6 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
     private final InventoryRecordService recordService;
-    private final ResponseService responseService;
 
     /**
      * 시재 조회 api
@@ -59,7 +58,7 @@ public class InventoryController {
             responseDtoList = inventoryService.findByCategory(category, token);
         }
 
-        SingleResponse<List<InventoryResponseDto>> response = responseService.getResponse(responseDtoList,
+        SingleResponse<List<InventoryResponseDto>> response = ResponseService.getResponse(responseDtoList,
                                                                           CodeStatus.SUCCESS_SEARCHED_INVENTORY);
 
         return ResponseEntity.ok().body(response);
@@ -79,7 +78,7 @@ public class InventoryController {
 
         List<InventoryResponseDto> responseDtoList = inventoryService.saveInventory(requestDto, token);
 
-        SingleResponse<List<InventoryResponseDto>> response = responseService.getResponse(responseDtoList,
+        SingleResponse<List<InventoryResponseDto>> response = ResponseService.getResponse(responseDtoList,
                 CodeStatus.SUCCESS_CREATED_INVENTORY);
 
         return ResponseEntity.ok().body(response);
@@ -99,7 +98,7 @@ public class InventoryController {
 
         List<InventoryResponseDto> responseDtoList = inventoryService.updateInventory(requestDto, token);
 
-        SingleResponse<List<InventoryResponseDto>> response = responseService.getResponse(responseDtoList,
+        SingleResponse<List<InventoryResponseDto>> response = ResponseService.getResponse(responseDtoList,
                 CodeStatus.SUCCESS_UPDATED_INVENTORY);
 
         return ResponseEntity.ok().body(response);
@@ -116,7 +115,7 @@ public class InventoryController {
                 .replace(JwtProperties.TOKEN_PREFIX,"");
         inventoryService.checkWorkTime(token);
 
-        SingleResponse response = responseService.getResponse(null, CodeStatus.SUCCESS);
+        SingleResponse response = ResponseService.getResponse(null, CodeStatus.SUCCESS);
 
         return ResponseEntity.ok().body(response);
     }
@@ -133,7 +132,7 @@ public class InventoryController {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
         List<InventoryRecordListResponseDto> responseDtoList = recordService.findInventoryUpdateRecords(category, token);
-        SingleResponse<List<InventoryRecordListResponseDto>> response = responseService.getResponse(responseDtoList,
+        SingleResponse<List<InventoryRecordListResponseDto>> response = ResponseService.getResponse(responseDtoList,
                 CodeStatus.SUCCESS_SEARCHED_INVENTORY);
         return ResponseEntity.ok().body(response);
     }
@@ -149,7 +148,7 @@ public class InventoryController {
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
         List<InventoryRecordTodayResponseDto> responseDtoList = recordService.findInventoryUpdateRecordToday(token);
-        SingleResponse<List<InventoryRecordTodayResponseDto>> response = responseService.getResponse(responseDtoList,
+        SingleResponse<List<InventoryRecordTodayResponseDto>> response = ResponseService.getResponse(responseDtoList,
                 CodeStatus.SUCCESS_SEARCHED_INVENTORY);
         return ResponseEntity.ok().body(response);
     }
@@ -167,7 +166,7 @@ public class InventoryController {
                 .replace(JwtProperties.TOKEN_PREFIX,"");
         inventoryService.deleteInventory(inventoryIdx, token);
 
-        SingleResponse<String> response = responseService.getResponse("",CodeStatus.SUCCESS_DELETED_INVENTORY);
+        SingleResponse<String> response = ResponseService.getResponse("",CodeStatus.SUCCESS_DELETED_INVENTORY);
 
         return ResponseEntity.ok().body(response);
     }

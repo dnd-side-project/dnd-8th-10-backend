@@ -37,7 +37,6 @@ public class NoticeController {
 
     private final NoticeService noticeService;
     private final UserService userService;
-    private final ResponseService responseService;
 
     //새로운 알림 있는지 확인
     @GetMapping("notice")
@@ -61,7 +60,7 @@ public class NoticeController {
         List<NoticeResponseDto> responseDto = noticeService.getNotice(user);
         noticeService.read(user); //알림 읽음 처리
         SingleResponse<List<NoticeResponseDto>> singleResponse =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_NOTICE);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_NOTICE);
 
         return ResponseEntity.ok().body(singleResponse);
     }

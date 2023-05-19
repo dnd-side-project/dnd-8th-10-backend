@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 @RequestMapping("/api")
 public class StoreController {
     private final StoreService storeService;
-    private final ResponseService responseService;
 
     /**
      *
@@ -45,7 +44,7 @@ public class StoreController {
         StoreResponseDto responseDto = storeService.getStoreInfo(token);
 
         SingleResponse<StoreResponseDto> response =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS);
 
         return ResponseEntity.ok().body(response);
     }
