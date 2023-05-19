@@ -206,6 +206,7 @@ public class CheckListService {
             startDay = now.minusDays(dayOfWeekNumber);
 
         for(int i=0;i<7;i++){
+            // TODO 일주일 치 데이터 가져와서 확인하기
             List<CheckList> list = checkListRepository
                     .findCheckListByCheckDateAndAndStatusAndUser(startDay.plusDays(i),"N", user);
             if(list.size()>0){

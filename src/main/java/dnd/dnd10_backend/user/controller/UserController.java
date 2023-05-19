@@ -4,9 +4,9 @@ import dnd.dnd10_backend.common.domain.SingleResponse;
 import dnd.dnd10_backend.common.domain.enums.CodeStatus;
 import dnd.dnd10_backend.common.service.ResponseService;
 import dnd.dnd10_backend.config.jwt.JwtProperties;
+import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
-import dnd.dnd10_backend.user.service.TokenService;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -44,8 +44,6 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
     private final UserService userService;
-    private final ResponseService responseService;
-    private final TokenService tokenService;
 
     /**
      * 사용자 정보 조회 api
@@ -55,9 +53,12 @@ public class UserController {
     @GetMapping("/user")
     public ResponseEntity getUser(HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
-                        .replace(JwtProperties.TOKEN_PREFIX,"");
-        UserResponseDto userResponseDto = userService.findUser(token);
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
+        UserResponseDto userResponseDto = userService.findUser(user);
+        SingleResponse<UserResponseDto> response = ResponseService.getResponse(userResponseDto,
                                                                 CodeStatus.SUCCESS_SEARCHED_USER);
         return ResponseEntity.ok().body(response);
     }
@@ -72,8 +73,12 @@ public class UserController {
                                      HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                             .replace(JwtProperties.TOKEN_PREFIX,"");
-        UserResponseDto userResponseDto = userService.saveUser(requestDto, token);
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+
+        User user = userService.getUserByEmail(token);
+
+        UserResponseDto userResponseDto = userService.saveUser(requestDto, user);
+
+        SingleResponse<UserResponseDto> response = ResponseService.getResponse(userResponseDto,
                                                                 CodeStatus.SUCCESS_CREATED_USER);
         return ResponseEntity.ok().body(response);
     }
@@ -87,9 +92,12 @@ public class UserController {
     public ResponseEntity updateUser(@RequestBody UserSaveRequestDto requestDto,
                                      HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
-                            .replace(JwtProperties.TOKEN_PREFIX,"");
-        UserResponseDto userResponseDto = userService.updateUser(requestDto, token);
-        SingleResponse<UserResponseDto> response = responseService.getResponse(userResponseDto,
+                .replace(JwtProperties.TOKEN_PREFIX,"");
+
+        User user = userService.getUserByEmail(token);
+
+        UserResponseDto userResponseDto = userService.updateUser(requestDto, user);
+        SingleResponse<UserResponseDto> response = ResponseService.getResponse(userResponseDto,
                                                                     CodeStatus.SUCCESS_UPDATED_USER);
         return ResponseEntity.ok().body(response);
     }
@@ -103,10 +111,10 @@ public class UserController {
     public ResponseEntity deleteUser(HttpServletRequest request) {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
+        User user = userService.getUserByEmail(token);
+        userService.deleteUser(user);
 
-        userService.deleteUser(token);
-
-        SingleResponse<String> response = responseService.getResponse("",CodeStatus.SUCCESS_DELETED_USER);
+        SingleResponse<String> response = ResponseService.getResponse("",CodeStatus.SUCCESS_DELETED_USER);
 
         return ResponseEntity.ok().body(response);
     }
@@ -125,10 +133,12 @@ public class UserController {
         String token = request.getHeader(JwtProperties.AT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
+        User user = userService.getUserByEmail(token);
+
         String refreshToken = request.getHeader(JwtProperties.RT_HEADER_STRING)
                 .replace(JwtProperties.TOKEN_PREFIX,"");
 
-        userService.getLogout(token);
+        userService.getLogout(user);
 
 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -138,7 +148,7 @@ public class UserController {
         }
 
         //카카오 세션 로그아웃웃
-        SingleResponse singleResponse = responseService.getResponse("",CodeStatus.SUCCESS);
+        SingleResponse singleResponse = ResponseService.getResponse("",CodeStatus.SUCCESS);
 
         return ResponseEntity.ok().body(singleResponse);
     }

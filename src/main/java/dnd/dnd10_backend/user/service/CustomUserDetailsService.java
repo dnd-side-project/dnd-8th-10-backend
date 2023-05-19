@@ -1,6 +1,7 @@
 package dnd.dnd10_backend.user.service;
 
 import dnd.dnd10_backend.user.domain.User;
+import dnd.dnd10_backend.user.repository.UserCacheRepository;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,10 +24,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserRepository userRepository;
+    private final UserCacheRepository userCacheRepository;
     @Override
     public UserDetails loadUserByUsername(String kakaoEmail) throws UsernameNotFoundException {
-        User user = userRepository.findByKakaoEmail(kakaoEmail);
-        return user;
+        return userCacheRepository.findByEmail(kakaoEmail);
     }
 }
