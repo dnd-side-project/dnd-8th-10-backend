@@ -35,7 +35,6 @@ import java.util.List;
 public class CheckListController {
 
     private final CheckListService checkListService;
-    private final ResponseService responseService;
 
     /**
      * 체크리스트를 저장하는 api
@@ -53,7 +52,7 @@ public class CheckListController {
                 = checkListService.saveCheckList(requestDto, token);
 
         SingleResponse<List<CheckListResponseDto>> response
-                = responseService.getResponse(responseDto,
+                = ResponseService.getResponse(responseDto,
                                 CodeStatus.SUCCESS_CREATED_CHECKLIST);
 
         return ResponseEntity.ok().body(response);
@@ -74,7 +73,7 @@ public class CheckListController {
         WorkCheckListResponseDto responseDto = checkListService.findCheckList(date,token);
 
         SingleResponse<WorkCheckListResponseDto> response
-                = responseService.getResponse(responseDto,CodeStatus.SUCCESS_SEARCHED_CHECKLIST);
+                = ResponseService.getResponse(responseDto,CodeStatus.SUCCESS_SEARCHED_CHECKLIST);
 
         return ResponseEntity.ok().body(response);
     }
@@ -94,7 +93,7 @@ public class CheckListController {
         List<CheckListResponseDto> responseDto = checkListService.updateCheckList(requestDto, token);
 
         SingleResponse<List<CheckListResponseDto>> response
-                = responseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_CHECKLIST);
+                = ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_UPDATED_CHECKLIST);
 
         return ResponseEntity.ok().body(response);
     }
@@ -114,7 +113,7 @@ public class CheckListController {
         List<CheckListResponseDto> responseDto = checkListService.deleteCheckList(checkIdx, token);
 
         SingleResponse<List<CheckListResponseDto>> response
-                = responseService.getResponse(responseDto, CodeStatus.SUCCESS_DELETED_CHECKLIST);
+                = ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_DELETED_CHECKLIST);
 
         return ResponseEntity.ok().body(response);
     }
@@ -132,7 +131,7 @@ public class CheckListController {
         List<Boolean> responseList = checkListService.checkWeek(token);
 
         SingleResponse<List<Boolean>> response
-                = responseService.getResponse(responseList,CodeStatus.SUCCESS);
+                = ResponseService.getResponse(responseList,CodeStatus.SUCCESS);
 
         return ResponseEntity.ok().body(response);
     }

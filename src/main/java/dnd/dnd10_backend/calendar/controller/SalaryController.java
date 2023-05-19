@@ -43,7 +43,6 @@ public class SalaryController {
 
     private final SalaryService salaryService;
     private final UserService userService;
-    private final ResponseService responseService;
 
     //직원 페이지 급여 조회
     @GetMapping("/calendar/salary/worker")
@@ -59,7 +58,7 @@ public class SalaryController {
         List<SalaryResponseDto> responseDto = salaryService.getWorkerSalary(year, month, user);
 
         SingleResponse<List<SalaryResponseDto>> response =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_SALARY);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_SALARY);
 
         return ResponseEntity.ok().body(response);
     }
@@ -79,7 +78,7 @@ public class SalaryController {
         List<StoreSalaryResponseDto> responseDto = salaryService.getStoreSalary(year, month, store);
 
         SingleResponse<List<StoreSalaryResponseDto>> response =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_SALARY);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_SALARY);
 
         return ResponseEntity.ok().body(response);
     }
@@ -94,7 +93,7 @@ public class SalaryController {
         SalaryDetailResponseDto responseDto = salaryService.getSalaryDetail(year, month, user);
 
         SingleResponse<SalaryDetailResponseDto> response =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_SALARY);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_SALARY);
 
         return ResponseEntity.ok().body(response);
     }

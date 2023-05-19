@@ -41,7 +41,6 @@ public class TokenController {
 
     private final UserService userService;
     private final TokenService tokenService;
-    private final ResponseService responseService;
 
     // 프론트에서 인가코드 돌려 받는 주소
     // 인가 코드로 엑세스 토큰 발급 -> 사용자 정보 조회 -> DB 저장 -> jwt 토큰 발급 -> 프론트에 토큰 전달
@@ -64,7 +63,7 @@ public class TokenController {
 
         //response body 설정
         UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
-        SingleResponse<UserCreateResponseDto> response = responseService.getResponse(userResponseDto,
+        SingleResponse<UserCreateResponseDto> response = ResponseService.getResponse(userResponseDto,
                 CodeStatus.SUCCESS_SOCIAL_LOGIN);
 
         return ResponseEntity.ok().headers(headers).body(response);
@@ -88,7 +87,7 @@ public class TokenController {
 
         //response body 설정
         UserCreateResponseDto userResponseDto = userService.getUserByToken(tokenList.get(0));
-        SingleResponse<UserCreateResponseDto> response = responseService.getResponse(userResponseDto,
+        SingleResponse<UserCreateResponseDto> response = ResponseService.getResponse(userResponseDto,
                 CodeStatus.SUCCESS_TOKEN_REISSUED);
 
         return ResponseEntity.ok().headers(headers).body(response);

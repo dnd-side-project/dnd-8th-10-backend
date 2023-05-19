@@ -46,7 +46,6 @@ public class CalendarController {
 
     private final CalendarService calendarService;
     private final UserService userService;
-    private final ResponseService responseService;
 
     //근무시간 등록 API
     @PostMapping("/calendar")
@@ -148,7 +147,7 @@ public class CalendarController {
         List<TimeCardResponseDto> responseDto = calendarService.getTimeCards(year, month, day, user.getStore().getStoreName());
 
         SingleResponse<List<TimeCardResponseDto>> response =
-                responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_TIMECARD);
+                ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_TIMECARD);
 
         return ResponseEntity.ok().body(response);
     }
@@ -166,7 +165,7 @@ public class CalendarController {
         List<String> responseDto = calendarService.getWorkDay(year, month, user);
 
         SingleResponse<List<String>> response
-                = responseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_WORKDAY);
+                = ResponseService.getResponse(responseDto, CodeStatus.SUCCESS_SEARCHED_WORKDAY);
 
         return ResponseEntity.ok().body(response);
     }

@@ -27,7 +27,7 @@ public class ResponseService {
      * @param <T>
      * @return
      */
-    public <T> SingleResponse<T> getResponse(T data, CodeStatus status){
+    public static <T> SingleResponse<T> getResponse(T data, CodeStatus status){
         return new SingleResponse(ResponseStatus.SUCCESS, status,data);
     }
 }
