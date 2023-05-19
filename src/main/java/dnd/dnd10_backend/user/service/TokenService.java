@@ -112,8 +112,6 @@ public class TokenService {
         KakaoProfile profile = findProfile(token);
         List<String> tokenList = new ArrayList<>();
 
-        boolean isNull = false;
-
         User user = userRepository.findByKakaoId(profile.getId());
 
         if(user == null) {

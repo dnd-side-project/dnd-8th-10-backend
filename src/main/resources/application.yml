@@ -16,12 +16,17 @@ spring:
   hibernate:
    ddl-auto: update
   database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
-  show-sql: true
  servlet:
   multipart:
    enabled: true
    max-file-size: 100MB
    max-request-size: 100MB
+ cache:
+  caffeine:
+   spec: maximumSize=500,expireAfterAccess=20s
+   type: caffeine
+   cache-names:
+    - userCacheStore
 
 server:
  servlet:

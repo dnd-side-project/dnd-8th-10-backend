@@ -14,9 +14,12 @@ import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import dnd.dnd10_backend.user.dto.response.UserCreateResponseDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
+import dnd.dnd10_backend.user.repository.UserCacheRepository;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -55,11 +58,13 @@ import static com.auth0.jwt.JWT.require;
  * [2023-02-24] 사용자 등록과 업데이트 함수 분리 - 원지윤
  * [2023-03-01] 카카오 소셜 로그아웃 추가 - 원지윤
  */
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserCacheRepository userCacheRepository;
     private final StoreRepository storeRepository;
     private final DefaultInventoryService defaultInventoryService;
     private final DefaultCheckListService defaultCheckListService;
@@ -90,7 +95,7 @@ public class UserService {
         String email = require(Algorithm.HMAC512(JwtProperties.SECRET)).build().verify(token)
                 .getClaim("email").asString();
         //user 찾기
-        User user = userRepository.findByKakaoEmail(email);
+        User user = userCacheRepository.findByEmail(email);
         if(user == null) throw new CustomerNotFoundException(CodeStatus.NOT_FOUND_USER);
 
         return user;
@@ -101,9 +106,7 @@ public class UserService {
      * @param requestDto client한테서 받아온 사용자 정보
      * @return 응답해주려는 user 정보
      */
-    public UserResponseDto saveUser(UserSaveRequestDto requestDto, final String token){
-        //user 찾기
-        User user = getUserByEmail(token);
+    public UserResponseDto saveUser(UserSaveRequestDto requestDto, User user){
 
         Store store = storeRepository.findStoreByStoreName(requestDto.getWorkPlace());
 
@@ -138,25 +141,13 @@ public class UserService {
     /**
      * 사용자 정보를 업데이트하는 함수
      * @param requestDto 업데이트 하려는 정보
-     * @param token access token
+     * @param user 업데이트하려는 사용자
      * @return 응답해주려는 user 정보
      */
-    public UserResponseDto updateUser(UserSaveRequestDto requestDto, final String token){
-        //user 찾기
-        User user = getUserByEmail(token);
+    @CachePut(value = "userCacheStore", key="#user.kakaoEmail")
+    public UserResponseDto updateUser(UserSaveRequestDto requestDto, User user){
 
-        Store store = storeRepository.findStoreByStoreName(requestDto.getWorkPlace());
-
-        if(store == null){
-            store = Store.builder()
-                    .storeName(requestDto.getWorkPlace())
-                    .storeLocation(requestDto.getWorkLocation())
-                    .build();
-
-            store = storeRepository.save(store);
-            defaultInventoryService.saveDafaultInventories(store);
-        }
-
+        Store store = user.getStore();
         //requestDto로 user 정보 update
         user.updateUser(requestDto, store);
 
@@ -171,12 +162,11 @@ public class UserService {
 
     /**
      * user를 삭제하는 메소드
-     * @param token access token
+     * @param user 삭제하려는 user
      */
-    public void deleteUser(final String token){
+    @CacheEvict(value = "userCacheStore", key="#user.kakaoEmail")
+    public void deleteUser(User user){
         RestTemplate rt = new RestTemplate();
-
-        User user = getUserByEmail(token);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -210,12 +200,11 @@ public class UserService {
 
     /**
      * 카카오 소셜 로그아웃
-     * @param token access token
+     * @param user 로그아웃 하려는 사용자
      */
-    public void getLogout(final String token) {
+    @CacheEvict(value = "userCacheStore", key="#user.kakaoEmail")
+    public void getLogout(User user) {
         RestTemplate rt = new RestTemplate();
-
-        User user = getUserByEmail(token);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -242,14 +231,12 @@ public class UserService {
     }
 
     /**
-     * access token으로 사용자를 찾는 메소드
-     * @param token access token
+     * 사용자를 정보를 찾는 메소드
+     * @param user 사용자
      * @return
      */
-    public UserResponseDto findUser(final String token){
-        User user = getUserByEmail(token);
-        Store store = user.getStore();
-        return UserResponseDto.of(user,store);
+    public UserResponseDto findUser(User user){
+        return UserResponseDto.of(user,user.getStore());
     }
 
     /**
@@ -258,8 +245,7 @@ public class UserService {
      * @return userCode로 찾은 User정보
      */
     public User findByUserCode(Long userCode) {
-        User user = userRepository.findByUserCode(userCode);
-        return user;
+        return userRepository.findByUserCode(userCode);
     }
 
 
