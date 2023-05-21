@@ -23,7 +23,7 @@ public class UserCacheRepository {
     private final UserRepository userRepository;
 
     @Cacheable(cacheNames="userCacheStore", key="#email")
-    public User findByEmail(final String email){
+    public User findByEmail(final String email) {
         log.info(">>> cache is not working");
         return userRepository.findByKakaoEmail(email);
     }
