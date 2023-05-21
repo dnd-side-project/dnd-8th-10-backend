@@ -7,6 +7,7 @@ import dnd.dnd10_backend.config.jwt.JwtProperties;
 import dnd.dnd10_backend.user.domain.User;
 import dnd.dnd10_backend.user.dto.request.UserSaveRequestDto;
 import dnd.dnd10_backend.user.dto.response.UserResponseDto;
+import dnd.dnd10_backend.user.repository.UserRepository;
 import dnd.dnd10_backend.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
