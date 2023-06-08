@@ -144,15 +144,14 @@ public class UserService {
      * @param user 업데이트하려는 사용자
      * @return 응답해주려는 user 정보
      */
-    @CachePut(value = "userCacheStore", key="#user.kakaoEmail")
     public UserResponseDto updateUser(UserSaveRequestDto requestDto, User user){
 
         Store store = user.getStore();
         //requestDto로 user 정보 update
         user.updateUser(requestDto, store);
 
-        //user 정보 저장
-        userRepository.save(user);
+        //캐시 내용 업데이트 및 DB업데이트 내용 저장
+        user = userCacheRepository.updateUser(user);
 
         //사용자 출근요일에 기본 체크리스트 추가
         defaultCheckListService.saveFirstDefaultCheckList(user);
