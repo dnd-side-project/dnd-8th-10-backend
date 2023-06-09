@@ -17,6 +17,7 @@ import dnd.dnd10_backend.user.dto.response.UserResponseDto;
 import dnd.dnd10_backend.user.repository.UserCacheRepository;
 import dnd.dnd10_backend.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -61,6 +62,7 @@ import static com.auth0.jwt.JWT.require;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -125,7 +127,7 @@ public class UserService {
         //requestDto로 user 정보 update
         user.updateUser(requestDto, store);
 
-        List<User> userList = userRepository.findByKakaoNickname(user.getUsername());
+        //List<User> userList = userRepository.findByKakaoNickname(user.getUsername());
 
         user.setUserProfileCode((count%10)+1);
 
@@ -186,7 +188,7 @@ public class UserService {
                 String.class
         );
 
-        System.out.println(response.getStatusCode());
+        log.info("status code : {}",response.getStatusCode());
 
         if(response.getStatusCode() == HttpStatus.OK) {
             userRepository.delete(user);
