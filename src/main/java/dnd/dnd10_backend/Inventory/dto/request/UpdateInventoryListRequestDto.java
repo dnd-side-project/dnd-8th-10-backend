@@ -24,6 +24,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateInventoryListRequestDto {
-    private Category category;
+    private String category;
     private List<UpdateInventoryRequestDto> list;
 }
