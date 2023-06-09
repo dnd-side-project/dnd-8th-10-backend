@@ -151,7 +151,7 @@ public class InventoryService {
         }
 
         inventoryUpdateRecordRepository.saveAll(recordList);
-        inventoryList = inventoryRepository.saveAll(inventoryList);
+        inventoryRepository.saveAll(inventoryList);
 
         return convertInventoryToDto(inventoryList);
     }
