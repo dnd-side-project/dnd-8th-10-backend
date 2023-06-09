@@ -76,12 +76,11 @@ public class InventoryRecordService {
      * @return
      */
     public List<InventoryRecordListResponseDto> findAllInventoryUpdateRecords(List<InventoryUpdateRecord> list){
-        List<InventoryRecordListResponseDto> responseDtoList = list.stream()
+        return list.stream()
                 .map(t -> {
                     List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCard(t.getTimeCard());
                     return InventoryRecordListResponseDto.of(t.getUserName(),t.getUserProfileCode(),t.getTimeCard(),convertToInventoryRecordToDto(recordList));
                 }).collect(Collectors.toList());
-        return responseDtoList;
     }
 
     /**
@@ -91,12 +90,11 @@ public class InventoryRecordService {
      * @return 응답해주려는 inventoryRecord의 정보
      */
     public List<InventoryRecordListResponseDto> findInventoryUpdateRecordsByCategory(List<InventoryUpdateRecord> list, Category category){
-        List<InventoryRecordListResponseDto> responseDtoList = list.stream()
+        return list.stream()
                 .map(t -> {
                     List<InventoryUpdateRecord> recordList = recordRepository.findByTimeCardAndCategory(t.getTimeCard(), category);
                     return InventoryRecordListResponseDto.of(t.getUserName(),t.getUserProfileCode(),t.getTimeCard(),convertToInventoryRecordToDto(recordList));
                 }).collect(Collectors.toList());
-        return responseDtoList;
     }
 
     /**
@@ -173,10 +171,9 @@ public class InventoryRecordService {
      * @return List타입의 InventoryRecordResponseDto 목록
      */
     public List<InventoryRecordResponseDto> convertToInventoryRecordToDto(List<InventoryUpdateRecord> recordList){
-        List<InventoryRecordResponseDto> responseDtoList = recordList.stream()
+        return recordList.stream()
                 .map(t -> InventoryRecordResponseDto.of(t))
                 .collect(Collectors.toList());
-        return responseDtoList;
     }
 
 

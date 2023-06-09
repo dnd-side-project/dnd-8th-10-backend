@@ -119,12 +119,13 @@ public class InventoryService {
         TimeCard timeCard = findTimeCard(user, store);
 
         List<InventoryUpdateRecord> recordList = inventoryUpdateRecordRepository.findByTimeCard(timeCard);
+        List<Inventory> inventoryList = new ArrayList<>();
 
         for(UpdateInventoryRequestDto i: list){
             Inventory inventory = inventoryRepository
                     .findInventoryByStoreAndInventoryName(store, i.getInventoryName());
             inventory.setInventoryCount(i.getDiff());
-            inventoryRepository.save(inventory);
+            inventoryList.add(inventory);
 
             InventoryUpdateRecord record = new InventoryUpdateRecord();
 
@@ -145,10 +146,13 @@ public class InventoryService {
                         .user(user)
                         .store(store)
                         .build();
+                recordList.add(record);
             }
         }
 
-        List<Inventory> inventoryList = inventoryRepository.findInventoryByCategoryAndStore(category, store);
+        inventoryUpdateRecordRepository.saveAll(recordList);
+        inventoryList = inventoryRepository.saveAll(inventoryList);
+
         return convertInventoryToDto(inventoryList);
     }
 
@@ -170,10 +174,9 @@ public class InventoryService {
      * @return List타입의 InventoryResponseDto 목록
      */
     public List<InventoryResponseDto> convertInventoryToDto(List<Inventory> inventoryList){
-        List<InventoryResponseDto> responseList = inventoryList.stream()
+        return inventoryList.stream()
                 .map(t -> InventoryResponseDto.of(t))
                 .collect(Collectors.toList());
-        return responseList;
     }
 
     /**
