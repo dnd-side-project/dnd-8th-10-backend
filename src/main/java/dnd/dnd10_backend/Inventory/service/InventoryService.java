@@ -26,6 +26,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -109,10 +110,10 @@ public class InventoryService {
      * @param token access token
      * @return 응답해주려는 inventory 정보 목록
      */
-    public List<InventoryResponseDto> updateInventory(UpdateInventoryListRequestDto listRequestDto, final String token){
+    public List<InventoryResponseDto> updateInventory(final UpdateInventoryListRequestDto listRequestDto, final String token){
         User user = userService.getUserByEmail(token);
         Store store = user.getStore();
-        Category category = listRequestDto.getCategory();
+        Category category = Category.valueOf(listRequestDto.getCategory().toUpperCase(Locale.ROOT));
 
         List<UpdateInventoryRequestDto> list = listRequestDto.getList();
         TimeCard timeCard = findTimeCard(user, store);
@@ -145,9 +146,6 @@ public class InventoryService {
                         .store(store)
                         .build();
             }
-
-            inventoryUpdateRecordRepository.save(record);
-            
         }
 
         List<Inventory> inventoryList = inventoryRepository.findInventoryByCategoryAndStore(category, store);
